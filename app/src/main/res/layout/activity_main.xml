@@ -37,4 +37,17 @@
         android:layout_height="386dp"
         tools:layout_editor_absoluteY="81dp" />
 
+    <com.lukedeighton.wheelview.WheelView
+        android:id="@+id/wheelView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:repeatItems="true"
+        app:rotatableWheelDrawable="false"
+        app:selectionAngle="90.0"
+        app:wheelItemCount="10"
+        app:wheelItemRadius="43dp"
+        app:wheelOffsetY="60dp"
+        app:wheelPadding="13dp"
+        app:wheelPosition="bottom"
+        app:wheelRadius="276dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

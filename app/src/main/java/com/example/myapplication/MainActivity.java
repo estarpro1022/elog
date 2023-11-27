@@ -1,8 +1,10 @@
 package com.example.myapplication;
 
+import android.app.Dialog;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.CalendarView;
 import android.widget.Toast;
 import android.widget.CalendarView;
@@ -27,8 +29,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     CalendarView calendarView;
+    WheelView wheelView;
     private ActivityMainBinding binding;
 
+    private boolean isWheelViewVisible = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +45,10 @@ public class MainActivity extends AppCompatActivity {
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
                 // 处理日期变更的逻辑
                 Toast.makeText(MainActivity.this, year + "年" + (month + 1) + "月" + dayOfMonth + "日", Toast.LENGTH_LONG).show();
-
+                if(!isWheelViewVisible) {
+                    wheelView.setVisibility(View.VISIBLE);
+                    isWheelViewVisible = true;
+                }
             }
         });
 
@@ -53,13 +60,14 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        final WheelView wheelView = (WheelView) findViewById(R.id.wheelView);
+        wheelView = findViewById(R.id.wheelView);
 
         final List<String> entries = new ArrayList<>();
-        for(int i = 0; i < 14; i++) entries.add(String.valueOf(i));
+        for (int i = 0; i < 10; i++) entries.add(String.valueOf(i));
 
         final List<Drawable> imgList = new ArrayList<>();
-        for(int i = 0; i < 14; i++) imgList.add(getResources().getDrawable(R.mipmap.ic_launcher));
+        for (int i = 0; i < 10; i++)
+            imgList.add(getResources().getDrawable(R.mipmap.ic_launcher));
 
         wheelView.setAdapter(new WheelAdapter() {
             @Override
@@ -78,6 +86,16 @@ public class MainActivity extends AppCompatActivity {
             public void onWheelItemClick(WheelView parent, int position, boolean isSelected) {
                 wheelView.setSelected(position);
                 Log.e("----", "" + position);
+            }
+        });
+
+        binding.getRoot().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(isWheelViewVisible){
+                    wheelView.setVisibility(View.GONE);
+                    isWheelViewVisible = false;
+                }
             }
         });
     }

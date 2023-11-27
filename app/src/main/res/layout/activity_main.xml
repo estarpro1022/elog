@@ -5,7 +5,8 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="?attr/actionBarSize">
+    android:paddingTop="?attr/actionBarSize"
+    android:orientation="horizontal">
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
@@ -36,22 +37,31 @@
     <CalendarView
         android:id="@+id/calendarView"
         android:layout_width="418dp"
-        android:layout_height="443dp"
+        android:layout_height="300dp"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="1dp"
         tools:ignore="MissingConstraints" />
 
-    <com.lukedeighton.wheelview.WheelView
-        android:id="@+id/wheelView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:repeatItems="true"
-        app:rotatableWheelDrawable="false"
-        app:selectionAngle="90.0"
-        app:wheelItemCount="10"
-        app:wheelItemRadius="43dp"
-        app:wheelOffsetY="60dp"
-        app:wheelPadding="13dp"
-        app:wheelPosition="bottom"
-        app:wheelRadius="276dp"/>
+        tools:ignore="MissingConstraints">
+        <com.lukedeighton.wheelview.WheelView
+            android:id="@+id/wheelView"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="220dp"
+            android:layout_gravity="bottom"
+            android:visibility="gone"
+            app:repeatItems="true"
+            app:rotatableWheelDrawable="false"
+            app:selectionAngle="90.0"
+            app:wheelItemCount="10"
+            app:wheelItemRadius="43dp"
+            app:wheelOffsetY="60dp"
+            app:wheelPadding="13dp"
+            app:wheelPosition="bottom"
+            app:wheelRadius="276dp"
+            tools:ignore="MissingConstraints" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

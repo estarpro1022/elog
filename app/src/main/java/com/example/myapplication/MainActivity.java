@@ -1,14 +1,15 @@
 package com.example.myapplication;
 
-import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.CalendarView;
 import android.widget.Toast;
-import android.widget.CalendarView;
-import android.widget.Toast;
+
+import com.example.myapplication.databinding.ActivityMainBinding;
+import com.lukedeighton.wheelview.WheelView;
+
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -19,36 +20,48 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.myapplication.databinding.ActivityMainBinding;
-import com.lukedeighton.wheelview.WheelView;
 import com.lukedeighton.wheelview.adapter.WheelAdapter;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     CalendarView calendarView;
     WheelView wheelView;
     private ActivityMainBinding binding;
+    private String selectedDate;
 
-    private boolean isWheelViewVisible = false;
+    private Map<String, Diary> diaryMap;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        diaryMap = new HashMap<>();
+        wheelView = findViewById(R.id.wheelView);
         calendarView = findViewById(R.id.calendarView);
         calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
             @Override
             public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
                 // 处理日期变更的逻辑
-                Toast.makeText(MainActivity.this, year + "年" + (month + 1) + "月" + dayOfMonth + "日", Toast.LENGTH_LONG).show();
-                if(!isWheelViewVisible) {
-                    wheelView.setVisibility(View.VISIBLE);
-                    isWheelViewVisible = true;
+//                Toast.makeText(MainActivity.this, year + "年" + (month + 1) + "月" + dayOfMonth + "日", Toast.LENGTH_LONG).show();
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(year, month, dayOfMonth);
+                selectedDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
+                Diary diary = diaryMap.get(selectedDate);
+                if(diary != null){
+                    Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
+                    intent.putExtra("diary", diary);
+                    startActivityForResult(intent, 1);
                 }
+               else wheelView.setVisibility(View.VISIBLE);
+
             }
         });
 
@@ -60,11 +73,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        wheelView = findViewById(R.id.wheelView);
-
-        final List<String> entries = new ArrayList<>();
-        for (int i = 0; i < 10; i++) entries.add(String.valueOf(i));
-
         final List<Drawable> imgList = new ArrayList<>();
         for (int i = 0; i < 10; i++)
             imgList.add(getResources().getDrawable(R.mipmap.ic_launcher));
@@ -74,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
             public Drawable getDrawable(int position) {
                 return imgList.get(position);
             }
-
             @Override
             public int getCount() {
                 return imgList.size();
@@ -85,18 +92,34 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onWheelItemClick(WheelView parent, int position, boolean isSelected) {
                 wheelView.setSelected(position);
-                Log.e("----", "" + position);
+                Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
+                intent.putExtra("mood", position);
+                intent.putExtra("date", selectedDate);
+                startActivityForResult(intent, 1);
+                wheelView.setVisibility(View.GONE);
             }
         });
-
         binding.getRoot().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(isWheelViewVisible){
-                    wheelView.setVisibility(View.GONE);
-                    isWheelViewVisible = false;
-                }
+                wheelView.setVisibility(View.GONE);
             }
         });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 1 && resultCode == RESULT_OK){
+            if(data.hasExtra("deletedDate")){
+                diaryMap.remove(data.getStringExtra("deletedDate"));
+            }
+            else {
+                Diary diary = (Diary) data.getSerializableExtra("diary");
+                if(diaryMap.get(diary.getDate()) != null) diaryMap.remove(diary.getDate());
+                diaryMap.put(diary.getDate(), diary);
+            }
+        }
     }
 }

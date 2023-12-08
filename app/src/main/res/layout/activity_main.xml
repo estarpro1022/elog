@@ -36,7 +36,7 @@
 
     <CalendarView
         android:id="@+id/calendarView"
-        android:layout_width="418dp"
+        android:layout_width="410dp"
         android:layout_height="300dp"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="1dp"
@@ -53,6 +53,7 @@
             android:layout_height="220dp"
             android:layout_gravity="bottom"
             android:visibility="gone"
+            android:clickable="true"
             app:repeatItems="true"
             app:rotatableWheelDrawable="false"
             app:selectionAngle="90.0"
@@ -63,5 +64,6 @@
             app:wheelPosition="bottom"
             app:wheelRadius="276dp"
             tools:ignore="MissingConstraints" />
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

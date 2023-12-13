@@ -21,10 +21,13 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.lukedeighton.wheelview.adapter.WheelAdapter;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -32,38 +35,62 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    CalendarView calendarView;
+    MaterialCalendarView calendarView;
     WheelView wheelView;
     private ActivityMainBinding binding;
-    private String selectedDate;
+    private CalendarDay selectedDate;
 
     private Map<String, Diary> diaryMap;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+//        setContentView(R.layout.activity_main);
         diaryMap = new HashMap<>();
         wheelView = findViewById(R.id.wheelView);
         calendarView = findViewById(R.id.calendarView);
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
-                // 处理日期变更的逻辑
-//                Toast.makeText(MainActivity.this, year + "年" + (month + 1) + "月" + dayOfMonth + "日", Toast.LENGTH_LONG).show();
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(year, month, dayOfMonth);
-                selectedDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
-                Diary diary = diaryMap.get(selectedDate);
-                if(diary != null){
-                    Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
-                    intent.putExtra("diary", diary);
-                    startActivityForResult(intent, 1);
-                }
-               else wheelView.setVisibility(View.VISIBLE);
+        Calendar calendar = Calendar.getInstance();
+        calendarView.state().edit().setMaximumDate(calendar).commit();
+//        calendarView.state().edit().setMaximumDate(calendar.getTime()).commit();
 
+        calendarView.setOnDateChangedListener((widget, date, selected) -> {
+            // 在这里处理日期变化事件
+            // date 是选中的日期
+            // selected 表示日期是否被选中
+            Calendar calendar1 = Calendar.getInstance();
+            calendar1.set(date.getYear(), date.getMonth(), date.getDay());
+            selectedDate = date;
+            String Date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar1.getTime());
+            Diary diary = diaryMap.get(Date);
+            if (diary != null) {
+                Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
+                intent.putExtra("diary", diary);
+                startActivityForResult(intent, 1);
+            } else {// 检查 wheelView 是否为 null
+                wheelView.setVisibility(View.VISIBLE);
             }
         });
+//        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+//            @Override
+//            public void onSelectedDayChange(@NonNull CalendarView view, int year, int month, int dayOfMonth) {
+//                // 处理日期变更的逻辑
+////                Toast.makeText(MainActivity.this, year + "年" + (month + 1) + "月" + dayOfMonth + "日", Toast.LENGTH_LONG).show();
+//                calendarView.addDecorator(new CustomDecorator(date));
+//                Calendar calendar = Calendar.getInstance();
+//                calendar.set(year, month, dayOfMonth);
+//                selectedDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
+//                Diary diary = diaryMap.get(selectedDate);
+//                if(diary != null){
+//                    Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
+//                    intent.putExtra("diary", diary);
+//                    startActivityForResult(intent, 1);
+//                }
+//               else wheelView.setVisibility(View.VISIBLE);
+//
+//            }
+//        });
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -82,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
             public Drawable getDrawable(int position) {
                 return imgList.get(position);
             }
+
             @Override
             public int getCount() {
                 return imgList.size();
@@ -109,16 +137,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1 && resultCode == RESULT_OK){
-            if(data.hasExtra("deletedDate")){
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            if (data.hasExtra("deletedDate")) {
                 diaryMap.remove(data.getStringExtra("deletedDate"));
-            }
-            else {
+
+                String deletedDate = data.getStringExtra("deletedDate");
+                diaryMap.remove(deletedDate);
+
+                // 移除相应的装饰日期
+//                CalendarDay removedDay = selectedDate; // 自定义方法，将日期字符串解析为CalendarDay
+                calendarView.removeDecorator(new CustomDecorator(selectedDate));
+//                decoratedDates.remove(removedDay);
+
+                // 更新装饰器
+//                updateDecorators();//TODO:移除selectedDate的装饰效果
+            } else {
                 Diary diary = (Diary) data.getSerializableExtra("diary");
-                if(diaryMap.get(diary.getDate()) != null) diaryMap.remove(diary.getDate());
+                if (diaryMap.get(diary.getDate()) != null) diaryMap.remove(diary.getDate());
                 diaryMap.put(diary.getDate(), diary);
+                calendarView.addDecorator(new CustomDecorator(selectedDate));
             }
         }
     }

@@ -34,13 +34,13 @@
         app:layout_constraintVertical_bias="1.0"
         app:navGraph="@navigation/mobile_navigation" />
 
-    <CalendarView
-        android:id="@+id/calendarView"
-        android:layout_width="410dp"
-        android:layout_height="300dp"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="1dp"
-        tools:ignore="MissingConstraints" />
+<!--    <CalendarView-->
+<!--        android:id="@+id/calendarView"-->
+<!--        android:layout_width="410dp"-->
+<!--        android:layout_height="300dp"-->
+<!--        tools:layout_editor_absoluteX="0dp"-->
+<!--        tools:layout_editor_absoluteY="1dp"-->
+<!--        tools:ignore="MissingConstraints" />-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,7 +48,7 @@
         tools:ignore="MissingConstraints">
         <com.lukedeighton.wheelview.WheelView
             android:id="@+id/wheelView"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="220dp"
             android:layout_gravity="bottom"
@@ -63,7 +63,14 @@
             app:wheelPadding="13dp"
             app:wheelPosition="bottom"
             app:wheelRadius="276dp"
-            tools:ignore="MissingConstraints" />
+            tools:ignore="MissingConstraints"
+            android:focusable="true" />
+        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            app:mcv_selectionColor="#00F"
+            app:mcv_showOtherDates="all" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,11 +1,18 @@
 package com.example.myapplication;
 
+import android.provider.ContactsContract;
+
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+
 import java.io.Serializable;
+import java.util.Date;
+
 class Diary implements Serializable{
     private String title;
     private String date;
     private String content;
     private int mood;
+
 
     public Diary(String title, String date, String content, int mood) {
         this.title = title;

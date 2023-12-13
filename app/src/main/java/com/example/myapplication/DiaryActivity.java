@@ -10,9 +10,12 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+
 public class DiaryActivity extends AppCompatActivity{
-    private String selectedDate;
     private Integer mood;
+
+    private String selectedDate;
 
 
     @Override
@@ -60,6 +63,7 @@ public class DiaryActivity extends AppCompatActivity{
                     intent1.putExtra("diary", diary);
                     setResult(RESULT_OK, intent1);
                     Toast.makeText(DiaryActivity.this, "日记保存成功", Toast.LENGTH_SHORT).show();
+
                     finish();
                 }
             }

@@ -6,5 +6,16 @@
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+     <color name="white">#FFFFFFFF</color>
+
+    <color name="angry">#ee5856</color>
+    <color name="shy">#faa0bc</color>
+    <color name="hoho">#e8e193</color>
+    <color name="good">#ffc038</color>
+    <color name="happy">#fb9139</color>
+    <color name="dizzy">#a0ceaf</color>
+    <color name="shock">#43889a</color>
+    <color name="injured">#7d8cab</color>
+    <color name="decadence">#9a77df</color>
+    <color name="sleppy">#3b5182</color>
 </resources>

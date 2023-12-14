@@ -36,4 +36,8 @@ public class CustomDecorator implements DayViewDecorator {
         // 设置圆形背景
         view.setBackgroundDrawable(circleDrawable);
     }
+    public void removeDecorator(DayViewFacade view) {
+        view.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+    }
+
 }

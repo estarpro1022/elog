@@ -123,12 +123,19 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 1 && resultCode == RESULT_OK) {
             if (data.hasExtra("deletedDate")) {
                 diaryMap.remove(data.getStringExtra("deletedDate"));
-                calendarView.removeDecorator(new CustomDecorator(selectedDate));
+                CustomDecorator decorator = new CustomDecorator(selectedDate);
+                decorator.setDecorated(false);
+                calendarView.addDecorator(decorator);
+                //TODO:去除selectedData日期上的装饰效果，使日期底色变成原来的颜色
             } else {
                 Diary diary = (Diary) data.getSerializableExtra("diary");
                 if (diaryMap.get(diary.getDate()) != null) diaryMap.remove(diary.getDate());
                 diaryMap.put(diary.getDate(), diary);
-                calendarView.addDecorator(new CustomDecorator(selectedDate));
+                //添加装饰效果使日期底色变成红色
+                CustomDecorator decorator = new CustomDecorator(selectedDate);
+                decorator.setDecorated(true);
+                calendarView.addDecorator(decorator);
+//                calendarView.addDecorator(new CustomDecorator(selectedDate));
             }
         }
     }

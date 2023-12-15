@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         calendarView.setTitleFormatter(new TitleFormatter() {
             @Override
             public CharSequence format(CalendarDay day) {
-                return String.format("%d\n%d月", day.getYear(), day.getMonth() + 1);
+                return String.format("%d年%d月", day.getYear(), day.getMonth() + 1);
             }
         });
 

@@ -1,6 +1,7 @@
 package com.example.myapplication;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         //设置最大可选日期
         Calendar calendar = Calendar.getInstance();
         calendarView.state().edit().setMaximumDate(calendar).commit();
-
+        //当前日期之后的日期和不属于本月的日期设为不可见
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
             // 在这里处理日期变化事件
             // date 是选中的日期
@@ -123,6 +124,10 @@ public class MainActivity extends AppCompatActivity {
                 diaryMap.remove(data.getStringExtra("deletedDate"));
                 CustomDecorator decorator = new CustomDecorator(selectedDate);
                 decorator.setDecorated(false);
+//                decorator.setColor(diary.getMood());
+
+                decorator.setContext(this);
+
                 calendarView.addDecorator(decorator);
                 //TODO:去除selectedData日期上的装饰效果，使日期底色变成原来的颜色
             } else {
@@ -132,8 +137,9 @@ public class MainActivity extends AppCompatActivity {
                 //添加装饰效果使日期底色变成红色
                 CustomDecorator decorator = new CustomDecorator(selectedDate);
                 decorator.setDecorated(true);
+                decorator.setColor(diary.getMood());
+                decorator.setContext(this);
                 calendarView.addDecorator(decorator);
-//                calendarView.addDecorator(new CustomDecorator(selectedDate));
             }
         }
     }

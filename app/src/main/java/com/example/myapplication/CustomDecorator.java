@@ -12,6 +12,7 @@ import com.prolificinteractive.materialcalendarview.DayViewFacade;
 public class CustomDecorator implements DayViewDecorator {
 
     private CalendarDay dateToDecorate;
+//    private int color;
     private boolean isDecorated;
     public CustomDecorator(CalendarDay dateToDecorate) {
         this.dateToDecorate = dateToDecorate;

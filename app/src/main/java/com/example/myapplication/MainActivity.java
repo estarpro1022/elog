@@ -1,11 +1,10 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.CalendarView;
-import android.widget.Toast;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.lukedeighton.wheelview.WheelView;
@@ -13,7 +12,6 @@ import com.lukedeighton.wheelview.WheelView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -27,13 +25,23 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+    public static final int ANGRY = 0;
+    public static final int SHY = 1;
+    public static final int HOHO = 2;
+    public static final int GOOD = 3;
+    public static final int HAPPY = 4;
+    public static final int DIZZY = 5;
+    public static final int SHOCK = 6;
+    public static final int INJURED = 7;
+    public static final int DECADENCE = 8;
+    public static final int SLEEPY = 9;
+//    public static final int TRANSPARENT = 10;
 
     MaterialCalendarView calendarView;
     WheelView wheelView;
@@ -53,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         //设置最大可选日期
         Calendar calendar = Calendar.getInstance();
         calendarView.state().edit().setMaximumDate(calendar).commit();
-
+        //TODO:当前日期之后的日期和不属于本月的日期设为不可见
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
             // 在这里处理日期变化事件
             // date 是选中的日期
@@ -125,17 +133,23 @@ public class MainActivity extends AppCompatActivity {
                 diaryMap.remove(data.getStringExtra("deletedDate"));
                 CustomDecorator decorator = new CustomDecorator(selectedDate);
                 decorator.setDecorated(false);
+//                decorator.setColor(diary.getMood());
+
+                decorator.setContext(this);
+
                 calendarView.addDecorator(decorator);
                 //TODO:去除selectedData日期上的装饰效果，使日期底色变成原来的颜色
             } else {
                 Diary diary = (Diary) data.getSerializableExtra("diary");
                 if (diaryMap.get(diary.getDate()) != null) diaryMap.remove(diary.getDate());
                 diaryMap.put(diary.getDate(), diary);
+
                 //添加装饰效果使日期底色变成红色
                 CustomDecorator decorator = new CustomDecorator(selectedDate);
                 decorator.setDecorated(true);
+                decorator.setColor(diary.getMood());
+                decorator.setContext(this);
                 calendarView.addDecorator(decorator);
-//                calendarView.addDecorator(new CustomDecorator(selectedDate));
             }
         }
     }

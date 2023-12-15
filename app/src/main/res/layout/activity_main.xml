@@ -34,23 +34,24 @@
         app:layout_constraintVertical_bias="1.0"
         app:navGraph="@navigation/mobile_navigation" />
 
-<!--    <CalendarView-->
-<!--        android:id="@+id/calendarView"-->
-<!--        android:layout_width="410dp"-->
-<!--        android:layout_height="300dp"-->
-<!--        tools:layout_editor_absoluteX="0dp"-->
-<!--        tools:layout_editor_absoluteY="1dp"-->
-<!--        tools:ignore="MissingConstraints" />-->
 
-    <LinearLayout
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:ignore="MissingConstraints">
+        android:layout_height="match_parent">
+
+        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:mcv_selectionColor="#00F"
+            app:mcv_showOtherDates="all" />
+
         <com.lukedeighton.wheelview.WheelView
             android:id="@+id/wheelView"
             android:layout_width="match_parent"
             android:layout_height="220dp"
-            android:layout_gravity="bottom"
+            android:layout_alignParentBottom="true"
             android:visibility="gone"
             android:clickable="true"
             app:repeatItems="true"
@@ -62,14 +63,8 @@
             app:wheelPadding="13dp"
             app:wheelPosition="bottom"
             app:wheelRadius="276dp"
-            tools:ignore="MissingConstraints"
             android:focusable="true" />
-        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-            android:id="@+id/calendarView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:mcv_selectionColor="#00F"
-            app:mcv_showOtherDates="all" />
 
-    </LinearLayout>
+    </RelativeLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

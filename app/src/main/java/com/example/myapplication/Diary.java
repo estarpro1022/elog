@@ -1,22 +1,23 @@
 package com.example.myapplication;
 
+import android.graphics.drawable.Drawable;
+import android.provider.ContactsContract;
+import android.widget.ImageView;
+
 import java.io.Serializable;
 class Diary implements Serializable{
-    private String title;
     private String date;
     private String content;
-    private int mood;
+    private Integer mood;
+    private String moodText;
 
-    public Diary(String title, String date, String content, int mood) {
-        this.title = title;
+    public Diary(String date, String content, int mood, String moodText) {
         this.date = date;
         this.content = content;
         this.mood = mood;
+        this.moodText = moodText;
     }
 
-    public String getTitle() {
-        return title;
-    }
 
     public String getDate() {
         return date;
@@ -30,4 +31,5 @@ class Diary implements Serializable{
         return mood;
     }
 
+    public String getMoodText() {return moodText;}
 }

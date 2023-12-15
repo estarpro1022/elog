@@ -1,11 +1,10 @@
 package com.example.myapplication;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.CalendarView;
-import android.widget.Toast;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.lukedeighton.wheelview.WheelView;
@@ -13,7 +12,6 @@ import com.lukedeighton.wheelview.WheelView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -27,8 +25,8 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -40,14 +38,16 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private CalendarDay selectedDate;
     private String selectedDateString;
-    private Map<String, Diary> diaryMap;
-
+    private Map<String, Diary> diaryMap = new HashMap<>();
+    final LinkedHashMap<String, Integer> emotionList = new LinkedHashMap<>();
+    private List<Drawable> imgList = new ArrayList<>();
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        diaryMap = new HashMap<>();
+        init();
         wheelView = findViewById(R.id.wheelView);
         calendarView = findViewById(R.id.calendarView);
         //设置最大可选日期
@@ -81,10 +81,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        final List<Drawable> imgList = new ArrayList<>();
-        for (int i = 0; i < 10; i++)
-            imgList.add(getResources().getDrawable(R.mipmap.ic_launcher));
-
         wheelView.setAdapter(new WheelAdapter() {
             @Override
             public Drawable getDrawable(int position) {
@@ -102,7 +98,9 @@ public class MainActivity extends AppCompatActivity {
             public void onWheelItemClick(WheelView parent, int position, boolean isSelected) {
                 wheelView.setSelected(position);
                 Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
-                intent.putExtra("mood", position);
+                String key = (String) emotionList.keySet().toArray()[position];
+                intent.putExtra("emotionText", key);
+                intent.putExtra("emotion", emotionList.get(key));
                 intent.putExtra("date", selectedDateString);
                 startActivityForResult(intent, 1);
                 wheelView.setVisibility(View.GONE);
@@ -138,5 +136,27 @@ public class MainActivity extends AppCompatActivity {
 //                calendarView.addDecorator(new CustomDecorator(selectedDate));
             }
         }
+    }
+    public void init(){
+        imgList.add(getDrawable(R.drawable.angry));
+        imgList.add(getDrawable(R.drawable.shy));
+        imgList.add(getDrawable(R.drawable.hoho));
+        imgList.add(getDrawable(R.drawable.good));
+        imgList.add(getDrawable(R.drawable.happy));
+        imgList.add(getDrawable(R.drawable.dizzy));
+        imgList.add(getDrawable(R.drawable.shock));
+        imgList.add(getDrawable(R.drawable.injured));
+        imgList.add(getDrawable(R.drawable.decadence));
+        imgList.add(getDrawable(R.drawable.sleepy));
+        emotionList.put("生气", R.drawable.angry);
+        emotionList.put("害羞", R.drawable.shy);
+        emotionList.put("呵呵", R.drawable.hoho);
+        emotionList.put("好", R.drawable.good);
+        emotionList.put("非常棒", R.drawable.happy);
+        emotionList.put("晕", R.drawable.dizzy);
+        emotionList.put("惊吓", R.drawable.shock);
+        emotionList.put("委屈", R.drawable.injured);
+        emotionList.put("颓废", R.drawable.decadence);
+        emotionList.put("困觉", R.drawable.sleepy);
     }
 }

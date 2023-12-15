@@ -1,7 +1,6 @@
 package com.example.myapplication;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -9,7 +8,6 @@ import android.view.View;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.lukedeighton.wheelview.WheelView;
-
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -148,7 +146,14 @@ public class MainActivity extends AppCompatActivity {
                 //添加装饰效果使日期底色变成红色
                 CustomDecorator decorator = new CustomDecorator(selectedDate);
                 decorator.setDecorated(true);
-                decorator.setColor(diary.getMood());
+                int pos = 0;
+                for (int drawableResId: emotionList.values()){
+                    if(drawableResId == diary.getMood()){
+                        decorator.setColor(pos);
+                        break;
+                    }
+                    pos++;
+                }
                 decorator.setContext(this);
                 calendarView.addDecorator(decorator);
             }

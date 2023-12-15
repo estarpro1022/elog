@@ -1,9 +1,5 @@
 package com.example.myapplication;
 
-import android.graphics.drawable.Drawable;
-import android.provider.ContactsContract;
-import android.widget.ImageView;
-
 import java.io.Serializable;
 class Diary implements Serializable{
     private String date;

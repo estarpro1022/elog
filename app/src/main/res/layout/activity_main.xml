@@ -4,7 +4,6 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="?attr/actionBarSize"
     android:orientation="horizontal">
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -59,7 +58,7 @@
             app:rotatableWheelDrawable="false"
             app:selectionAngle="90.0"
             app:wheelItemCount="10"
-            app:wheelItemRadius="43dp"
+            app:wheelItemRadius="50dp"
             app:wheelOffsetY="60dp"
             app:wheelPadding="13dp"
             app:wheelPosition="bottom"

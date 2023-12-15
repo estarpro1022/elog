@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -26,45 +27,40 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    public static final int ANGRY = 0;
-    public static final int SHY = 1;
-    public static final int HOHO = 2;
-    public static final int GOOD = 3;
-    public static final int HAPPY = 4;
-    public static final int DIZZY = 5;
-    public static final int SHOCK = 6;
-    public static final int INJURED = 7;
-    public static final int DECADENCE = 8;
-    public static final int SLEEPY = 9;
-//    public static final int TRANSPARENT = 10;
 
     MaterialCalendarView calendarView;
     WheelView wheelView;
     private ActivityMainBinding binding;
     private CalendarDay selectedDate;
     private String selectedDateString;
-    private Map<String, Diary> diaryMap;
-
+    private Map<String, Diary> diaryMap = new HashMap<>();
+    final LinkedHashMap<String, Integer> emotionList = new LinkedHashMap<>();
+    private List<Drawable> imgList = new ArrayList<>();
+    @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        diaryMap = new HashMap<>();
+        init();
         wheelView = findViewById(R.id.wheelView);
         calendarView = findViewById(R.id.calendarView);
         //设置最大可选日期
         Calendar calendar = Calendar.getInstance();
         calendarView.state().edit().setMaximumDate(calendar).commit();
 
+
         SelectedDayDecorator selectedDayDecorator = new SelectedDayDecorator();
         calendarView.addDecorator(selectedDayDecorator);
         //TODO:当前日期之后的日期和不属于本月的日期设为不可见
+        //当前日期之后的日期和不属于本月的日期设为不可见
+
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
             // 在这里处理日期变化事件
             // date 是选中的日期
@@ -97,10 +93,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        final List<Drawable> imgList = new ArrayList<>();
-        for (int i = 0; i < 10; i++)
-            imgList.add(getResources().getDrawable(R.mipmap.ic_launcher));
-
         wheelView.setAdapter(new WheelAdapter() {
             @Override
             public Drawable getDrawable(int position) {
@@ -118,7 +110,9 @@ public class MainActivity extends AppCompatActivity {
             public void onWheelItemClick(WheelView parent, int position, boolean isSelected) {
                 wheelView.setSelected(position);
                 Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
-                intent.putExtra("mood", position);
+                String key = (String) emotionList.keySet().toArray()[position];
+                intent.putExtra("emotionText", key);
+                intent.putExtra("emotion", emotionList.get(key));
                 intent.putExtra("date", selectedDateString);
                 startActivityForResult(intent, 1);
                 wheelView.setVisibility(View.GONE);
@@ -151,7 +145,6 @@ public class MainActivity extends AppCompatActivity {
                 Diary diary = (Diary) data.getSerializableExtra("diary");
                 if (diaryMap.get(diary.getDate()) != null) diaryMap.remove(diary.getDate());
                 diaryMap.put(diary.getDate(), diary);
-
                 //添加装饰效果使日期底色变成红色
                 CustomDecorator decorator = new CustomDecorator(selectedDate);
                 decorator.setDecorated(true);
@@ -160,5 +153,27 @@ public class MainActivity extends AppCompatActivity {
                 calendarView.addDecorator(decorator);
             }
         }
+    }
+    public void init(){
+        imgList.add(getDrawable(R.drawable.angry));
+        imgList.add(getDrawable(R.drawable.shy));
+        imgList.add(getDrawable(R.drawable.hoho));
+        imgList.add(getDrawable(R.drawable.good));
+        imgList.add(getDrawable(R.drawable.happy));
+        imgList.add(getDrawable(R.drawable.dizzy));
+        imgList.add(getDrawable(R.drawable.shock));
+        imgList.add(getDrawable(R.drawable.injured));
+        imgList.add(getDrawable(R.drawable.decadence));
+        imgList.add(getDrawable(R.drawable.sleepy));
+        emotionList.put("生气", R.drawable.angry);
+        emotionList.put("害羞", R.drawable.shy);
+        emotionList.put("呵呵", R.drawable.hoho);
+        emotionList.put("好", R.drawable.good);
+        emotionList.put("非常棒", R.drawable.happy);
+        emotionList.put("晕", R.drawable.dizzy);
+        emotionList.put("惊吓", R.drawable.shock);
+        emotionList.put("委屈", R.drawable.injured);
+        emotionList.put("颓废", R.drawable.decadence);
+        emotionList.put("困觉", R.drawable.sleepy);
     }
 }

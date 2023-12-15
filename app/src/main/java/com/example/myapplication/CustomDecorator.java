@@ -78,7 +78,7 @@ public class CustomDecorator implements DayViewDecorator {
                     backgroundColor = ContextCompat.getColor(context, R.color.decadence);
                     break;
                 case SLEEPY:
-                    backgroundColor = ContextCompat.getColor(context, R.color.sleppy);
+                    backgroundColor = ContextCompat.getColor(context, R.color.sleepy);
                     break;
                 default:
                     break;

@@ -20,6 +20,8 @@ import androidx.navigation.ui.NavigationUI;
 import com.lukedeighton.wheelview.adapter.WheelAdapter;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.format.TitleFormatter;
+import com.prolificinteractive.materialcalendarview.format.WeekDayFormatter;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,14 +51,44 @@ public class MainActivity extends AppCompatActivity {
         init();
         wheelView = findViewById(R.id.wheelView);
         calendarView = findViewById(R.id.calendarView);
+        calendarView.setTopbarVisible(true);
+
+        // 设置 TitleFormatter 以将标题（月份）显示为中文
+        calendarView.setTitleFormatter(new TitleFormatter() {
+            @Override
+            public CharSequence format(CalendarDay day) {
+                return String.format("%d年%d月", day.getYear(), day.getMonth() + 1);
+            }
+        });
+
+        // 设置星期的文本显示为中文
+        calendarView.setWeekDayFormatter(new WeekDayFormatter() {
+            @Override
+            public CharSequence format(int dayOfWeek) {
+                String[] weekDays = {"日", "一", "二", "三", "四", "五", "六"};
+                return weekDays[dayOfWeek - 1];
+            }
+        });
+
         //设置最大可选日期
         Calendar calendar = Calendar.getInstance();
         calendarView.state().edit().setMaximumDate(calendar).commit();
+
+
+        SelectedDayDecorator selectedDayDecorator = new SelectedDayDecorator();
+        calendarView.addDecorator(selectedDayDecorator);
+        //TODO:当前日期之后的日期和不属于本月的日期设为不可见
         //当前日期之后的日期和不属于本月的日期设为不可见
+
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
             // 在这里处理日期变化事件
             // date 是选中的日期
             // selected 表示日期是否被选中
+            // 更新 SelectedDayDecorator 的日期
+            selectedDayDecorator.setDate(date.getDate());
+            // 刷新日历以应用装饰
+            widget.invalidateDecorators();
+
             Calendar calendar1 = Calendar.getInstance();
             calendar1.set(date.getYear(), date.getMonth(), date.getDay());
             selectedDate = date;

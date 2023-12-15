@@ -42,7 +42,6 @@ public class CustomDecorator implements DayViewDecorator {
     @Override
     public void decorate(DayViewFacade view) {
 
-
         if (isDecorated) {
             // 在这里设置你想要的日期属性，例如背景色、文本颜色等
             // TODO: 设置日期底色为红色

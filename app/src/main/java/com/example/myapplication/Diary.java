@@ -1,7 +1,7 @@
 package com.example.myapplication;
 
 import java.io.Serializable;
-class Diary implements Serializable{
+public class Diary implements Serializable{
     private String date;
     private String content;
     private Integer mood;

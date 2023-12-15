@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -31,9 +32,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0"
         app:navGraph="@navigation/mobile_navigation" />
-
-
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -41,16 +39,18 @@
         <com.prolificinteractive.materialcalendarview.MaterialCalendarView
             android:id="@+id/calendarView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="390dp"
             app:mcv_dateTextAppearance="@style/TextAppearance.AppCompat.Medium"
             app:mcv_headerTextAppearance="@style/TextAppearance.AppCompat.Medium"
             app:mcv_selectionColor="#AAC6CA"
-            app:mcv_showOtherDates="out_of_range|defaults|decorated_disabled" />
+            app:mcv_showOtherDates="out_of_range|defaults|decorated_disabled"
+            tools:ignore="MissingConstraints" />
 
         <com.lukedeighton.wheelview.WheelView
             android:id="@+id/wheelView"
             android:layout_width="match_parent"
             android:layout_height="220dp"
+            app:layout_constraintHorizontal_weight="1"
             android:layout_alignParentBottom="true"
             android:visibility="gone"
             android:clickable="true"
@@ -63,8 +63,7 @@
             app:wheelPadding="13dp"
             app:wheelPosition="bottom"
             app:wheelRadius="276dp"
-            android:focusable="true" />
-
+            android:focusable="true"
+            tools:ignore="MissingConstraints" />
     </RelativeLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

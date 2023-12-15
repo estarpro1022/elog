@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private Map<String, Diary> diaryMap = new HashMap<>();
     final LinkedHashMap<String, Integer> emotionList = new LinkedHashMap<>();
     private List<Drawable> imgList = new ArrayList<>();
-    @SuppressLint("UseCompatLoadingForDrawables")
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
+                R.id.navigation_home, R.id.navigation_dashboard)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -148,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    @SuppressLint("UseCompatLoadingForDrawables")
     public void init(){
         imgList.add(getDrawable(R.drawable.angry));
         imgList.add(getDrawable(R.drawable.shy));

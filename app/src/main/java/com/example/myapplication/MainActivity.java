@@ -61,11 +61,19 @@ public class MainActivity extends AppCompatActivity {
         //设置最大可选日期
         Calendar calendar = Calendar.getInstance();
         calendarView.state().edit().setMaximumDate(calendar).commit();
+
+        SelectedDayDecorator selectedDayDecorator = new SelectedDayDecorator();
+        calendarView.addDecorator(selectedDayDecorator);
         //TODO:当前日期之后的日期和不属于本月的日期设为不可见
         calendarView.setOnDateChangedListener((widget, date, selected) -> {
             // 在这里处理日期变化事件
             // date 是选中的日期
             // selected 表示日期是否被选中
+            // 更新 SelectedDayDecorator 的日期
+            selectedDayDecorator.setDate(date.getDate());
+            // 刷新日历以应用装饰
+            widget.invalidateDecorators();
+
             Calendar calendar1 = Calendar.getInstance();
             calendar1.set(date.getYear(), date.getMonth(), date.getDay());
             selectedDate = date;

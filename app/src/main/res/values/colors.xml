@@ -23,4 +23,16 @@
     <color name="teal">#008080</color>
     <color name="indigo">#4B0082</color>
     <color name="lightBlue">#87CEEB</color>
+
+    <color name="angry">#ee5856</color>
+    <color name="shy">#faa0bc</color>
+    <color name="hoho">#e8e193</color>
+    <color name="good">#ffc038</color>
+    <color name="happy">#fb9139</color>
+    <color name="dizzy">#a0ceaf</color>
+    <color name="shock">#43889a</color>
+    <color name="injured">#7d8cab</color>
+    <color name="decadence">#9a77df</color>
+    <color name="sleepy">#3b5182</color>
+>>>>>>> diary
 </resources>

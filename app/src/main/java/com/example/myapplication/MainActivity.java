@@ -2,8 +2,12 @@ package com.example.myapplication;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.TextPaint;
+import android.text.style.TypefaceSpan;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -21,6 +25,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.lukedeighton.wheelview.adapter.WheelAdapter;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.DayViewDecorator;
+import com.prolificinteractive.materialcalendarview.DayViewFacade;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.format.TitleFormatter;
 import com.prolificinteractive.materialcalendarview.format.WeekDayFormatter;
@@ -43,6 +49,53 @@ public class MainActivity extends AppCompatActivity {
     private Map<String, Diary> diaryMap = new HashMap<>();
     final LinkedHashMap<String, Integer> emotionList = new LinkedHashMap<>();
     private List<Drawable> imgList = new ArrayList<>();
+    // 自定义 DayViewDecorator 来设置字体
+    private static class CustomTypefaceDecorator implements DayViewDecorator {
+
+        private final Typeface typeface;
+
+        public CustomTypefaceDecorator(Typeface typeface) {
+            this.typeface = typeface;
+        }
+
+        @Override
+        public boolean shouldDecorate(CalendarDay day) {
+            // 这里可以添加需要设置字体的日期的条件
+            return true;
+        }
+
+        @Override
+        public void decorate(DayViewFacade view) {
+            // 在这里设置日期的字体
+            view.addSpan(new CustomTypefaceSpan(typeface));
+        }
+    }
+
+    // 自定义 Span 以应用字体
+    private static class CustomTypefaceSpan extends TypefaceSpan {
+
+        private final Typeface typeface;
+
+        public CustomTypefaceSpan(Typeface typeface) {
+            super(""); // 这里可以传入一个空字符串，因为我们不需要额外的样式
+            this.typeface = typeface;
+        }
+
+        @Override
+        public void updateDrawState(TextPaint ds) {
+            applyCustomTypeface(ds, typeface);
+        }
+
+        @Override
+        public void updateMeasureState(TextPaint paint) {
+            applyCustomTypeface(paint, typeface);
+        }
+
+        private static void applyCustomTypeface(Paint paint, Typeface tf) {
+            paint.setTypeface(tf);
+            // 在这里可以设置字体的其他属性，例如颜色、大小等
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +106,10 @@ public class MainActivity extends AppCompatActivity {
         wheelView = findViewById(R.id.wheelView);
         calendarView = findViewById(R.id.calendarView);
         calendarView.setTopbarVisible(true);
+
+        //设置日历字体
+        Typeface customTypeface = Typeface.createFromAsset(getAssets(), "font1.ttf");
+        calendarView.addDecorator(new CustomTypefaceDecorator(customTypeface));
 
         // 设置 TitleFormatter 以将标题（月份）显示为中文
         calendarView.setTitleFormatter(new TitleFormatter() {

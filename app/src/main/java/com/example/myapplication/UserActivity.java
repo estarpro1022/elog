@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.example.myapplication.fragment.LoginFragment;
+
 public class UserActivity extends AppCompatActivity {
     private ImageView back;
 
@@ -13,6 +15,12 @@ public class UserActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+        if (savedInstanceState == null) {
+            LoginFragment loginFragment = new LoginFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.activity_user_fragment_container_view, loginFragment)
+                    .commit();
+        }
 
         initView();
     }

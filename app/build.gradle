@@ -32,6 +32,10 @@ android {
 }
 
 dependencies {
+    def fragment_version = "1.5.5"
+
+    // Java language implementation
+    implementation "androidx.fragment:fragment:$fragment_version"
     implementation 'com.github.prolificinteractive:material-calendarview:1.6.0'
     implementation 'com.github.lukedeighton:wheelview:0.4.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'

@@ -20,12 +20,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.myapplication.data.Diary;
+import com.example.myapplication.fragment.DeleteDialogFragment;
 import com.example.myapplication.fragment.InfoDialogFragment;
+import com.example.myapplication.interfaces.OnItemClickListener;
 import com.example.myapplication.utils.Keyboard;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
-public class DiaryActivity extends AppCompatActivity {
+public class DiaryActivity extends AppCompatActivity implements OnItemClickListener {
     private String selectedDate;
     private int emotionDrawable;
     private ImageView menu;
@@ -139,16 +141,25 @@ public class DiaryActivity extends AppCompatActivity {
                     InfoDialogFragment fragment = new InfoDialogFragment("字数：" + text.length() + "\n心情：" + emotionTextString);
                     fragment.show(getSupportFragmentManager(), "info");
                 } else if (id == R.id.delete) {
-                    Intent intent2 = new Intent();
-                    intent2.putExtra("deletedDate", selectedDate);
-                    setResult(RESULT_OK, intent2);
-                    Toast.makeText(DiaryActivity.this, "日记已删除", Toast.LENGTH_SHORT).show();
-                    finish();
-                    Toast.makeText(DiaryActivity.this, "删除成功", Toast.LENGTH_LONG).show();
+                    DeleteDialogFragment dialogFragment = new DeleteDialogFragment();
+                    dialogFragment.setDate(selectedDate);
+                    // 设置监听器，确认删除后调用DiaryActivity重写的onClick函数
+                    dialogFragment.setOnItemClickListener(DiaryActivity.this);
+                    dialogFragment.show(getSupportFragmentManager(), "delete");
                 }
                 return true;
             }
         });
         menu.show();
+    }
+
+    @Override
+    public void onClick(String selectedDate) {
+        Intent intent2 = new Intent();
+        intent2.putExtra("deletedDate", selectedDate);
+        setResult(RESULT_OK, intent2);
+        Toast.makeText(DiaryActivity.this, "日记已删除", Toast.LENGTH_SHORT).show();
+        finish();
+        Toast.makeText(DiaryActivity.this, "删除成功", Toast.LENGTH_LONG).show();
     }
 }

@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.data;
 
 import java.io.Serializable;
 public class Diary implements Serializable{

@@ -10,18 +10,14 @@ import android.text.TextPaint;
 import android.text.style.TypefaceSpan;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.PopupMenu;
 
+import com.example.myapplication.data.Diary;
 import com.example.myapplication.databinding.ActivityMainBinding;
-import com.example.myapplication.fragment.HomeFragment;
-import com.example.myapplication.fragment.LoginFragment;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 import com.lukedeighton.wheelview.WheelView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 
 import com.lukedeighton.wheelview.adapter.WheelAdapter;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -41,8 +37,10 @@ import java.util.Locale;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    MaterialCalendarView calendarView;
-    WheelView wheelView;
+    private MaterialCalendarView calendarView;
+    private WheelView wheelView;
+    private ImageView user;
+    private ImageView diaries;
     private ActivityMainBinding binding;
     private CalendarDay selectedDate;
     private String selectedDateString;
@@ -102,9 +100,55 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // 初始化View组件
+        initView();
+
+        // 初始化心情列表
         init();
+
+        // 初始化MaterialCalendarView组件
+        initCalendarView();
+
+        // 初始化WheelView组件
+        initWheelView();
+
+        // 初始化用户的ImageView组件
+        initUser();
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    public void init(){
+        imgList.add(getDrawable(R.drawable.angry));
+        imgList.add(getDrawable(R.drawable.shy));
+        imgList.add(getDrawable(R.drawable.hoho));
+        imgList.add(getDrawable(R.drawable.good));
+        imgList.add(getDrawable(R.drawable.happy));
+        imgList.add(getDrawable(R.drawable.dizzy));
+        imgList.add(getDrawable(R.drawable.shock));
+        imgList.add(getDrawable(R.drawable.injured));
+        imgList.add(getDrawable(R.drawable.decadence));
+        imgList.add(getDrawable(R.drawable.sleepy));
+        emotionList.put("生气", R.drawable.angry);
+        emotionList.put("害羞", R.drawable.shy);
+        emotionList.put("呵呵", R.drawable.hoho);
+        emotionList.put("好", R.drawable.good);
+        emotionList.put("非常棒", R.drawable.happy);
+        emotionList.put("晕", R.drawable.dizzy);
+        emotionList.put("惊吓", R.drawable.shock);
+        emotionList.put("委屈", R.drawable.injured);
+        emotionList.put("颓废", R.drawable.decadence);
+        emotionList.put("困觉", R.drawable.sleepy);
+    }
+
+    private void initView() {
         wheelView = findViewById(R.id.wheelView);
         calendarView = findViewById(R.id.calendarView);
+        user = findViewById(R.id.activity_main_user);
+        diaries = findViewById(R.id.activity_main_diary);
+    }
+
+    private void initCalendarView() {
         calendarView.setTopbarVisible(true);
 
         //设置日历字体
@@ -131,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
         //设置最大可选日期
         Calendar calendar = Calendar.getInstance();
         calendarView.state().edit().setMaximumDate(calendar).commit();
-
 
         SelectedDayDecorator selectedDayDecorator = new SelectedDayDecorator();
         calendarView.addDecorator(selectedDayDecorator);
@@ -161,9 +204,9 @@ public class MainActivity extends AppCompatActivity {
                 wheelView.setVisibility(View.VISIBLE);
             }
         });
+    }
 
-
-
+    private void initWheelView() {
         wheelView.setAdapter(new WheelAdapter() {
             @Override
             public Drawable getDrawable(int position) {
@@ -195,8 +238,19 @@ public class MainActivity extends AppCompatActivity {
                 wheelView.setVisibility(View.GONE);
             }
         });
-
     }
+
+    private void initUser() {
+        user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, UserActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -231,28 +285,5 @@ public class MainActivity extends AppCompatActivity {
                 calendarView.addDecorator(decorator);
             }
         }
-    }
-    @SuppressLint("UseCompatLoadingForDrawables")
-    public void init(){
-        imgList.add(getDrawable(R.drawable.angry));
-        imgList.add(getDrawable(R.drawable.shy));
-        imgList.add(getDrawable(R.drawable.hoho));
-        imgList.add(getDrawable(R.drawable.good));
-        imgList.add(getDrawable(R.drawable.happy));
-        imgList.add(getDrawable(R.drawable.dizzy));
-        imgList.add(getDrawable(R.drawable.shock));
-        imgList.add(getDrawable(R.drawable.injured));
-        imgList.add(getDrawable(R.drawable.decadence));
-        imgList.add(getDrawable(R.drawable.sleepy));
-        emotionList.put("生气", R.drawable.angry);
-        emotionList.put("害羞", R.drawable.shy);
-        emotionList.put("呵呵", R.drawable.hoho);
-        emotionList.put("好", R.drawable.good);
-        emotionList.put("非常棒", R.drawable.happy);
-        emotionList.put("晕", R.drawable.dizzy);
-        emotionList.put("惊吓", R.drawable.shock);
-        emotionList.put("委屈", R.drawable.injured);
-        emotionList.put("颓废", R.drawable.decadence);
-        emotionList.put("困觉", R.drawable.sleepy);
     }
 }

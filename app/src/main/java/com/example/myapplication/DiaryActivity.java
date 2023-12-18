@@ -1,25 +1,37 @@
 package com.example.myapplication;
 
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class DiaryActivity extends AppCompatActivity{
+import com.example.myapplication.data.Diary;
+import com.example.myapplication.fragment.InfoDialogFragment;
+
+public class DiaryActivity extends AppCompatActivity {
     private String selectedDate;
     private int emotionDrawable;
+    private ImageView menu;
+    private LinearLayout background;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.diary);
+        setContentView(R.layout.activity_diary);
 
+        background = findViewById(R.id.activity_detail);
+        menu = findViewById(R.id.activity_diary_menu);
         TextView date = findViewById(R.id.elog_date);
         EditText content = findViewById(R.id.elog_content);
         ImageButton back = findViewById(R.id.elog_back_btn);
@@ -52,6 +64,7 @@ public class DiaryActivity extends AppCompatActivity{
             }
         });
 
+
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,5 +92,29 @@ public class DiaryActivity extends AppCompatActivity{
                 finish();
             }
         });
+    }
+
+    public void showPopup(View view) {
+        PopupMenu menu = new PopupMenu(this, view);
+        menu.inflate(R.menu.overflow_menu);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            menu.setForceShowIcon(true);
+        }
+        menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                int id = menuItem.getItemId();
+                if (id == R.id.save) {
+                    Toast.makeText(DiaryActivity.this, "保存成功", Toast.LENGTH_LONG).show();
+                } else if (id == R.id.info) {
+                    InfoDialogFragment fragment = new InfoDialogFragment();
+                    fragment.show(getSupportFragmentManager(), "info");
+                } else if (id == R.id.delete) {
+                    Toast.makeText(DiaryActivity.this, "删除成功", Toast.LENGTH_LONG).show();
+                }
+                return true;
+            }
+        });
+        menu.show();
     }
 }

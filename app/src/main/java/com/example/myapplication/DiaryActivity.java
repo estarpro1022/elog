@@ -1,12 +1,14 @@
 package com.example.myapplication;
 
-import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.EditText;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,30 +17,41 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.myapplication.data.Diary;
 import com.example.myapplication.fragment.InfoDialogFragment;
+import com.example.myapplication.utils.Keyboard;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 public class DiaryActivity extends AppCompatActivity {
     private String selectedDate;
     private int emotionDrawable;
     private ImageView menu;
-    private LinearLayout background;
+    private ConstraintLayout background;
+    private LinearLayout textLayout;
+    private TextView date;
+    private TextInputEditText content;
+    private ImageButton back;
+    private ImageView emotion;
+    private TextView emotionText;
+    private FloatingActionButton editButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diary);
 
-        background = findViewById(R.id.activity_detail);
+        background = findViewById(R.id.activity_diary_layout);
+        textLayout = findViewById(R.id.activity_diary_text_layout);
         menu = findViewById(R.id.activity_diary_menu);
-        TextView date = findViewById(R.id.elog_date);
-        EditText content = findViewById(R.id.elog_content);
-        ImageButton back = findViewById(R.id.elog_back_btn);
-        ImageButton save = findViewById(R.id.elog_save);
-        ImageButton delete = findViewById(R.id.elog_delete);
-        ImageView emotion = findViewById(R.id.emotion);
-        TextView emotionText = findViewById(R.id.emotionText);
+        date = findViewById(R.id.elog_date);
+        back = findViewById(R.id.elog_back_btn);
+        content = findViewById(R.id.elog_content);
+        emotion = findViewById(R.id.emotion);
+        emotionText = findViewById(R.id.emotionText);
+        editButton = findViewById(R.id.activity_diary_float_button);
 
         Intent intent = getIntent();
         if(intent.hasExtra("diary")){
@@ -57,40 +70,43 @@ public class DiaryActivity extends AppCompatActivity {
             emotionText.setText(intent.getStringExtra("emotionText"));
         }
 
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
+        back.setOnClickListener(view -> {
+            finish();
         });
 
-
-        save.setOnClickListener(new View.OnClickListener() {
+        content.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onClick(View view) {
-                if(content.length() == 0){
-                    Toast.makeText(DiaryActivity.this, "Please enter content", Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    Diary diary = new Diary(selectedDate, content.getText().toString(), emotionDrawable, emotionText.getText().toString());
-                    Intent intent1 = new Intent();
-                    intent1.putExtra("diary", diary);
-                    setResult(RESULT_OK, intent1);
-                    Toast.makeText(DiaryActivity.this, "日记保存成功", Toast.LENGTH_SHORT).show();
-                    finish();
+            public void onFocusChange(View view, boolean b) {
+                if (b) {
+                    // 用户输入文本时隐藏按钮
+                    editButton.setVisibility(View.GONE);
+                } else {
+                    editButton.setVisibility(View.VISIBLE);
                 }
             }
         });
 
-        delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent2 = new Intent();
-                intent2.putExtra("deletedDate", selectedDate);
-                setResult(RESULT_OK, intent2);
-                Toast.makeText(DiaryActivity.this, "日记已删除", Toast.LENGTH_SHORT).show();
-                finish();
-            }
+        background.setOnClickListener(view -> {
+            Log.i("DiaryActivity", "close the keyboard");
+            content.clearFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(content.getWindowToken(), 0);
+//            editButton.setVisibility(View.VISIBLE);
+        });
+
+        textLayout.setOnClickListener(view -> {
+            content.clearFocus();
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(content.getWindowToken(), 0);
+//            editButton.setVisibility(View.VISIBLE);
+        });
+
+        editButton.setOnClickListener(view -> {
+            Log.i("DiaryActivity", "open the keyboard");
+            content.requestFocus();
+//            editButton.setVisibility(View.GONE);
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(content, InputMethodManager.SHOW_IMPLICIT);
         });
     }
 
@@ -98,6 +114,7 @@ public class DiaryActivity extends AppCompatActivity {
         PopupMenu menu = new PopupMenu(this, view);
         menu.inflate(R.menu.overflow_menu);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // 弹出菜单强制显示图案
             menu.setForceShowIcon(true);
         }
         menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -105,11 +122,28 @@ public class DiaryActivity extends AppCompatActivity {
             public boolean onMenuItemClick(MenuItem menuItem) {
                 int id = menuItem.getItemId();
                 if (id == R.id.save) {
-                    Toast.makeText(DiaryActivity.this, "保存成功", Toast.LENGTH_LONG).show();
+                    if(content.length() == 0){
+                        Toast.makeText(DiaryActivity.this, "Please enter content", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Diary diary = new Diary(selectedDate, content.getText().toString(), emotionDrawable, emotionText.getText().toString());
+                        Intent intent1 = new Intent();
+                        intent1.putExtra("diary", diary);
+                        setResult(RESULT_OK, intent1);
+                        Toast.makeText(DiaryActivity.this, "日记保存成功", Toast.LENGTH_SHORT).show();
+//                        finish();
+                    }
                 } else if (id == R.id.info) {
-                    InfoDialogFragment fragment = new InfoDialogFragment();
+                    String text = content.getText().toString();
+                    String emotionTextString = emotionText.getText().toString();
+                    InfoDialogFragment fragment = new InfoDialogFragment("字数：" + text.length() + "\n心情：" + emotionTextString);
                     fragment.show(getSupportFragmentManager(), "info");
                 } else if (id == R.id.delete) {
+                    Intent intent2 = new Intent();
+                    intent2.putExtra("deletedDate", selectedDate);
+                    setResult(RESULT_OK, intent2);
+                    Toast.makeText(DiaryActivity.this, "日记已删除", Toast.LENGTH_SHORT).show();
+                    finish();
                     Toast.makeText(DiaryActivity.this, "删除成功", Toast.LENGTH_LONG).show();
                 }
                 return true;

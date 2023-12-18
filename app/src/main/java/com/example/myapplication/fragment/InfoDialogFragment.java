@@ -17,16 +17,22 @@ import com.example.myapplication.R;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link InfoDialogFragment#newInstance} factory method to
+ * Use the  factory method to
  * create an instance of this fragment.
  */
 public class InfoDialogFragment extends DialogFragment {
+    private String msg;
+    public InfoDialogFragment(String message) {
+        super();
+        msg = message;
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("详细信息")
-                .setMessage("100个字")
+                .setMessage(msg)
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // START THE GAME!

@@ -210,6 +210,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, 1);
             } else {// 检查 wheelView 是否为 null
                 wheelView.setVisibility(View.VISIBLE);
+
+//                wheelView.setSelectionAngle(wheelView.getSelectionAngle()+36);
             }
         });
     }
@@ -244,6 +246,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 wheelView.setVisibility(View.GONE);
+                calendarView.clearSelection();
             }
         });
     }

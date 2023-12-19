@@ -209,6 +209,17 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("diary", diary);
                 startActivityForResult(intent, 1);
             } else {// 检查 wheelView 是否为 null
+                wheelView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        int nextPosition = wheelView.getSelectedPosition() + 1;
+                        if(nextPosition >= wheelView.getWheelItemCount()){
+                            nextPosition = 0;
+                        }
+                        wheelView.setSelected(nextPosition);
+                    }
+                });
+
                 wheelView.setVisibility(View.VISIBLE);
             }
         });

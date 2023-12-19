@@ -1,22 +1,16 @@
 package com.example.myapplication.fragment;
 
-import static android.app.Activity.RESULT_OK;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.myapplication.interfaces.OnItemClickListener;
-
-import java.util.ArrayList;
+import com.example.myapplication.interfaces.OnDeleteClickListener;
 
 public class DeleteDialogFragment extends DialogFragment {
     private String date;
@@ -29,10 +23,10 @@ public class DeleteDialogFragment extends DialogFragment {
         return date;
     }
 
-    private OnItemClickListener onItemClickListener;
+    private OnDeleteClickListener onDeleteClickListener;
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        onItemClickListener = listener;
+    public void setOnDeleteClickListener(OnDeleteClickListener listener) {
+        onDeleteClickListener = listener;
     }
 
 
@@ -51,7 +45,7 @@ public class DeleteDialogFragment extends DialogFragment {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        onItemClickListener.onClick(date);
+                        onDeleteClickListener.onClick(date);
                     }
                 });
         return builder.create();

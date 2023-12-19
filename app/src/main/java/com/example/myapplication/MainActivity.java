@@ -8,13 +8,16 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextPaint;
 import android.text.style.TypefaceSpan;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 
+import com.example.myapplication.activity.DiaryActivity;
+import com.example.myapplication.activity.DiaryListActivity;
+import com.example.myapplication.activity.UserActivity;
 import com.example.myapplication.data.Diary;
 import com.example.myapplication.databinding.ActivityMainBinding;
+import com.example.myapplication.decorator.CustomDecorator;
+import com.example.myapplication.decorator.SelectedDayDecorator;
 import com.lukedeighton.wheelview.WheelView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,11 +33,13 @@ import com.prolificinteractive.materialcalendarview.format.WeekDayFormatter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class MainActivity extends AppCompatActivity {
     private MaterialCalendarView calendarView;
@@ -115,6 +120,9 @@ public class MainActivity extends AppCompatActivity {
 
         // 初始化用户的ImageView组件
         initUser();
+
+        // 初始化日记总览的ImageView组件
+        initDiaries();
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -250,6 +258,19 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void initDiaries() {
+        diaries.setOnClickListener(view -> {
+            TreeMap<String, Diary> treeMap = new TreeMap<>(Collections.reverseOrder());
+            treeMap.putAll(diaryMap);
+            Diary[] diariesArray = treeMap.values().toArray(new Diary[0]);
+            // 发送日记列表
+            // Diary类是序列化的，所以直接传就可以
+            Intent intent = new Intent(this, DiaryListActivity.class);
+            intent.putExtra("diaries", diariesArray);
+            startActivity(intent);
+        });
+    }
+
 
 
     @Override
@@ -257,6 +278,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == RESULT_OK) {
             if (data.hasExtra("deletedDate")) {
+                // TODO: 应将日记保存在数据库中，并且删除日记该直接从数据库删除
                 diaryMap.remove(data.getStringExtra("deletedDate"));
                 CustomDecorator decorator = new CustomDecorator(selectedDate);
                 decorator.setDecorated(false);

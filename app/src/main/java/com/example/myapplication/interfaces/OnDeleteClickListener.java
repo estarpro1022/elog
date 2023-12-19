@@ -1,5 +1,5 @@
 package com.example.myapplication.interfaces;
 
-public interface OnItemClickListener {
+public interface OnDeleteClickListener {
     void onClick(String selectedDate);
 }

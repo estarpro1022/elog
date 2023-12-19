@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,7 +6,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
@@ -19,15 +18,16 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.example.myapplication.R;
 import com.example.myapplication.data.Diary;
 import com.example.myapplication.fragment.DeleteDialogFragment;
 import com.example.myapplication.fragment.InfoDialogFragment;
-import com.example.myapplication.interfaces.OnItemClickListener;
-import com.example.myapplication.utils.Keyboard;
+import com.example.myapplication.interfaces.OnDeleteClickListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
-public class DiaryActivity extends AppCompatActivity implements OnItemClickListener {
+public class DiaryActivity extends AppCompatActivity implements OnDeleteClickListener {
+    private String tag = "DiaryActivity";
     private String selectedDate;
     private int emotionDrawable;
     private ImageView menu;
@@ -131,6 +131,7 @@ public class DiaryActivity extends AppCompatActivity implements OnItemClickListe
                         Diary diary = new Diary(selectedDate, content.getText().toString(), emotionDrawable, emotionText.getText().toString());
                         Intent intent1 = new Intent();
                         intent1.putExtra("diary", diary);
+                        Log.i(tag, "date: " + selectedDate);
                         setResult(RESULT_OK, intent1);
                         Toast.makeText(DiaryActivity.this, "日记保存成功", Toast.LENGTH_SHORT).show();
 //                        finish();
@@ -144,7 +145,7 @@ public class DiaryActivity extends AppCompatActivity implements OnItemClickListe
                     DeleteDialogFragment dialogFragment = new DeleteDialogFragment();
                     dialogFragment.setDate(selectedDate);
                     // 设置监听器，确认删除后调用DiaryActivity重写的onClick函数
-                    dialogFragment.setOnItemClickListener(DiaryActivity.this);
+                    dialogFragment.setOnDeleteClickListener(DiaryActivity.this);
                     dialogFragment.show(getSupportFragmentManager(), "delete");
                 }
                 return true;

@@ -5,7 +5,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/img"
+    android:background="@drawable/background_main"
     >
 <!--    TODO 图片去水印    -->
 
@@ -90,7 +90,7 @@
             app:wheelOffsetY="60dp"
             app:wheelPadding="13dp"
             app:wheelPosition="bottom"
-            app:wheelRadius="276dp"
+            app:wheelRadius="230dp"
             tools:ignore="MissingConstraints" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

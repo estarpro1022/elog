@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.example.myapplication.adapter.DiaryAdapter;
+import com.example.myapplication.R;
 import com.example.myapplication.data.Diary;
 import com.example.myapplication.interfaces.OnItemDiaryClickListener;
 

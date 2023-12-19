@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.decorator;
 
 import android.graphics.Color;
 import android.graphics.Typeface;

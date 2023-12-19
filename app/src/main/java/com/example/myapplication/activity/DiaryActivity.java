@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.example.myapplication.R;
 import com.example.myapplication.data.Diary;
 import com.example.myapplication.fragment.DeleteDialogFragment;
 import com.example.myapplication.fragment.InfoDialogFragment;

@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.decorator;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -8,6 +8,7 @@ import android.graphics.drawable.shapes.OvalShape;
 
 import androidx.core.content.ContextCompat;
 
+import com.example.myapplication.R;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.DayViewFacade;

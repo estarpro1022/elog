@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.myapplication.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,10 +10,9 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.myapplication.R;
 import com.example.myapplication.data.Diary;
 import com.example.myapplication.interfaces.OnItemDiaryClickListener;
-
-import java.util.Map;
 
 public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {

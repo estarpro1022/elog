@@ -8,13 +8,16 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextPaint;
 import android.text.style.TypefaceSpan;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 
+import com.example.myapplication.activity.DiaryActivity;
+import com.example.myapplication.activity.DiaryListActivity;
+import com.example.myapplication.activity.UserActivity;
 import com.example.myapplication.data.Diary;
 import com.example.myapplication.databinding.ActivityMainBinding;
+import com.example.myapplication.decorator.CustomDecorator;
+import com.example.myapplication.decorator.SelectedDayDecorator;
 import com.lukedeighton.wheelview.WheelView;
 
 import androidx.appcompat.app.AppCompatActivity;

@@ -7,11 +7,10 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {Diary.class, User.class},version = 1,exportSchema = false)
+@Database(entities = {Diary.class},version = 1,exportSchema = false)
 public abstract class DiaryDatabase extends RoomDatabase {
 
     public abstract DiaryDao getDiaryDao();
-    public abstract UserDao getUserDao();
 
     private static final String DB_NAME = "diary_db";
     private static DiaryDatabase instance;

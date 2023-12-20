@@ -8,14 +8,10 @@ import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
 
-@Entity(foreignKeys = @ForeignKey(entity = User.class,
-        parentColumns = "UserId",
-        childColumns = "userId"),
-        indices = {@Index("userId")})
+@Entity
 public class Diary implements Serializable{
     @PrimaryKey(autoGenerate = true)
     int id;
-    private int userId;
     @ColumnInfo(name = "diary_date")
     private String date;
     @ColumnInfo(name = "diary_content")
@@ -38,16 +34,6 @@ public class Diary implements Serializable{
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    // Getter method for userId
-    public int getUserId() {
-        return userId;
-    }
-
-    // Setter method for userId
-    public void setUserId(int userId) {
-        this.userId = userId;
     }
 
     public void setDate(String date) {

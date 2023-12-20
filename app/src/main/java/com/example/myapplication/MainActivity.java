@@ -123,6 +123,8 @@ public class MainActivity extends AppCompatActivity {
 
         // 初始化日记总览的ImageView组件
         initDiaries();
+
+
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")

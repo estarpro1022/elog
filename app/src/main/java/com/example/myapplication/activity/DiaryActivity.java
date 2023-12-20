@@ -143,6 +143,7 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
                         intent1.putExtra("diary", diary);
                         Log.i(tag, "date: " + selectedDate);
                         setResult(RESULT_OK, intent1);
+                        diaryDao.insertDiary(diary);
                         Toast.makeText(DiaryActivity.this, "日记保存成功", Toast.LENGTH_SHORT).show();
 //                        finish();
                     }
@@ -169,6 +170,7 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
         Intent intent2 = new Intent();
         intent2.putExtra("deletedDate", selectedDate);
         setResult(RESULT_OK, intent2);
+        diaryDao.deleteDiaryByDate(selectedDate);
         Toast.makeText(DiaryActivity.this, "日记已删除", Toast.LENGTH_SHORT).show();
         finish();
         Toast.makeText(DiaryActivity.this, "删除成功", Toast.LENGTH_LONG).show();

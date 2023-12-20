@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextPaint;
 import android.text.style.TypefaceSpan;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.example.myapplication.activity.DiaryActivity;
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private Map<String, Diary> diaryMap = new HashMap<>();
     final LinkedHashMap<String, Integer> emotionList = new LinkedHashMap<>();
     private List<Drawable> imgList = new ArrayList<>();
+
     // 自定义 DayViewDecorator 来设置字体
     private static class CustomTypefaceDecorator implements DayViewDecorator {
 
@@ -126,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    public void init(){
+    public void init() {
         imgList.add(getDrawable(R.drawable.angry));
         imgList.add(getDrawable(R.drawable.shy));
         imgList.add(getDrawable(R.drawable.hoho));
@@ -275,7 +279,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -299,8 +302,8 @@ public class MainActivity extends AppCompatActivity {
                 CustomDecorator decorator = new CustomDecorator(selectedDate);
                 decorator.setDecorated(true);
                 int pos = 0;
-                for (int drawableResId: emotionList.values()){
-                    if(drawableResId == diary.getMood()){
+                for (int drawableResId : emotionList.values()) {
+                    if (drawableResId == diary.getMood()) {
                         decorator.setColor(pos);
                         break;
                     }

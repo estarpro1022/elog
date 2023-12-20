@@ -130,27 +130,27 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    public void init() {
-        imgList.add(getDrawable(R.drawable.angry));
-        imgList.add(getDrawable(R.drawable.shy));
-        imgList.add(getDrawable(R.drawable.hoho));
+    public void init(){
         imgList.add(getDrawable(R.drawable.good));
         imgList.add(getDrawable(R.drawable.happy));
+        imgList.add(getDrawable(R.drawable.shy));
+        imgList.add(getDrawable(R.drawable.hoho));
+        imgList.add(getDrawable(R.drawable.sleepy));
         imgList.add(getDrawable(R.drawable.dizzy));
+        imgList.add(getDrawable(R.drawable.angry));
         imgList.add(getDrawable(R.drawable.shock));
         imgList.add(getDrawable(R.drawable.injured));
         imgList.add(getDrawable(R.drawable.decadence));
-        imgList.add(getDrawable(R.drawable.sleepy));
-        emotionList.put("生气", R.drawable.angry);
-        emotionList.put("害羞", R.drawable.shy);
-        emotionList.put("呵呵", R.drawable.hoho);
         emotionList.put("好", R.drawable.good);
         emotionList.put("非常棒", R.drawable.happy);
+        emotionList.put("害羞", R.drawable.shy);
+        emotionList.put("呵呵", R.drawable.hoho);
+        emotionList.put("困觉", R.drawable.sleepy);
         emotionList.put("晕", R.drawable.dizzy);
+        emotionList.put("生气", R.drawable.angry);
         emotionList.put("惊吓", R.drawable.shock);
         emotionList.put("委屈", R.drawable.injured);
         emotionList.put("颓废", R.drawable.decadence);
-        emotionList.put("困觉", R.drawable.sleepy);
     }
 
     private void initView() {
@@ -213,6 +213,17 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("diary", diary);
                 startActivityForResult(intent, 1);
             } else {// 检查 wheelView 是否为 null
+                wheelView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        int nextPosition = wheelView.getSelectedPosition() + 1;
+                        if(nextPosition >= wheelView.getWheelItemCount()){
+                            nextPosition = 0;
+                        }
+                        wheelView.setSelected(nextPosition);
+                    }
+                });
+
                 wheelView.setVisibility(View.VISIBLE);
 
 //                wheelView.setSelectionAngle(wheelView.getSelectionAngle()+36);

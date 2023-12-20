@@ -161,16 +161,16 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
 
     public void changeImage(View view) {
         final LinkedHashMap<String, Integer> emotionList = new LinkedHashMap<>();
-        emotionList.put("生气", R.drawable.angry);
-        emotionList.put("害羞", R.drawable.shy);
-        emotionList.put("呵呵", R.drawable.hoho);
         emotionList.put("好", R.drawable.good);
         emotionList.put("非常棒", R.drawable.happy);
+        emotionList.put("害羞", R.drawable.shy);
+        emotionList.put("呵呵", R.drawable.hoho);
+        emotionList.put("困觉", R.drawable.sleepy);
         emotionList.put("晕", R.drawable.dizzy);
+        emotionList.put("生气", R.drawable.angry);
         emotionList.put("惊吓", R.drawable.shock);
         emotionList.put("委屈", R.drawable.injured);
         emotionList.put("颓废", R.drawable.decadence);
-        emotionList.put("困觉", R.drawable.sleepy);
 
         String key = "";
         for (int i = 0; i < 10; i++) {

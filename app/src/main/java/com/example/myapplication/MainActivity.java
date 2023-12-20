@@ -221,6 +221,8 @@ public class MainActivity extends AppCompatActivity {
                 });
 
                 wheelView.setVisibility(View.VISIBLE);
+
+//                wheelView.setSelectionAngle(wheelView.getSelectionAngle()+36);
             }
         });
     }
@@ -255,6 +257,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 wheelView.setVisibility(View.GONE);
+                calendarView.clearSelection();
             }
         });
     }

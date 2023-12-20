@@ -37,6 +37,13 @@ dependencies {
     // 拖拽按钮
 //    implementation 'com.github.wangfeng19930909:DragFloatingActionButton:1.0.1'
 
+    // Retrofit
+    implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+
+    // gson
+    implementation 'com.google.code.gson:gson:2.10.1'
+
     // Java language implementation
     implementation "androidx.fragment:fragment:$fragment_version"
     implementation 'com.github.prolificinteractive:material-calendarview:1.6.0'

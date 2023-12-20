@@ -5,16 +5,14 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_main"
-    >
-<!--    TODO 图片去水印    -->
+    android:background="@drawable/background_main">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/activity_main_top_constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -72,7 +70,7 @@
             app:mcv_showOtherDates="out_of_range|defaults|decorated_disabled"
             tools:ignore="MissingConstraints" />
 
-<!--        TODO 调整半径大小         -->
+        <!--        TODO 调整半径大小         -->
         <com.lukedeighton.wheelview.WheelView
             android:id="@+id/wheelView"
             android:layout_width="match_parent"

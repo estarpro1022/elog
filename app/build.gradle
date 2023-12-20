@@ -9,7 +9,7 @@ android {
     defaultConfig {
         applicationId "com.example.myapplication"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -38,6 +38,13 @@ dependencies {
 //    implementation 'com.github.wangfeng19930909:DragFloatingActionButton:1.0.1'
 
     // Java language implementation
+    def room_version = "2.5.0"
+
+    //noinspection GradleDependency
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    testImplementation "androidx.room:room-testing:$room_version"
+
     implementation "androidx.fragment:fragment:$fragment_version"
     implementation 'com.github.prolificinteractive:material-calendarview:1.6.0'
     implementation 'com.github.lukedeighton:wheelview:0.4.1'

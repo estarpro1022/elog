@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.myapplication.data.Diary;
+
 import com.example.myapplication.fragment.DeleteDialogFragment;
 import com.example.myapplication.fragment.InfoDialogFragment;
 import com.example.myapplication.interfaces.OnItemClickListener;
@@ -39,6 +40,7 @@ public class DiaryActivity extends AppCompatActivity implements OnItemClickListe
     private ImageView emotion;
     private TextView emotionText;
     private FloatingActionButton editButton;
+    private Diary currentDiary;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){

@@ -76,17 +76,17 @@
             android:layout_alignParentBottom="true"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:layout_constraintHorizontal_weight="1"
             app:repeatItems="true"
             app:rotatableWheelDrawable="false"
             app:selectionAngle="90.0"
             app:wheelItemCount="10"
             app:wheelItemRadius="50dp"
-            app:wheelOffsetY="60dp"
+            app:wheelOffsetY="50dp"
             app:wheelPadding="13dp"
             app:wheelPosition="bottom"
-            app:wheelRadius="230dp"
+            app:wheelRadius="220dp"
             tools:ignore="MissingConstraints" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

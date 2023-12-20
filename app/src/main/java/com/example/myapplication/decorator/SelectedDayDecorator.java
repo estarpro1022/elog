@@ -18,12 +18,14 @@ public class SelectedDayDecorator implements DayViewDecorator {
     private CalendarDay selectedDate = null;
 
     public SelectedDayDecorator() {
-        selectedDate = CalendarDay.today();
+        selectedDate = CalendarDay.from(new Date(0));
+
+//        selectedDate = CalendarDay.today();
     }
 
     @Override
     public boolean shouldDecorate(CalendarDay day) {
-        return selectedDate != null && day.equals(selectedDate);
+        return day.equals(selectedDate);
     }
 
     @Override

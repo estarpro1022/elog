@@ -160,8 +160,8 @@ public class MainActivity extends AppCompatActivity {
         calendarView.setTopbarVisible(true);
 
         //设置日历字体
-        Typeface customTypeface = Typeface.createFromAsset(getAssets(), "font1.ttf");
-        calendarView.addDecorator(new CustomTypefaceDecorator(customTypeface));
+//        Typeface customTypeface = Typeface.createFromAsset(getAssets(), "font1.ttf");
+//        calendarView.addDecorator(new CustomTypefaceDecorator(customTypeface));
 
         // 设置 TitleFormatter 以将标题（月份）显示为中文
         calendarView.setTitleFormatter(new TitleFormatter() {

@@ -78,7 +78,10 @@
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_gravity="center"
-                tools:src="@drawable/shock" />
+                tools:src="@drawable/shock"
+                android:clickable="true"
+                android:onClick="changeImage"
+                android:focusable="true" />
 
             <TextView
                 android:id="@+id/emotionText"

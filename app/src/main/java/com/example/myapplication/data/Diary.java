@@ -2,6 +2,7 @@ package com.example.myapplication.data;
 
 import java.io.Serializable;
 public class Diary implements Serializable{
+
     private String date;
     private String content;
     private Integer mood;

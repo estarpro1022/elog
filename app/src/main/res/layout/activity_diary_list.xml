@@ -4,15 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".activity.DiaryListActivity">
 
     <ImageView
         android:id="@+id/activity_diary_list_back"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:src="@drawable/back_icon"
-        android:layout_marginTop="30dp"
         android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/back_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

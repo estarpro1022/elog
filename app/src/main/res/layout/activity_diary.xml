@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_diary_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
@@ -78,10 +79,10 @@
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_gravity="center"
-                tools:src="@drawable/shock"
                 android:clickable="true"
+                android:focusable="true"
                 android:onClick="changeImage"
-                android:focusable="true" />
+                tools:src="@drawable/shock" />
 
             <TextView
                 android:id="@+id/emotionText"

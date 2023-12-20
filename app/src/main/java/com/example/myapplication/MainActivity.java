@@ -10,7 +10,20 @@ import android.text.TextPaint;
 import android.text.style.TypefaceSpan;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.myapplication.activity.DiaryActivity;
 import com.example.myapplication.activity.DiaryListActivity;
 import com.example.myapplication.activity.UserActivity;
@@ -18,10 +31,8 @@ import com.example.myapplication.data.Diary;
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.decorator.CustomDecorator;
 import com.example.myapplication.decorator.SelectedDayDecorator;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.lukedeighton.wheelview.WheelView;
-
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.lukedeighton.wheelview.adapter.WheelAdapter;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.DayViewDecorator;
@@ -46,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
     private WheelView wheelView;
     private ImageView user;
     private ImageView diaries;
+    private CardView cardView;
+    private FloatingActionButton llmButton;
+    private RequestListener<GifDrawable> animationListener;
     private ActivityMainBinding binding;
     private CalendarDay selectedDate;
     private String selectedDateString;
@@ -123,6 +137,10 @@ public class MainActivity extends AppCompatActivity {
 
         // 初始化日记总览的ImageView组件
         initDiaries();
+
+        // 初始化展示人格的FloatingActionButton组件
+        initAnimation();
+        initLLM();
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -154,6 +172,8 @@ public class MainActivity extends AppCompatActivity {
         calendarView = findViewById(R.id.calendarView);
         user = findViewById(R.id.activity_main_user);
         diaries = findViewById(R.id.activity_main_diary);
+        llmButton = findViewById(R.id.llm_button);
+        cardView = findViewById(R.id.card_view);
     }
 
     private void initCalendarView() {
@@ -194,6 +214,9 @@ public class MainActivity extends AppCompatActivity {
             // date 是选中的日期
             // selected 表示日期是否被选中
             // 更新 SelectedDayDecorator 的日期
+            if(cardView.getVisibility() == View.VISIBLE){
+                return;
+            }
             selectedDayDecorator.setDate(date.getDate());
             // 刷新日历以应用装饰
             widget.invalidateDecorators();
@@ -250,14 +273,15 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("emotion", emotionList.get(key));
                 intent.putExtra("date", selectedDateString);
                 startActivityForResult(intent, 1);
-                wheelView.setVisibility(View.GONE);
+                wheelView.setVisibility(View.INVISIBLE);
             }
         });
         binding.getRoot().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                wheelView.setVisibility(View.GONE);
+                wheelView.setVisibility(View.INVISIBLE);
                 calendarView.clearSelection();
+                cardView.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -266,6 +290,9 @@ public class MainActivity extends AppCompatActivity {
         user.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(cardView.getVisibility() == View.VISIBLE){
+                    return;
+                }
                 Intent intent = new Intent(MainActivity.this, UserActivity.class);
                 startActivity(intent);
             }
@@ -274,6 +301,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void initDiaries() {
         diaries.setOnClickListener(view -> {
+            if(cardView.getVisibility() == View.VISIBLE){
+                return;
+            }
             TreeMap<String, Diary> treeMap = new TreeMap<>(Collections.reverseOrder());
             treeMap.putAll(diaryMap);
             Diary[] diariesArray = treeMap.values().toArray(new Diary[0]);
@@ -284,8 +314,63 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
     }
+    private void initAnimation(){
+        ImageView animal = findViewById(R.id.card_view_icon);
+        animationListener = new RequestListener<GifDrawable>() {
+            @Override
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<GifDrawable> target, boolean isFirstResource) {
+                return false;
+            }
 
+            @Override
+            public boolean onResourceReady(GifDrawable resource, Object model, Target<GifDrawable> target, DataSource dataSource, boolean isFirstResource) {
+                // 在gif动画加载完成后设置点击事件监听器
+                resource.setLoopCount(1);
+                animal.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // 播放gif动画
+                        resource.start();
+                        // 监听动画播放完成事件
+                        // 监听动画播放完成事件
+                        resource.registerAnimationCallback(new Animatable2Compat.AnimationCallback() {
+                            @Override
+                            public void onAnimationEnd(Drawable drawable) {
+                                resource.stop();
+                            }
+                        });
+                    }
+                });
+                return false;
+            }
+        };
+    }
 
+    private void initLLM(){
+        // 设置卡片透明度
+        float alphaValue = 0.9f;
+        cardView.setAlpha(alphaValue);
+        // 设置文本
+        String name = "无语羊驼";
+        String description = "——呸呸呸！让口水飞";
+        ((TextView)findViewById(R.id.card_view_name)).setText(name);
+        ((TextView)findViewById(R.id.card_view_description)).setText(description);
+        llmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cardView.setVisibility(View.VISIBLE);
+                // 设置动画
+                ImageView animal = findViewById(R.id.card_view_icon);
+                Glide.with(getApplicationContext())
+                        .asGif()
+                        .load(R.raw.alpaca)
+                        .listener(animationListener)
+                        .into(animal);
+                String llm = "人生不是一场竞赛，有时候放慢脚步，适当休息，反而能够更好地迎接挑战和充实自己";
+                ((TextView)findViewById(R.id.card_view_llm)).setText(llm);
+            }
+        });
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

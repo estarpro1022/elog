@@ -49,9 +49,12 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private CalendarDay selectedDate;
     private String selectedDateString;
+    SelectedDayDecorator selectedDayDecorator = new SelectedDayDecorator();
+
     private Map<String, Diary> diaryMap = new HashMap<>();
     final LinkedHashMap<String, Integer> emotionList = new LinkedHashMap<>();
     private List<Drawable> imgList = new ArrayList<>();
+
     // 自定义 DayViewDecorator 来设置字体
     private static class CustomTypefaceDecorator implements DayViewDecorator {
 
@@ -183,9 +186,9 @@ public class MainActivity extends AppCompatActivity {
         //设置最大可选日期
         Calendar calendar = Calendar.getInstance();
         calendarView.state().edit().setMaximumDate(calendar).commit();
-
-        SelectedDayDecorator selectedDayDecorator = new SelectedDayDecorator();
+//        SelectedDayDecorator selectedDayDecorator = new SelectedDayDecorator();
         calendarView.addDecorator(selectedDayDecorator);
+
         //TODO:当前日期之后的日期和不属于本月的日期设为不可见
         //当前日期之后的日期和不属于本月的日期设为不可见
 
@@ -194,6 +197,9 @@ public class MainActivity extends AppCompatActivity {
             // date 是选中的日期
             // selected 表示日期是否被选中
             // 更新 SelectedDayDecorator 的日期
+
+            selectedDayDecorator.setDecorateSelected(true);
+
             selectedDayDecorator.setDate(date.getDate());
             // 刷新日历以应用装饰
             widget.invalidateDecorators();
@@ -250,14 +256,17 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("emotion", emotionList.get(key));
                 intent.putExtra("date", selectedDateString);
                 startActivityForResult(intent, 1);
-                wheelView.setVisibility(View.GONE);
+                calendarView.clearSelection();
+                wheelView.setVisibility(View.INVISIBLE);
             }
         });
         binding.getRoot().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                wheelView.setVisibility(View.GONE);
+                wheelView.setVisibility(View.INVISIBLE);
                 calendarView.clearSelection();
+                selectedDayDecorator.setDecorateSelected(false);
+                calendarView.addDecorator(selectedDayDecorator);
             }
         });
     }

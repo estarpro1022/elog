@@ -109,6 +109,8 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/elog_content"
+                    android:textCursorDrawable="@null"
+                    android:textColor="@color/black"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="start|top"

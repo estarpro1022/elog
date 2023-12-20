@@ -170,20 +170,12 @@ public class MainActivity extends AppCompatActivity {
 //        calendarView.addDecorator(new CustomTypefaceDecorator(customTypeface));
 
         // 设置 TitleFormatter 以将标题（月份）显示为中文
-        calendarView.setTitleFormatter(new TitleFormatter() {
-            @Override
-            public CharSequence format(CalendarDay day) {
-                return String.format("%d年%d月", day.getYear(), day.getMonth() + 1);
-            }
-        });
+        calendarView.setTitleFormatter(day -> String.format("%d年%d月", day.getYear(), day.getMonth() + 1));
 
         // 设置星期的文本显示为中文
-        calendarView.setWeekDayFormatter(new WeekDayFormatter() {
-            @Override
-            public CharSequence format(int dayOfWeek) {
-                String[] weekDays = {"日", "一", "二", "三", "四", "五", "六"};
-                return weekDays[dayOfWeek - 1];
-            }
+        calendarView.setWeekDayFormatter(dayOfWeek -> {
+            String[] weekDays = {"日", "一", "二", "三", "四", "五", "六"};
+            return weekDays[dayOfWeek - 1];
         });
 
         //设置最大可选日期

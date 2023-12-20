@@ -1,5 +1,6 @@
 package com.example.myapplication.data;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -10,8 +11,10 @@ import java.io.Serializable;
 
 @Entity
 public class Diary implements Serializable{
-    @PrimaryKey(autoGenerate = true)
-    int id;
+//    @PrimaryKey(autoGenerate = true)
+//    int id;
+    @PrimaryKey
+    @NonNull
     @ColumnInfo(name = "diary_date")
     private String date;
     @ColumnInfo(name = "diary_content")
@@ -28,13 +31,13 @@ public class Diary implements Serializable{
         this.moodText = moodText;
     }
 
-    public int getId() {
-        return id;
-    }
+//    public int getId() {
+//        return id;
+//    }
 
-    public void setId(int id) {
-        this.id = id;
-    }
+//    public void setId(int id) {
+//        this.id = id;
+//    }
 
     public void setDate(String date) {
         this.date = date;

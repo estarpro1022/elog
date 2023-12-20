@@ -133,9 +133,14 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
             Diary diary = new Diary(selectedDate, content.getText().toString(), emotionDrawable, emotionText.getText().toString());
             Intent intent1 = new Intent();
             intent1.putExtra("diary", diary);
-            Log.i(tag, "date: " + selectedDate);
+            if (diaryDao.queryDiaryByDate(selectedDate) != null) {
+                diaryDao.updateDiary(diary);
+                Toast.makeText(DiaryActivity.this, "日记修改成功", Toast.LENGTH_SHORT).show();
+            } else {
+                diaryDao.insertDiary(diary);
+                Toast.makeText(DiaryActivity.this, "日记保存成功", Toast.LENGTH_SHORT).show();
+            }
             setResult(RESULT_OK, intent1);
-            Toast.makeText(DiaryActivity.this, "日记保存成功", Toast.LENGTH_SHORT).show();
             finish();
         });
 
@@ -158,16 +163,6 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
                 int id = menuItem.getItemId();
-                if (true) {
-                    Diary diary = new Diary(selectedDate, content.getText().toString(), emotionDrawable, emotionText.getText().toString());
-                    Intent intent1 = new Intent();
-                    intent1.putExtra("diary", diary);
-                    Log.i(tag, "date: " + selectedDate);
-                    setResult(RESULT_OK, intent1);
-                    diaryDao.insertDiary(diary);
-                    Toast.makeText(DiaryActivity.this, "日记保存成功", Toast.LENGTH_SHORT).show();
-//                        finish();
-                }
                 if (id == R.id.info) {
                     String text = content.getText().toString();
                     String emotionTextString = emotionText.getText().toString();
@@ -227,6 +222,5 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
         diaryDao.deleteDiaryByDate(selectedDate);
         Toast.makeText(DiaryActivity.this, "日记已删除", Toast.LENGTH_SHORT).show();
         finish();
-        Toast.makeText(DiaryActivity.this, "删除成功", Toast.LENGTH_LONG).show();
     }
 }

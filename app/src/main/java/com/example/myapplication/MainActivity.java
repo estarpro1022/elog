@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.TextPaint;
 import android.text.style.TypefaceSpan;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -18,6 +19,8 @@ import com.example.myapplication.activity.DiaryActivity;
 import com.example.myapplication.activity.DiaryListActivity;
 import com.example.myapplication.activity.UserActivity;
 import com.example.myapplication.data.Diary;
+import com.example.myapplication.data.DiaryDao;
+import com.example.myapplication.data.DiaryDatabase;
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.decorator.CustomDecorator;
 import com.example.myapplication.decorator.SelectedDayDecorator;
@@ -37,6 +40,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -45,6 +49,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class MainActivity extends AppCompatActivity {
+    private String tag = "MainActivity";
     private MaterialCalendarView calendarView;
     private WheelView wheelView;
     private ImageView user;
@@ -57,60 +62,16 @@ public class MainActivity extends AppCompatActivity {
     private Map<String, Diary> diaryMap = new HashMap<>();
     final LinkedHashMap<String, Integer> emotionList = new LinkedHashMap<>();
     private List<Drawable> imgList = new ArrayList<>();
-
-    // 自定义 DayViewDecorator 来设置字体
-    private static class CustomTypefaceDecorator implements DayViewDecorator {
-
-        private final Typeface typeface;
-
-        public CustomTypefaceDecorator(Typeface typeface) {
-            this.typeface = typeface;
-        }
-
-        @Override
-        public boolean shouldDecorate(CalendarDay day) {
-            // 这里可以添加需要设置字体的日期的条件
-            return true;
-        }
-
-        @Override
-        public void decorate(DayViewFacade view) {
-            // 在这里设置日期的字体
-            view.addSpan(new CustomTypefaceSpan(typeface));
-        }
-    }
-
-    // 自定义 Span 以应用字体
-    private static class CustomTypefaceSpan extends TypefaceSpan {
-
-        private final Typeface typeface;
-
-        public CustomTypefaceSpan(Typeface typeface) {
-            super(""); // 这里可以传入一个空字符串，因为我们不需要额外的样式
-            this.typeface = typeface;
-        }
-
-        @Override
-        public void updateDrawState(TextPaint ds) {
-            applyCustomTypeface(ds, typeface);
-        }
-
-        @Override
-        public void updateMeasureState(TextPaint paint) {
-            applyCustomTypeface(paint, typeface);
-        }
-
-        private static void applyCustomTypeface(Paint paint, Typeface tf) {
-            paint.setTypeface(tf);
-            // 在这里可以设置字体的其他属性，例如颜色、大小等
-        }
-    }
+    private DiaryDao diaryDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // 初始化数据库
+        diaryDao = DiaryDatabase.getInstance(this).getDiaryDao();
 
         // 初始化View组件
         initView();
@@ -131,6 +92,37 @@ public class MainActivity extends AppCompatActivity {
         initDiaries();
 
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        decorateCalendarView();
+    }
+
+    private void decorateCalendarView() {
+        List<Diary> diaryList = diaryDao.queryAllDiaries();
+        for (Diary diary: diaryList) {
+            int year = Integer.parseInt(diary.getDate().substring(0, 4));
+            // month: 0-11
+            int month = Integer.parseInt(diary.getDate().substring(5, 7)) - 1;
+            int day = Integer.parseInt(diary.getDate().substring(8, 10));
+            Log.i(tag, "year: " + year + " month: " + month + " day: " + day);
+            CalendarDay calendarDay = CalendarDay.from(year, month, day);
+            CustomDecorator decorator = new CustomDecorator(calendarDay);
+            decorator.setDecorated(true);
+            int pos = 0;
+            for (int drawableResId : emotionList.values()) {
+                if (drawableResId == diary.getMood()) {
+                    Log.i(tag, "diary mood: " + diary.getMood());
+                    decorator.setColor(pos);
+                    break;
+                }
+                pos++;
+            }
+            decorator.setContext(this);
+            calendarView.addDecorator(decorator);
+        }
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
@@ -165,11 +157,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initCalendarView() {
-        calendarView.setTopbarVisible(true);
+        // 渲染已写日记
+        decorateCalendarView();
 
-        //设置日历字体
-//        Typeface customTypeface = Typeface.createFromAsset(getAssets(), "font1.ttf");
-//        calendarView.addDecorator(new CustomTypefaceDecorator(customTypeface));
+        calendarView.setTopbarVisible(true);
 
         // 设置 TitleFormatter 以将标题（月份）显示为中文
         calendarView.setTitleFormatter(day -> String.format("%d年%d月", day.getYear(), day.getMonth() + 1));
@@ -205,7 +196,8 @@ public class MainActivity extends AppCompatActivity {
             calendar1.set(date.getYear(), date.getMonth(), date.getDay());
             selectedDate = date;
             selectedDateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar1.getTime());
-            Diary diary = diaryMap.get(selectedDateString);
+            Diary diary = diaryDao.queryDiaryByDate(selectedDateString);
+//            Diary diary = diaryMap.get(selectedDateString);
             if (diary != null) {
 //                Toast.makeText(MainActivity.this,"111",Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
@@ -280,13 +272,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void initDiaries() {
         diaries.setOnClickListener(view -> {
-            TreeMap<String, Diary> treeMap = new TreeMap<>(Collections.reverseOrder());
-            treeMap.putAll(diaryMap);
-            Diary[] diariesArray = treeMap.values().toArray(new Diary[0]);
             // 发送日记列表
             // Diary类是序列化的，所以直接传就可以
             Intent intent = new Intent(this, DiaryListActivity.class);
-            intent.putExtra("diaries", diariesArray);
             startActivity(intent);
         });
     }
@@ -298,20 +286,18 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 1 && resultCode == RESULT_OK) {
             if (data.hasExtra("deletedDate")) {
                 // TODO: 应将日记保存在数据库中，并且删除日记该直接从数据库删除
-                diaryMap.remove(data.getStringExtra("deletedDate"));
+//                diaryMap.remove(data.getStringExtra("deletedDate"));
                 CustomDecorator decorator = new CustomDecorator(selectedDate);
                 decorator.setDecorated(false);
-//                decorator.setColor(diary.getMood());
-
                 decorator.setContext(this);
-
                 calendarView.addDecorator(decorator);
                 //TODO:去除selectedData日期上的装饰效果，使日期底色变成原来的颜色
             } else {
                 Diary diary = (Diary) data.getSerializableExtra("diary");
-                if (diaryMap.get(diary.getDate()) != null) diaryMap.remove(diary.getDate());
-                diaryMap.put(diary.getDate(), diary);
+//                if (diaryMap.get(diary.getDate()) != null) diaryMap.remove(diary.getDate());
+//                diaryMap.put(diary.getDate(), diary);
                 //添加装饰效果使日期底色变成红色
+                Log.i(tag, "custom date: " + selectedDate);
                 CustomDecorator decorator = new CustomDecorator(selectedDate);
                 decorator.setDecorated(true);
                 int pos = 0;

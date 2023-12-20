@@ -5,17 +5,16 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/img"
-    >
-<!--    TODO 图片去水印    -->
+    android:background="@drawable/background_5"
+    android:fitsSystemWindows="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/activity_main_top_constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="30dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -36,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="Elog"
-            android:textSize="50sp"
+            android:textSize="36sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/activity_main_diary"
             app:layout_constraintStart_toEndOf="@+id/activity_main_user"
@@ -47,7 +46,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="bottom"
-            android:src="@drawable/diary"
+            android:src="@drawable/diaries"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -72,7 +71,7 @@
             app:mcv_showOtherDates="out_of_range|defaults|decorated_disabled"
             tools:ignore="MissingConstraints" />
 
-<!--        TODO 调整半径大小         -->
+        <!--        TODO 调整半径大小         -->
         <com.lukedeighton.wheelview.WheelView
             android:id="@+id/wheelView"
             android:layout_width="match_parent"
@@ -80,17 +79,17 @@
             android:layout_alignParentBottom="true"
             android:clickable="true"
             android:focusable="true"
-            android:visibility="gone"
+            android:visibility="invisible"
             app:layout_constraintHorizontal_weight="1"
             app:repeatItems="true"
             app:rotatableWheelDrawable="false"
             app:selectionAngle="90.0"
             app:wheelItemCount="10"
             app:wheelItemRadius="50dp"
-            app:wheelOffsetY="60dp"
+            app:wheelOffsetY="50dp"
             app:wheelPadding="13dp"
             app:wheelPosition="bottom"
-            app:wheelRadius="276dp"
+            app:wheelRadius="220dp"
             tools:ignore="MissingConstraints" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

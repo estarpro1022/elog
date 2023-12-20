@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextPaint;
 import android.text.style.TypefaceSpan;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.example.myapplication.activity.DiaryActivity;
@@ -49,9 +52,12 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private CalendarDay selectedDate;
     private String selectedDateString;
+    SelectedDayDecorator selectedDayDecorator = new SelectedDayDecorator();
+
     private Map<String, Diary> diaryMap = new HashMap<>();
     final LinkedHashMap<String, Integer> emotionList = new LinkedHashMap<>();
     private List<Drawable> imgList = new ArrayList<>();
+
     // 自定义 DayViewDecorator 来设置字体
     private static class CustomTypefaceDecorator implements DayViewDecorator {
 
@@ -129,26 +135,26 @@ public class MainActivity extends AppCompatActivity {
 
     @SuppressLint("UseCompatLoadingForDrawables")
     public void init(){
-        imgList.add(getDrawable(R.drawable.angry));
-        imgList.add(getDrawable(R.drawable.shy));
-        imgList.add(getDrawable(R.drawable.hoho));
         imgList.add(getDrawable(R.drawable.good));
         imgList.add(getDrawable(R.drawable.happy));
+        imgList.add(getDrawable(R.drawable.shy));
+        imgList.add(getDrawable(R.drawable.hoho));
+        imgList.add(getDrawable(R.drawable.sleepy));
         imgList.add(getDrawable(R.drawable.dizzy));
+        imgList.add(getDrawable(R.drawable.angry));
         imgList.add(getDrawable(R.drawable.shock));
         imgList.add(getDrawable(R.drawable.injured));
         imgList.add(getDrawable(R.drawable.decadence));
-        imgList.add(getDrawable(R.drawable.sleepy));
-        emotionList.put("生气", R.drawable.angry);
-        emotionList.put("害羞", R.drawable.shy);
-        emotionList.put("呵呵", R.drawable.hoho);
         emotionList.put("好", R.drawable.good);
         emotionList.put("非常棒", R.drawable.happy);
+        emotionList.put("害羞", R.drawable.shy);
+        emotionList.put("呵呵", R.drawable.hoho);
+        emotionList.put("困觉", R.drawable.sleepy);
         emotionList.put("晕", R.drawable.dizzy);
+        emotionList.put("生气", R.drawable.angry);
         emotionList.put("惊吓", R.drawable.shock);
         emotionList.put("委屈", R.drawable.injured);
         emotionList.put("颓废", R.drawable.decadence);
-        emotionList.put("困觉", R.drawable.sleepy);
     }
 
     private void initView() {
@@ -162,32 +168,24 @@ public class MainActivity extends AppCompatActivity {
         calendarView.setTopbarVisible(true);
 
         //设置日历字体
-        Typeface customTypeface = Typeface.createFromAsset(getAssets(), "font1.ttf");
-        calendarView.addDecorator(new CustomTypefaceDecorator(customTypeface));
+//        Typeface customTypeface = Typeface.createFromAsset(getAssets(), "font1.ttf");
+//        calendarView.addDecorator(new CustomTypefaceDecorator(customTypeface));
 
         // 设置 TitleFormatter 以将标题（月份）显示为中文
-        calendarView.setTitleFormatter(new TitleFormatter() {
-            @Override
-            public CharSequence format(CalendarDay day) {
-                return String.format("%d年%d月", day.getYear(), day.getMonth() + 1);
-            }
-        });
+        calendarView.setTitleFormatter(day -> String.format("%d年%d月", day.getYear(), day.getMonth() + 1));
 
         // 设置星期的文本显示为中文
-        calendarView.setWeekDayFormatter(new WeekDayFormatter() {
-            @Override
-            public CharSequence format(int dayOfWeek) {
-                String[] weekDays = {"日", "一", "二", "三", "四", "五", "六"};
-                return weekDays[dayOfWeek - 1];
-            }
+        calendarView.setWeekDayFormatter(dayOfWeek -> {
+            String[] weekDays = {"日", "一", "二", "三", "四", "五", "六"};
+            return weekDays[dayOfWeek - 1];
         });
 
         //设置最大可选日期
         Calendar calendar = Calendar.getInstance();
         calendarView.state().edit().setMaximumDate(calendar).commit();
-
-        SelectedDayDecorator selectedDayDecorator = new SelectedDayDecorator();
+//        SelectedDayDecorator selectedDayDecorator = new SelectedDayDecorator();
         calendarView.addDecorator(selectedDayDecorator);
+
         //TODO:当前日期之后的日期和不属于本月的日期设为不可见
         //当前日期之后的日期和不属于本月的日期设为不可见
 
@@ -196,6 +194,9 @@ public class MainActivity extends AppCompatActivity {
             // date 是选中的日期
             // selected 表示日期是否被选中
             // 更新 SelectedDayDecorator 的日期
+
+            selectedDayDecorator.setDecorateSelected(true);
+
             selectedDayDecorator.setDate(date.getDate());
             // 刷新日历以应用装饰
             widget.invalidateDecorators();
@@ -223,6 +224,8 @@ public class MainActivity extends AppCompatActivity {
                 });
 
                 wheelView.setVisibility(View.VISIBLE);
+
+//                wheelView.setSelectionAngle(wheelView.getSelectionAngle()+36);
             }
         });
     }
@@ -250,13 +253,17 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("emotion", emotionList.get(key));
                 intent.putExtra("date", selectedDateString);
                 startActivityForResult(intent, 1);
-                wheelView.setVisibility(View.GONE);
+                calendarView.clearSelection();
+                wheelView.setVisibility(View.INVISIBLE);
             }
         });
         binding.getRoot().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                wheelView.setVisibility(View.GONE);
+                wheelView.setVisibility(View.INVISIBLE);
+                calendarView.clearSelection();
+                selectedDayDecorator.setDecorateSelected(false);
+                calendarView.addDecorator(selectedDayDecorator);
             }
         });
     }
@@ -285,7 +292,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -309,8 +315,8 @@ public class MainActivity extends AppCompatActivity {
                 CustomDecorator decorator = new CustomDecorator(selectedDate);
                 decorator.setDecorated(true);
                 int pos = 0;
-                for (int drawableResId: emotionList.values()){
-                    if(drawableResId == diary.getMood()){
+                for (int drawableResId : emotionList.values()) {
+                    if (drawableResId == diary.getMood()) {
                         decorator.setColor(pos);
                         break;
                     }

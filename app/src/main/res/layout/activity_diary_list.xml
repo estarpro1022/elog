@@ -4,15 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@drawable/bg_read"
     tools:context=".activity.DiaryListActivity">
 
     <ImageView
         android:id="@+id/activity_diary_list_back"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:src="@drawable/back_icon"
-        android:layout_marginTop="30dp"
         android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -24,5 +26,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activity_diary_list_back" />
+
+    <TextView
+        android:id="@+id/activity_diary_list_hint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="这里空空如也~\n快写下你的心情日记吧！"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:textSize="32sp"
+        app:layout_constraintBottom_toBottomOf="@+id/activity_diary_list_recycler_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -69,7 +69,8 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
         holder.date.setText(date);
         holder.weather.setText("阴");
         holder.temperature.setText("5°C");
-        holder.content.setText(content);
+        // 将换行符改为空格
+        holder.content.setText(content.replace("\n", " "));
     }
 
 

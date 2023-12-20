@@ -61,7 +61,7 @@ public class LoginFragment extends Fragment {
                         .setReorderingAllowed(true)
                         .addToBackStack(null)
                         .commit();
-                Toast.makeText(getContext(), "I'm going to jump to register", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "I'm going to jump to register", Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -13,12 +12,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -95,7 +95,12 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
             emotionText.setText(intent.getStringExtra("emotionText"));
         }
 
-        back.setOnClickListener(view -> finish());
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getOnBackPressedDispatcher().onBackPressed();
+            }
+        });
 
         // setOnClickListener设置是没用的，click的是Scrollview的child
         scrollView.setOnTouchListener(new View.OnTouchListener() {
@@ -130,18 +135,7 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
         });
 
         editButton.setOnClickListener(view -> {
-            Diary diary = new Diary(selectedDate, content.getText().toString(), emotionDrawable, emotionText.getText().toString());
-            Intent intent1 = new Intent();
-            intent1.putExtra("diary", diary);
-            if (diaryDao.queryDiaryByDate(selectedDate) != null) {
-                diaryDao.updateDiary(diary);
-                Toast.makeText(DiaryActivity.this, "日记修改成功", Toast.LENGTH_SHORT).show();
-            } else {
-                diaryDao.insertDiary(diary);
-                Toast.makeText(DiaryActivity.this, "日记保存成功", Toast.LENGTH_SHORT).show();
-            }
-            setResult(RESULT_OK, intent1);
-            finish();
+            saveDiary();
         });
 
         blank.setOnClickListener(view -> {
@@ -150,9 +144,30 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
                 imm.showSoftInput(content, InputMethodManager.SHOW_IMPLICIT);
             }
         });
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Diary diary = diaryDao.queryDiaryByDate(selectedDate);
+                if (diary != null) {
+                    if (diary.getContent().equals(content.getText().toString())) {
+                        finish();
+                    } else {
+                        popDialog();
+                    }
+                } else {
+                    if (content.getText().toString().isEmpty()) {
+                        finish();
+                    } else {
+                        popDialog();
+                    }
+                }
+            }
+        });
+
     }
 
-    public void showPopup(View view) {
+    public void showPopupMenu(View view) {
         PopupMenu menu = new PopupMenu(this, view);
         menu.inflate(R.menu.overflow_menu);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -171,7 +186,7 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
                 } else if (id == R.id.delete) {
                     DeleteDialogFragment dialogFragment = new DeleteDialogFragment();
                     dialogFragment.setDate(selectedDate);
-                    // 设置监听器，确认删除后调用DiaryActivity重写的onClick函数
+                    // 设置监听器，当用户点击删除选项后调用DiaryActivity重写的onClick函数
                     dialogFragment.setOnDeleteClickListener(DiaryActivity.this);
                     dialogFragment.show(getSupportFragmentManager(), "delete");
                 }
@@ -220,7 +235,33 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
         intent2.putExtra("deletedDate", selectedDate);
         setResult(RESULT_OK, intent2);
         diaryDao.deleteDiaryByDate(selectedDate);
-        Toast.makeText(DiaryActivity.this, "日记已删除", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(DiaryActivity.this, "日记已删除", Toast.LENGTH_SHORT).show();
         finish();
+    }
+
+    private void saveDiary() {
+        Diary diary = new Diary(selectedDate, content.getText().toString(), emotionDrawable, emotionText.getText().toString());
+        Intent intent1 = new Intent();
+        intent1.putExtra("diary", diary);
+        if (diaryDao.queryDiaryByDate(selectedDate) != null) {
+            diaryDao.updateDiary(diary);
+//            Toast.makeText(DiaryActivity.this, "日记修改成功", Toast.LENGTH_SHORT).show();
+        } else {
+            diaryDao.insertDiary(diary);
+//            Toast.makeText(DiaryActivity.this, "日记保存成功", Toast.LENGTH_SHORT).show();
+        }
+        setResult(RESULT_OK, intent1);
+        finish();
+    }
+
+    private void popDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(DiaryActivity.this);
+        builder.setTitle("提示")
+                .setMessage("是否需要保存更改")
+                .setNegativeButton("不保存", (dialogInterface, i) -> finish())
+                .setPositiveButton("保存", (dialogInterface, i) -> saveDiary());
+        // 不要老是忘记show
+        builder.create().show();
+
     }
 }

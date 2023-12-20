@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void decorateCalendarView() {
+        calendarView.removeDecorators();
         List<Diary> diaryList = diaryDao.queryAllDiaries();
         for (Diary diary: diaryList) {
             int year = Integer.parseInt(diary.getDate().substring(0, 4));

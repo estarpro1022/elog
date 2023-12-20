@@ -53,7 +53,7 @@ public class RegisterFragment extends Fragment {
         jump_to_login = root.findViewById(R.id.jump_to_login);
         jump_to_login.setOnClickListener(view -> {
             getActivity().getSupportFragmentManager().popBackStack();
-            Toast.makeText(getActivity(), "I'm back to login page.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), "I'm back to login page.", Toast.LENGTH_SHORT).show();
         });
     }
 }

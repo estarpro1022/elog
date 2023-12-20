@@ -2,6 +2,7 @@ package com.example.myapplication.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,7 +27,12 @@ import com.example.myapplication.interfaces.OnDeleteClickListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+
 public class DiaryActivity extends AppCompatActivity implements OnDeleteClickListener {
+
     private String tag = "DiaryActivity";
     private String selectedDate;
     private int emotionDrawable;
@@ -41,7 +47,7 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
     private FloatingActionButton editButton;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState){
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diary);
 
@@ -56,7 +62,7 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
         editButton = findViewById(R.id.activity_diary_float_button);
 
         Intent intent = getIntent();
-        if(intent.hasExtra("diary")){
+        if (intent.hasExtra("diary")) {
             Diary diary = (Diary) intent.getSerializableExtra("diary");
             selectedDate = diary.getDate();
             emotionDrawable = diary.getMood();
@@ -64,7 +70,7 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
             emotion.setImageResource(emotionDrawable);
             date.setText(selectedDate);
             content.setText(diary.getContent());
-        }else{
+        } else {
             selectedDate = intent.getStringExtra("date");
             date.setText(selectedDate);
             emotionDrawable = intent.getIntExtra("emotion", 1);
@@ -124,10 +130,9 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
             public boolean onMenuItemClick(MenuItem menuItem) {
                 int id = menuItem.getItemId();
                 if (id == R.id.save) {
-                    if(content.length() == 0){
+                    if (content.length() == 0) {
                         Toast.makeText(DiaryActivity.this, "Please enter content", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
+                    } else {
                         Diary diary = new Diary(selectedDate, content.getText().toString(), emotionDrawable, emotionText.getText().toString());
                         Intent intent1 = new Intent();
                         intent1.putExtra("diary", diary);
@@ -152,6 +157,39 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
             }
         });
         menu.show();
+    }
+
+    public void changeImage(View view) {
+        final LinkedHashMap<String, Integer> emotionList = new LinkedHashMap<>();
+        emotionList.put("生气", R.drawable.angry);
+        emotionList.put("害羞", R.drawable.shy);
+        emotionList.put("呵呵", R.drawable.hoho);
+        emotionList.put("好", R.drawable.good);
+        emotionList.put("非常棒", R.drawable.happy);
+        emotionList.put("晕", R.drawable.dizzy);
+        emotionList.put("惊吓", R.drawable.shock);
+        emotionList.put("委屈", R.drawable.injured);
+        emotionList.put("颓废", R.drawable.decadence);
+        emotionList.put("困觉", R.drawable.sleepy);
+
+        String key = "";
+        for (int i = 0; i < 10; i++) {
+            key = (String) emotionList.keySet().toArray()[i];
+            if (emotionDrawable == emotionList.get(key)) {
+                if (i == 9) {
+                    key = (String) emotionList.keySet().toArray()[0];
+                } else {
+                    key = (String) emotionList.keySet().toArray()[i+1];
+
+                }
+                emotionDrawable = emotionList.get(key);
+                break;
+            }
+
+        }
+        emotionText.setText(key);
+        emotion.setImageResource(emotionDrawable);
+
     }
 
     @Override

@@ -21,6 +21,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.example.myapplication.R;
 import com.example.myapplication.data.Diary;
 
+import com.example.myapplication.data.DiaryDao;
+import com.example.myapplication.data.DiaryDatabase;
 import com.example.myapplication.fragment.DeleteDialogFragment;
 import com.example.myapplication.fragment.InfoDialogFragment;
 import com.example.myapplication.interfaces.OnDeleteClickListener;
@@ -41,6 +43,9 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
     private TextView emotionText;
     private FloatingActionButton editButton;
     private Diary currentDiary;
+    private DiaryDatabase diaryDatabase;
+    private DiaryDao diaryDao;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -56,6 +61,9 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
         emotion = findViewById(R.id.emotion);
         emotionText = findViewById(R.id.emotionText);
         editButton = findViewById(R.id.activity_diary_float_button);
+
+        diaryDatabase = DiaryDatabase.getInstance(this);
+        diaryDao = diaryDatabase.getDiaryDao();
 
         Intent intent = getIntent();
         if(intent.hasExtra("diary")){

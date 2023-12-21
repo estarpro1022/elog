@@ -74,15 +74,25 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
-                    android:text="time"
+                    tools:text="2023-12-14"
                     android:textSize="20sp" />
 
                 <!--      TODO 天气API          -->
                 <TextView
+                    android:id="@+id/activity_diary_temperature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="晴 26°C"
+                    tools:text="26°C"
                     android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/activity_diary_weather"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    tools:text="晴"
+                    android:textSize="20sp"
+                    />
             </LinearLayout>
 
             <!--            填补ImageView两边的空白-->

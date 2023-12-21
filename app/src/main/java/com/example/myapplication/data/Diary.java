@@ -24,6 +24,8 @@ public class Diary implements Serializable{
     @ColumnInfo(name = "diary_mood_text")
     private String moodText;
 
+    // TODO: 新增属性temperature和weather
+
     public Diary(String date, String content, int mood, String moodText) {
         this.date = date;
         this.content = content;

@@ -24,6 +24,7 @@ import com.example.myapplication.data.DiaryDatabase;
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.decorator.CustomDecorator;
 import com.example.myapplication.decorator.SelectedDayDecorator;
+import com.example.myapplication.utils.WeatherService;
 import com.lukedeighton.wheelview.WheelView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -91,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
         // 初始化日记总览的ImageView组件
         initDiaries();
 
+        WeatherService.apiGetTemperature();
+        Log.i(tag, "get temperature: " + WeatherService.getTemperature());
 
     }
 
@@ -252,6 +255,8 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra("emotionText", key);
                     intent.putExtra("emotion", emotionList.get(key));
                     intent.putExtra("date", selectedDateString);
+                    intent.putExtra("temperature", WeatherService.getTemperature());
+                    intent.putExtra("weather", WeatherService.getWeather());
                     startActivityForResult(intent, 1);
                     calendarView.clearSelection();
                     wheelView.setVisibility(View.INVISIBLE);

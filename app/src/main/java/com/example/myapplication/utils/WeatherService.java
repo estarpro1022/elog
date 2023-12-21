@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.myapplication.interfaces.ApiWeather;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,7 +23,7 @@ public class WeatherService {
     private static String longitude = "118.77013";
     private static String api_key = "809e1be891f1fd5f3383c1807c1b9844";
     private static String language = "zh_cn";
-    private static double temperature;
+    private static String temperature;
     private static String weather;
 
     public static void apiGetTemperature() {
@@ -31,35 +32,45 @@ public class WeatherService {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         ApiWeather apiWeather = retrofit.create(ApiWeather.class);
-        Call<ResponseBody> result = apiWeather.getWeatherInfo(latitude, longitude, api_key, language);
+        Call<JsonObject> result = apiWeather.getWeatherInfo(latitude, longitude, api_key, language);
         System.out.println("visit weather");
-        result.enqueue(new Callback<ResponseBody>() {
+        result.enqueue(new Callback<JsonObject>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 if (response.isSuccessful()) {
                     Log.i(tag, "返回天气结果");
-                    System.out.println("成功");
                     try {
+                        assert response.body() != null;
+                        System.out.println(response.body().toString());
                         JSONObject object = new JSONObject(new Gson().toJson(response.body()));
                         System.out.println("visit temperature");
                         // 开尔文转为摄氏度
-                        temperature = object.getJSONObject("main").getDouble("temp") - 273.15;
+                        temperature = String.format("%.0f", object.getJSONObject("main").getDouble("temp") - 273.15);
+                        weather = object.getJSONArray("weather").getJSONObject(0).getString("description");
+                        System.out.println("成功");
                         Log.i(tag, "temperature: " + temperature);
+                        Log.i(tag, "weather: " + weather);
                     } catch (JSONException e) {
                         System.out.println("失败");
                         throw new RuntimeException(e);
                     }
+                } else {
+                    Log.i(tag, "天气信息获取失败");
                 }
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<JsonObject> call, Throwable t) {
                 Log.i(tag, "天气状况获取失败");
             }
         });
     }
 
-    public static double getTemperature() {
+    public static String getTemperature() {
         return temperature;
+    }
+
+    public static String getWeather() {
+        return weather;
     }
 }

@@ -46,10 +46,12 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
     private ConstraintLayout textLayout;
     private TextView date;
     private ScrollView scrollView;
-    private EditText content;
     private ImageButton back;
+    private TextView temperature;
+    private TextView weather;
     private ImageView emotion;
     private TextView emotionText;
+    private EditText content;
     private FloatingActionButton editButton;
     private DiaryDatabase diaryDatabase;
     private DiaryDao diaryDao;
@@ -69,6 +71,8 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
         scrollView = findViewById(R.id.activity_diary_scroll_view);
         date = findViewById(R.id.elog_date);
         back = findViewById(R.id.elog_back_btn);
+        temperature = findViewById(R.id.activity_diary_temperature);
+        weather = findViewById(R.id.activity_diary_weather);
         content = findViewById(R.id.elog_content);
         emotion = findViewById(R.id.emotion);
         emotionText = findViewById(R.id.emotionText);
@@ -90,17 +94,14 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
         } else {
             selectedDate = intent.getStringExtra("date");
             date.setText(selectedDate);
+            temperature.setText(intent.getStringExtra("temperature") + "°C");
+            weather.setText(intent.getStringExtra("weather"));
             emotionDrawable = intent.getIntExtra("emotion", 1);
             emotion.setImageResource(emotionDrawable);
             emotionText.setText(intent.getStringExtra("emotionText"));
         }
 
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getOnBackPressedDispatcher().onBackPressed();
-            }
-        });
+        back.setOnClickListener(view -> getOnBackPressedDispatcher().onBackPressed());
 
         // setOnClickListener设置是没用的，click的是Scrollview的child
         scrollView.setOnTouchListener(new View.OnTouchListener() {
@@ -150,7 +151,7 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
             public void handleOnBackPressed() {
                 Diary diary = diaryDao.queryDiaryByDate(selectedDate);
                 if (diary != null) {
-                    if (diary.getContent().equals(content.getText().toString())) {
+                    if (diary.getContent().equals(content.getText().toString()) && diary.getMood() == emotionDrawable) {
                         finish();
                     } else {
                         popDialog();

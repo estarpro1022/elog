@@ -96,6 +96,7 @@ public class CustomDecorator implements DayViewDecorator {
             view.setBackgroundDrawable(circleDrawable);
         } else {
             // TODO: 设置日期底色为原来的颜色
+            Log.i("CustomDecorator", "not selected decorator.");
             view.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
     }

@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
+        Log.i(tag, "onStart method.");
         super.onStart();
         decorateCalendarView();
     }
@@ -204,7 +205,8 @@ public class MainActivity extends AppCompatActivity {
             Diary diary = diaryDao.queryDiaryByDate(selectedDateString);
 //            Diary diary = diaryMap.get(selectedDateString);
             if (diary != null) {
-//                Toast.makeText(MainActivity.this,"111",Toast.LENGTH_SHORT).show();
+                // fix: 当用户先点击未写日记，再点击已写日记时，需要让轮盘不可见
+                wheelView.setVisibility(View.INVISIBLE);
                 Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
                 intent.putExtra("diary", diary);
                 startActivityForResult(intent, 1);
@@ -264,8 +266,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 wheelView.setVisibility(View.INVISIBLE);
                 calendarView.clearSelection();
-                selectedDayDecorator.setDecorateSelected(false);
-                calendarView.addDecorator(selectedDayDecorator);
+                // 神奇的是，点击空白处，白色的背景缓缓消失
             }
         });
     }
@@ -295,18 +296,10 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == RESULT_OK) {
             if (data.hasExtra("deletedDate")) {
-                // TODO: 应将日记保存在数据库中，并且删除日记该直接从数据库删除
-//                diaryMap.remove(data.getStringExtra("deletedDate"));
-                CustomDecorator decorator = new CustomDecorator(selectedDate);
-                decorator.setDecorated(false);
-                decorator.setContext(this);
-                calendarView.addDecorator(decorator);
-                //TODO:去除selectedData日期上的装饰效果，使日期底色变成原来的颜色
+                Log.i(tag, "deal with deleted diary.");
+                calendarView.clearSelection();
             } else {
                 Diary diary = (Diary) data.getSerializableExtra("diary");
-//                if (diaryMap.get(diary.getDate()) != null) diaryMap.remove(diary.getDate());
-//                diaryMap.put(diary.getDate(), diary);
-                //添加装饰效果使日期底色变成红色
                 Log.i(tag, "custom date: " + selectedDate);
                 CustomDecorator decorator = new CustomDecorator(selectedDate);
                 decorator.setDecorated(true);

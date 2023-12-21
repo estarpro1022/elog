@@ -41,9 +41,9 @@ public class CustomDecorator implements DayViewDecorator {
     private String tag = "CustomDecorator";
     @Override
     public boolean shouldDecorate(CalendarDay day) {
-        Log.i(tag, "day: " + day.toString() + " my date: " + dateToDecorate.toString());
+//        Log.i(tag, "day: " + day.toString() + " my date: " + dateToDecorate.toString());
         if (day.equals(dateToDecorate)) {
-            Log.i(tag, "sure to decorate.");
+//            Log.i(tag, "sure to decorate.");
         }
         return day.equals(dateToDecorate);
     }

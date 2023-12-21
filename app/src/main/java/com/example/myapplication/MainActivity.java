@@ -112,14 +112,14 @@ public class MainActivity extends AppCompatActivity {
             // month: 0-11
             int month = Integer.parseInt(diary.getDate().substring(5, 7)) - 1;
             int day = Integer.parseInt(diary.getDate().substring(8, 10));
-            Log.i(tag, "year: " + year + " month: " + month + " day: " + day);
+//            Log.i(tag, "year: " + year + " month: " + month + " day: " + day);
             CalendarDay calendarDay = CalendarDay.from(year, month, day);
             CustomDecorator decorator = new CustomDecorator(calendarDay);
             decorator.setDecorated(true);
             int pos = 0;
             for (int drawableResId : emotionList.values()) {
                 if (drawableResId == diary.getMood()) {
-                    Log.i(tag, "diary mood: " + diary.getMood());
+//                    Log.i(tag, "diary mood: " + diary.getMood());
                     decorator.setColor(pos);
                     break;
                 }
@@ -243,17 +243,22 @@ public class MainActivity extends AppCompatActivity {
         wheelView.setOnWheelItemClickListener(new WheelView.OnWheelItemClickListener() {
             @Override
             public void onWheelItemClick(WheelView parent, int position, boolean isSelected) {
-                wheelView.setSelected(position);
-                Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
-                String key = (String) emotionList.keySet().toArray()[position];
-                intent.putExtra("emotionText", key);
-                intent.putExtra("emotion", emotionList.get(key));
-                intent.putExtra("date", selectedDateString);
-                startActivityForResult(intent, 1);
-                calendarView.clearSelection();
-                wheelView.setVisibility(View.INVISIBLE);
+                if (isSelected) {
+                    wheelView.setSelected(position);
+                    Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
+                    String key = (String) emotionList.keySet().toArray()[position];
+                    intent.putExtra("emotionText", key);
+                    intent.putExtra("emotion", emotionList.get(key));
+                    intent.putExtra("date", selectedDateString);
+                    startActivityForResult(intent, 1);
+                    calendarView.clearSelection();
+                    wheelView.setVisibility(View.INVISIBLE);
+                } else {
+                    Log.i(tag, "轮盘在滑动");
+                }
             }
         });
+
         binding.getRoot().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

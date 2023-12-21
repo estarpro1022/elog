@@ -102,6 +102,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void decorateCalendarView() {
         calendarView.removeDecorators();
+        // 日历字体样式
+        calendarView.addDecorator(selectedDayDecorator);
+
+        // 日历背景样式
         List<Diary> diaryList = diaryDao.queryAllDiaries();
         for (Diary diary: diaryList) {
             int year = Integer.parseInt(diary.getDate().substring(0, 4));

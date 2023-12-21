@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 日历背景样式
         List<Diary> diaryList = diaryDao.queryAllDiaries();
-        for (Diary diary: diaryList) {
+        for (Diary diary : diaryList) {
             int year = Integer.parseInt(diary.getDate().substring(0, 4));
             // month: 0-11
             int month = Integer.parseInt(diary.getDate().substring(5, 7)) - 1;
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    public void init(){
+    public void init() {
         imgList.add(getDrawable(R.drawable.good));
         imgList.add(getDrawable(R.drawable.happy));
         imgList.add(getDrawable(R.drawable.shy));
@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         int nextPosition = wheelView.getSelectedPosition() + 1;
-                        if(nextPosition >= wheelView.getWheelItemCount()){
+                        if (nextPosition >= wheelView.getWheelItemCount()) {
                             nextPosition = 0;
                         }
                         wheelView.setSelected(nextPosition);
@@ -248,21 +248,17 @@ public class MainActivity extends AppCompatActivity {
         wheelView.setOnWheelItemClickListener(new WheelView.OnWheelItemClickListener() {
             @Override
             public void onWheelItemClick(WheelView parent, int position, boolean isSelected) {
-                if (isSelected) {
-                    wheelView.setSelected(position);
-                    Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
-                    String key = (String) emotionList.keySet().toArray()[position];
-                    intent.putExtra("emotionText", key);
-                    intent.putExtra("emotion", emotionList.get(key));
-                    intent.putExtra("date", selectedDateString);
-                    intent.putExtra("temperature", WeatherService.getTemperature());
-                    intent.putExtra("weather", WeatherService.getWeather());
-                    startActivityForResult(intent, 1);
-                    calendarView.clearSelection();
-                    wheelView.setVisibility(View.INVISIBLE);
-                } else {
-                    Log.i(tag, "轮盘在滑动");
-                }
+                wheelView.setSelected(position);
+                Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
+                String key = (String) emotionList.keySet().toArray()[position];
+                intent.putExtra("emotionText", key);
+                intent.putExtra("emotion", emotionList.get(key));
+                intent.putExtra("date", selectedDateString);
+                intent.putExtra("temperature", WeatherService.getTemperature());
+                intent.putExtra("weather", WeatherService.getWeather());
+                startActivityForResult(intent, 1);
+                calendarView.clearSelection();
+                wheelView.setVisibility(View.INVISIBLE);
             }
         });
 

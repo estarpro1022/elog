@@ -46,6 +46,7 @@ public class WeatherService {
                         System.out.println("visit temperature");
                         // 开尔文转为摄氏度
                         temperature = String.format("%.0f", object.getJSONObject("main").getDouble("temp") - 273.15);
+                        temperature += "°C";
                         weather = object.getJSONArray("weather").getJSONObject(0).getString("description");
                         System.out.println("成功");
                         Log.i(tag, "temperature: " + temperature);

@@ -25,21 +25,20 @@ public class Diary implements Serializable{
     private String moodText;
 
     // TODO: 新增属性temperature和weather
+    @ColumnInfo(name = "diary_temperature")
+    private String temperature;
 
-    public Diary(String date, String content, int mood, String moodText) {
+    @ColumnInfo(name = "diary_weather")
+    private String weather;
+
+    public Diary(String date, String content, int mood, String moodText, String temperature, String weather) {
         this.date = date;
         this.content = content;
         this.mood = mood;
         this.moodText = moodText;
+        this.temperature = temperature;
+        this.weather = weather;
     }
-
-//    public int getId() {
-//        return id;
-//    }
-
-//    public void setId(int id) {
-//        this.id = id;
-//    }
 
     public void setDate(String date) {
         this.date = date;
@@ -49,7 +48,7 @@ public class Diary implements Serializable{
         this.content = content;
     }
 
-    public void setMood(Integer mood) {
+    public void setMood(int mood) {
         this.mood = mood;
     }
 
@@ -70,4 +69,21 @@ public class Diary implements Serializable{
     }
 
     public String getMoodText() {return moodText;}
+
+    public String getTemperature() {
+        return temperature;
+    }
+
+    public void setTemperature(String temperature) {
+        this.temperature = temperature;
+    }
+
+    public String getWeather() {
+        return weather;
+    }
+
+    public void setWeather(String weather) {
+        this.weather = weather;
+    }
+
 }

@@ -30,6 +30,7 @@ import com.example.myapplication.data.DiaryDatabase;
 import com.example.myapplication.fragment.DeleteDialogFragment;
 import com.example.myapplication.fragment.InfoDialogFragment;
 import com.example.myapplication.interfaces.OnDeleteClickListener;
+import com.example.myapplication.utils.WeatherService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
@@ -91,10 +92,12 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
             emotion.setImageResource(emotionDrawable);
             date.setText(selectedDate);
             content.setText(diary.getContent());
+            temperature.setText(diary.getTemperature());
+            weather.setText(diary.getWeather());
         } else {
             selectedDate = intent.getStringExtra("date");
             date.setText(selectedDate);
-            temperature.setText(intent.getStringExtra("temperature") + "°C");
+            temperature.setText(intent.getStringExtra("temperature"));
             weather.setText(intent.getStringExtra("weather"));
             emotionDrawable = intent.getIntExtra("emotion", 1);
             emotion.setImageResource(emotionDrawable);
@@ -241,13 +244,16 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
     }
 
     private void saveDiary() {
-        Diary diary = new Diary(selectedDate, content.getText().toString(), emotionDrawable, emotionText.getText().toString());
+        Diary result = diaryDao.queryDiaryByDate(selectedDate);
         Intent intent1 = new Intent();
-        intent1.putExtra("diary", diary);
-        if (diaryDao.queryDiaryByDate(selectedDate) != null) {
+        if (result != null) {
+            Diary diary = new Diary(selectedDate, content.getText().toString(), emotionDrawable, emotionText.getText().toString(), result.getTemperature(), result.getWeather());
+            intent1.putExtra("diary", diary);
             diaryDao.updateDiary(diary);
 //            Toast.makeText(DiaryActivity.this, "日记修改成功", Toast.LENGTH_SHORT).show();
         } else {
+            Diary diary = new Diary(selectedDate, content.getText().toString(), emotionDrawable, emotionText.getText().toString(), getIntent().getStringExtra("temperature"), getIntent().getStringExtra("weather"));
+            intent1.putExtra("diary", diary);
             diaryDao.insertDiary(diary);
 //            Toast.makeText(DiaryActivity.this, "日记保存成功", Toast.LENGTH_SHORT).show();
         }

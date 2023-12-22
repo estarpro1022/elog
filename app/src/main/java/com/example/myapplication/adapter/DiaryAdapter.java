@@ -62,15 +62,17 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
         String moodText = diaries.get(position).getMoodText();
         String date = diaries.get(position).getDate();
         String content = diaries.get(position).getContent();
+        String temperature = diaries.get(position).getTemperature();
+        String weather = diaries.get(position).getWeather();
         holder.layout.setOnClickListener(view -> {
-            listener.onClick(new Diary(date, content, mood, moodText));
+            listener.onClick(new Diary(date, content, mood, moodText, temperature, weather));
         });
         holder.image.setImageResource(mood);
         holder.date.setText(date);
-        holder.weather.setText("阴");
-        holder.temperature.setText("5°C");
-        // 将换行符改为空格
         holder.content.setText(content.replace("\n", " "));
+        holder.temperature.setText(temperature);
+        holder.weather.setText(weather);
+        // 将换行符改为空格
     }
 
 

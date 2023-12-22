@@ -35,24 +35,24 @@
         app:layout_constraintTop_toTopOf="@+id/item_diary_image" />
 
     <TextView
-        android:id="@+id/item_diary_weather"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:text="晴"
-        android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/item_diary_date"
-        app:layout_constraintStart_toEndOf="@id/item_diary_date" />
-
-    <TextView
         android:id="@+id/item_diary_temperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:text="26°C"
+        android:layout_marginStart="8dp"
         android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/item_diary_weather"
-        app:layout_constraintStart_toEndOf="@+id/item_diary_weather" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/item_diary_date"
+        app:layout_constraintStart_toEndOf="@+id/item_diary_date" />
+
+    <TextView
+        android:id="@+id/item_diary_weather"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="晴"
+        android:layout_marginStart="8dp"
+        android:textSize="16sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/item_diary_temperature"
+        app:layout_constraintStart_toEndOf="@+id/item_diary_temperature" />
 
 <!--    maxEms限制水平方向输入字符数-->
     <TextView

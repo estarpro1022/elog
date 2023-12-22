@@ -282,10 +282,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 wheelView.setVisibility(View.INVISIBLE);
+                cardView.setVisibility(View.INVISIBLE);
                 calendarView.clearSelection();
                 selectedDayDecorator.setDecorateSelected(false);
                 calendarView.addDecorator(selectedDayDecorator);
-                cardView.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -374,6 +374,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 cardView.setVisibility(View.VISIBLE);
+                wheelView.setVisibility(View.INVISIBLE);
                 // 设置动画
                 ImageView animal = findViewById(R.id.card_view_icon);
                 Glide.with(getApplicationContext())

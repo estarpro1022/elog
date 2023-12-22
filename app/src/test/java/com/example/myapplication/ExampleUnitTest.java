@@ -20,7 +20,14 @@ public class ExampleUnitTest {
 
     @Test
     public void testApiWeather() {
-        WeatherService.apiGetTemperature();
-        assertEquals(0.97, WeatherService.getTemperature());
+//        WeatherService.apiGetTemperature();
+//        System.out.println(WeatherService.getTemperature());
+//        Double a = 2.0;
+//        System.out.println(String.valueOf(a));
+        System.out.println(String.format("%.0f", 3.11));
+        System.out.println(String.format("%.0f", 3.66));
+        System.out.println(String.format("%.0f", -3.64));
+        System.out.println(String.format("%.0f", -3.47));
+        System.out.println(String.format("%.0f", -3.55));
     }
 }

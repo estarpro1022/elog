@@ -3,22 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/item_diary_layout"
-    android:layout_margin="10dp"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
     android:background="@drawable/border"
-    android:paddingBottom="10dp"
     android:clickable="true"
     android:focusable="true"
-    android:layout_height="wrap_content">
-<!--    点击任意地方即可跳转日记详情页    -->
-<!--    clickable & focusable属性设为true   -->
+    >
+    <!--    点击任意地方即可跳转日记详情页    -->
+    <!--    clickable & focusable属性设为true   -->
 
     <ImageView
         android:id="@+id/item_diary_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
         android:src="@drawable/good"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,31 +35,34 @@
         app:layout_constraintTop_toTopOf="@+id/item_diary_image" />
 
     <TextView
-        android:id="@+id/item_diary_weather"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:text="晴"
-        android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/item_diary_date"
-        app:layout_constraintStart_toEndOf="@id/item_diary_date" />
-
-    <TextView
         android:id="@+id/item_diary_temperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
         android:text="26°C"
+        android:layout_marginStart="8dp"
         android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/item_diary_weather"
-        app:layout_constraintStart_toEndOf="@+id/item_diary_weather" />
+        app:layout_constraintBaseline_toBaselineOf="@+id/item_diary_date"
+        app:layout_constraintStart_toEndOf="@+id/item_diary_date" />
 
+    <TextView
+        android:id="@+id/item_diary_weather"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="晴"
+        android:layout_marginStart="8dp"
+        android:textSize="16sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/item_diary_temperature"
+        app:layout_constraintStart_toEndOf="@+id/item_diary_temperature" />
+
+<!--    maxEms限制水平方向输入字符数-->
     <TextView
         android:id="@+id/item_diary_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ellipsize="end"
-        android:maxLength="12"
+        android:maxEms="8"
+        android:maxLines="1"
+        android:scrollHorizontally="true"
         android:text="今天是个好日子，真是快乐 的一天,最好每天都是"
         android:textSize="18sp"
         android:textStyle="bold"

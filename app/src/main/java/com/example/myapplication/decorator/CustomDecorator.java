@@ -14,16 +14,17 @@ import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.DayViewFacade;
 
 public class CustomDecorator implements DayViewDecorator {
-    public static final int ANGRY = 0;
-    public static final int SHY = 1;
-    public static final int HOHO = 2;
-    public static final int GOOD = 3;
-    public static final int HAPPY = 4;
+    public static final int GOOD = 0;
+    public static final int HAPPY = 1;
+    public static final int SHY = 2;
+    public static final int HOHO = 3;
+    public static final int SLEEPY = 4;
     public static final int DIZZY = 5;
-    public static final int SHOCK = 6;
-    public static final int INJURED = 7;
-    public static final int DECADENCE = 8;
-    public static final int SLEEPY = 9;
+    public static final int ANGRY = 6;
+    public static final int SHOCK = 7;
+    public static final int INJURED = 8;
+    public static final int DECADENCE = 9;
+
     private CalendarDay dateToDecorate;
     private int color;
     private boolean isDecorated;

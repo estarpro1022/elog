@@ -7,7 +7,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.myapplication.adapter.DiaryAdapter;
 import com.example.myapplication.R;
@@ -19,12 +21,14 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
 
     private ImageView back;
     private RecyclerView recyclerView;
+    private TextView hint;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diary_list);
 
         back = findViewById(R.id.activity_diary_list_back);
+        hint = findViewById(R.id.activity_diary_list_hint);
         back.setOnClickListener(view -> {
             finish();
         });
@@ -33,6 +37,9 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
         assert diaries != null;
         for (Diary diary: diaries) {
             Log.i(tag, "diary");
+        }
+        if (diaries.length == 0) {
+            hint.setVisibility(View.VISIBLE);
         }
         recyclerView = findViewById(R.id.activity_diary_list_recycler_view);
         DiaryAdapter adapter = new DiaryAdapter(diaries);

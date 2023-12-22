@@ -151,7 +151,9 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/activity_main_top_constraintLayout"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintVertical_bias="1.0"
+        android:clipChildren="false"
+        android:clipToPadding="false">
 
         <com.prolificinteractive.materialcalendarview.MaterialCalendarView
             android:id="@+id/calendarView"
@@ -184,14 +186,20 @@
             app:wheelRadius="230dp"
             tools:ignore="MissingConstraints" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
+        <ImageView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:scaleType="centerCrop"
+            android:src="@raw/alpaca"
+            android:clipToOutline="true"
+            android:background="@drawable/background_circle"
             android:id="@+id/llm_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_above="@+id/wheelView"
             android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
             android:layout_marginBottom="30dp"
-            android:layout_marginRight="6dp"
-            android:clickable="true" />
+            android:clickable="true">
+
+        </ImageView>
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

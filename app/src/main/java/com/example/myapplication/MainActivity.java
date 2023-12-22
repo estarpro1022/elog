@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView user;
     private ImageView diaries;
     private CardView cardView;
-    private FloatingActionButton llmButton;
+    private ImageView llmButton;
     private RequestListener<GifDrawable> animationListener;
     private ActivityMainBinding binding;
     private CalendarDay selectedDate;
@@ -347,14 +347,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initLLM(){
-        // 设置卡片透明度
-        float alphaValue = 0.9f;
-        cardView.setAlpha(alphaValue);
+        cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+        });
         // 设置文本
         String name = "无语羊驼";
         String description = "——呸呸呸！让口水飞";
         ((TextView)findViewById(R.id.card_view_name)).setText(name);
         ((TextView)findViewById(R.id.card_view_description)).setText(description);
+
+        // 设置imagebutton
+        llmButton.setElevation(8); // 设置阴影的高度
+        llmButton.setTranslationZ(4); // 设置阴影的偏移量
+        llmButton.setAlpha(0.8f);
+//        ObjectAnimator rotationYAnimator = ObjectAnimator.ofFloat(llmButton, "rotationY", 0f, 360f);
+//        rotationYAnimator.setDuration(6000);
+//        rotationYAnimator.setRepeatCount(ValueAnimator.INFINITE);
+//        rotationYAnimator.start();
         llmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

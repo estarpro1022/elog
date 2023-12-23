@@ -45,9 +45,9 @@ public class LoginFragment extends Fragment {
 
 
     private void initView() {
-        username = root.findViewById(R.id.register_username);
+        username = root.findViewById(R.id.login_username);
         password = root.findViewById(R.id.login_password);
-        login = root.findViewById(R.id.register_button);
+        login = root.findViewById(R.id.login_button);
         login.setOnClickListener(view -> {
             Log.i(tag, "username: " + username.getText().toString());
             Log.i(tag, "password: " + password.getText().toString());
@@ -61,7 +61,7 @@ public class LoginFragment extends Fragment {
                         .setReorderingAllowed(true)
                         .addToBackStack(null)
                         .commit();
-                Toast.makeText(getContext(), "I'm going to jump to register", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getContext(), "I'm going to jump to register", Toast.LENGTH_SHORT).show();
             }
         });
     }

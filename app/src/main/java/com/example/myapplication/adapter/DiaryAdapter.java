@@ -14,6 +14,8 @@ import com.example.myapplication.R;
 import com.example.myapplication.data.Diary;
 import com.example.myapplication.interfaces.OnItemDiaryClickListener;
 
+import java.util.List;
+
 public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> {
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private ConstraintLayout layout;
@@ -35,11 +37,11 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
         }
     }
 
-    private Diary[] diaries;
+    private final List<Diary> diaries;
 
     private OnItemDiaryClickListener listener;
 
-    public DiaryAdapter(Diary[] diaries) {
+    public DiaryAdapter(List<Diary> diaries) {
         this.diaries = diaries;
     }
     public void setOnItemDiaryClickListener(OnItemDiaryClickListener listener) {
@@ -56,24 +58,27 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        int mood = diaries[position].getMood();
-        String moodText = diaries[position].getMoodText();
-        String date = diaries[position].getDate();
-        String content = diaries[position].getContent();
+        int mood = diaries.get(position).getMood();
+        String moodText = diaries.get(position).getMoodText();
+        String date = diaries.get(position).getDate();
+        String content = diaries.get(position).getContent();
+        String temperature = diaries.get(position).getTemperature();
+        String weather = diaries.get(position).getWeather();
         holder.layout.setOnClickListener(view -> {
-            listener.onClick(new Diary(date, content, mood, moodText));
+            listener.onClick(new Diary(date, content, mood, moodText, temperature, weather));
         });
         holder.image.setImageResource(mood);
         holder.date.setText(date);
-        holder.weather.setText("阴");
-        holder.temperature.setText("5°C");
-        holder.content.setText(content);
+        holder.content.setText(content.replace("\n", " "));
+        holder.temperature.setText(temperature);
+        holder.weather.setText(weather);
+        // 将换行符改为空格
     }
 
 
     @Override
     public int getItemCount() {
-        return diaries.length;
+        return diaries.size();
     }
 
 

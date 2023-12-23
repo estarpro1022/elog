@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_diary_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/write_2"
+    android:fitsSystemWindows="true">
 
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_margin="30dp"
         android:weightSum="2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,86 +35,160 @@
             android:layout_alignParentRight="true"
             android:layout_gravity="end"
             android:layout_weight="1"
-            android:onClick="showPopup"
+            android:onClick="showPopupMenu"
             android:src="@drawable/vertical_menu" />
     </RelativeLayout>
 
     <ScrollView
-        android:id="@+id/scrollView2"
+        android:id="@+id/activity_diary_scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relativeLayout">
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
+        app:layout_constraintVertical_bias="0.0">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/activity_diary_text_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/activity_diary_weather_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:orientation="horizontal">
+                android:clickable="true"
+                android:focusable="true"
+                android:orientation="horizontal"
+                android:paddingHorizontal="35dp"
+                android:paddingVertical="20dp"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
                     android:id="@+id/elog_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"
-                    android:text="time"
+                    tools:text="2023-12-14"
                     android:textSize="20sp" />
 
                 <!--      TODO 天气API          -->
                 <TextView
+                    android:id="@+id/activity_diary_temperature"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="晴 26°C"
+                    tools:text="26°C"
                     android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/activity_diary_weather"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    tools:text="晴"
+                    android:textSize="20sp"
+                    />
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/emotion"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_gravity="center"
-                tools:src="@drawable/shock" />
+            <!--            填补ImageView两边的空白-->
+            <RelativeLayout
+                android:id="@+id/activity_diary_relative_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="3"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/activity_diary_weather_layout">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="120dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_toStartOf="@+id/emotion"
+                    android:clickable="true"
+                    android:focusable="true" />
+                <!--            ImageView占一整行  补充：会带来问题，点击所占行旁边的空白也会换图片-->
+                <ImageView
+                    android:id="@+id/emotion"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="changeImage"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:src="@drawable/shock" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="120dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_toEndOf="@id/emotion"
+                    android:clickable="true"
+                    android:focusable="true" />
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/emotionText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textSize="20dp" />
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingBottom="10dp"
+                android:textSize="20dp"
+                app:layout_constraintTop_toBottomOf="@+id/activity_diary_relative_layout" />
 
-            <!--分割线-->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginTop="10dp"
-                android:background="@color/gray" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/elog_content_layout"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            <!--            我们直接套一层Layout，让分割线下方全都可以点击触发书写事件-->
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white"
-                app:boxStrokeWidth="0dp"
-                app:boxStrokeWidthFocused="0dp">
+                app:layout_constraintTop_toBottomOf="@id/emotionText">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <!--分割线-->
+                <View
+                    android:id="@+id/activity_diary_separator"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginHorizontal="15dp"
+                    android:background="@color/gray"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <EditText
                     android:id="@+id/elog_content"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="start|top"
-                    android:inputType="textMultiLine" />
+                    android:layout_height="wrap_content"
+                    android:background="@null"
+                    android:gravity="top|start"
+                    android:hint="请输入你的心情"
+                    android:inputType="textMultiLine|textNoSuggestions"
+                    android:minLines="5"
+                    android:paddingHorizontal="30dp"
+                    android:paddingVertical="20dp"
+                    android:textSize="20sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/activity_diary_separator" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+                <!--                歪打正着解决光标在键盘下的问题-->
+                <View
+                    android:id="@+id/activity_diary_blank"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/elog_content" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -121,7 +197,8 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="200dp"
-        android:src="@drawable/pencil"
+        android:contentDescription="保存"
+        android:src="@drawable/save"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

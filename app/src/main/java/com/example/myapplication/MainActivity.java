@@ -5,10 +5,14 @@ import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextPaint;
 import android.text.style.TypefaceSpan;
+import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -28,10 +32,12 @@ import com.example.myapplication.activity.DiaryActivity;
 import com.example.myapplication.activity.DiaryListActivity;
 import com.example.myapplication.activity.UserActivity;
 import com.example.myapplication.data.Diary;
+import com.example.myapplication.data.DiaryDao;
+import com.example.myapplication.data.DiaryDatabase;
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.decorator.CustomDecorator;
 import com.example.myapplication.decorator.SelectedDayDecorator;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.example.myapplication.utils.WeatherService;
 import com.lukedeighton.wheelview.WheelView;
 import com.lukedeighton.wheelview.adapter.WheelAdapter;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -45,6 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -53,6 +60,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class MainActivity extends AppCompatActivity {
+    private String tag = "MainActivity";
     private MaterialCalendarView calendarView;
     private WheelView wheelView;
     private ImageView user;
@@ -63,62 +71,21 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
     private CalendarDay selectedDate;
     private String selectedDateString;
+    SelectedDayDecorator selectedDayDecorator = new SelectedDayDecorator();
+
     private Map<String, Diary> diaryMap = new HashMap<>();
     final LinkedHashMap<String, Integer> emotionList = new LinkedHashMap<>();
     private List<Drawable> imgList = new ArrayList<>();
-    // 自定义 DayViewDecorator 来设置字体
-    private static class CustomTypefaceDecorator implements DayViewDecorator {
-
-        private final Typeface typeface;
-
-        public CustomTypefaceDecorator(Typeface typeface) {
-            this.typeface = typeface;
-        }
-
-        @Override
-        public boolean shouldDecorate(CalendarDay day) {
-            // 这里可以添加需要设置字体的日期的条件
-            return true;
-        }
-
-        @Override
-        public void decorate(DayViewFacade view) {
-            // 在这里设置日期的字体
-            view.addSpan(new CustomTypefaceSpan(typeface));
-        }
-    }
-
-    // 自定义 Span 以应用字体
-    private static class CustomTypefaceSpan extends TypefaceSpan {
-
-        private final Typeface typeface;
-
-        public CustomTypefaceSpan(Typeface typeface) {
-            super(""); // 这里可以传入一个空字符串，因为我们不需要额外的样式
-            this.typeface = typeface;
-        }
-
-        @Override
-        public void updateDrawState(TextPaint ds) {
-            applyCustomTypeface(ds, typeface);
-        }
-
-        @Override
-        public void updateMeasureState(TextPaint paint) {
-            applyCustomTypeface(paint, typeface);
-        }
-
-        private static void applyCustomTypeface(Paint paint, Typeface tf) {
-            paint.setTypeface(tf);
-            // 在这里可以设置字体的其他属性，例如颜色、大小等
-        }
-    }
+    private DiaryDao diaryDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        // 初始化数据库
+        diaryDao = DiaryDatabase.getInstance(this).getDiaryDao();
 
         // 初始化View组件
         initView();
@@ -141,30 +108,71 @@ public class MainActivity extends AppCompatActivity {
         // 初始化展示人格的FloatingActionButton组件
         initAnimation();
         initLLM();
+
+        WeatherService.apiGetTemperature();
+        Log.i(tag, "get temperature: " + WeatherService.getTemperature());
+
+    }
+
+    @Override
+    protected void onStart() {
+        Log.i(tag, "onStart method.");
+        super.onStart();
+        decorateCalendarView();
+    }
+
+    private void decorateCalendarView() {
+        calendarView.removeDecorators();
+        // 日历字体样式
+        calendarView.addDecorator(selectedDayDecorator);
+
+        // 日历背景样式
+        List<Diary> diaryList = diaryDao.queryAllDiaries();
+        for (Diary diary : diaryList) {
+            int year = Integer.parseInt(diary.getDate().substring(0, 4));
+            // month: 0-11
+            int month = Integer.parseInt(diary.getDate().substring(5, 7)) - 1;
+            int day = Integer.parseInt(diary.getDate().substring(8, 10));
+//            Log.i(tag, "year: " + year + " month: " + month + " day: " + day);
+            CalendarDay calendarDay = CalendarDay.from(year, month, day);
+            CustomDecorator decorator = new CustomDecorator(calendarDay);
+            decorator.setDecorated(true);
+            int pos = 0;
+            for (int drawableResId : emotionList.values()) {
+                if (drawableResId == diary.getMood()) {
+//                    Log.i(tag, "diary mood: " + diary.getMood());
+                    decorator.setColor(pos);
+                    break;
+                }
+                pos++;
+            }
+            decorator.setContext(this);
+            calendarView.addDecorator(decorator);
+        }
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    public void init(){
-        imgList.add(getDrawable(R.drawable.angry));
-        imgList.add(getDrawable(R.drawable.shy));
-        imgList.add(getDrawable(R.drawable.hoho));
+    public void init() {
         imgList.add(getDrawable(R.drawable.good));
         imgList.add(getDrawable(R.drawable.happy));
+        imgList.add(getDrawable(R.drawable.shy));
+        imgList.add(getDrawable(R.drawable.hoho));
+        imgList.add(getDrawable(R.drawable.sleepy));
         imgList.add(getDrawable(R.drawable.dizzy));
+        imgList.add(getDrawable(R.drawable.angry));
         imgList.add(getDrawable(R.drawable.shock));
         imgList.add(getDrawable(R.drawable.injured));
         imgList.add(getDrawable(R.drawable.decadence));
-        imgList.add(getDrawable(R.drawable.sleepy));
-        emotionList.put("生气", R.drawable.angry);
-        emotionList.put("害羞", R.drawable.shy);
-        emotionList.put("呵呵", R.drawable.hoho);
         emotionList.put("好", R.drawable.good);
         emotionList.put("非常棒", R.drawable.happy);
+        emotionList.put("害羞", R.drawable.shy);
+        emotionList.put("呵呵", R.drawable.hoho);
+        emotionList.put("困觉", R.drawable.sleepy);
         emotionList.put("晕", R.drawable.dizzy);
+        emotionList.put("生气", R.drawable.angry);
         emotionList.put("惊吓", R.drawable.shock);
         emotionList.put("委屈", R.drawable.injured);
         emotionList.put("颓废", R.drawable.decadence);
-        emotionList.put("困觉", R.drawable.sleepy);
     }
 
     private void initView() {
@@ -177,35 +185,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initCalendarView() {
+        // 渲染已写日记
+        decorateCalendarView();
+
         calendarView.setTopbarVisible(true);
 
-        //设置日历字体
-        Typeface customTypeface = Typeface.createFromAsset(getAssets(), "font1.ttf");
-        calendarView.addDecorator(new CustomTypefaceDecorator(customTypeface));
-
         // 设置 TitleFormatter 以将标题（月份）显示为中文
-        calendarView.setTitleFormatter(new TitleFormatter() {
-            @Override
-            public CharSequence format(CalendarDay day) {
-                return String.format("%d年%d月", day.getYear(), day.getMonth() + 1);
-            }
-        });
+        calendarView.setTitleFormatter(day -> String.format("%d年%d月", day.getYear(), day.getMonth() + 1));
 
         // 设置星期的文本显示为中文
-        calendarView.setWeekDayFormatter(new WeekDayFormatter() {
-            @Override
-            public CharSequence format(int dayOfWeek) {
-                String[] weekDays = {"日", "一", "二", "三", "四", "五", "六"};
-                return weekDays[dayOfWeek - 1];
-            }
+        calendarView.setWeekDayFormatter(dayOfWeek -> {
+            String[] weekDays = {"日", "一", "二", "三", "四", "五", "六"};
+            return weekDays[dayOfWeek - 1];
         });
 
         //设置最大可选日期
         Calendar calendar = Calendar.getInstance();
         calendarView.state().edit().setMaximumDate(calendar).commit();
-
-        SelectedDayDecorator selectedDayDecorator = new SelectedDayDecorator();
+//        SelectedDayDecorator selectedDayDecorator = new SelectedDayDecorator();
         calendarView.addDecorator(selectedDayDecorator);
+
         //TODO:当前日期之后的日期和不属于本月的日期设为不可见
         //当前日期之后的日期和不属于本月的日期设为不可见
 
@@ -217,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
             if(cardView.getVisibility() == View.VISIBLE){
                 return;
             }
+            selectedDayDecorator.setDecorateSelected(true);
             selectedDayDecorator.setDate(date.getDate());
             // 刷新日历以应用装饰
             widget.invalidateDecorators();
@@ -225,9 +225,11 @@ public class MainActivity extends AppCompatActivity {
             calendar1.set(date.getYear(), date.getMonth(), date.getDay());
             selectedDate = date;
             selectedDateString = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar1.getTime());
-            Diary diary = diaryMap.get(selectedDateString);
+            Diary diary = diaryDao.queryDiaryByDate(selectedDateString);
+//            Diary diary = diaryMap.get(selectedDateString);
             if (diary != null) {
-//                Toast.makeText(MainActivity.this,"111",Toast.LENGTH_SHORT).show();
+                // fix: 当用户先点击未写日记，再点击已写日记时，需要让轮盘不可见
+                wheelView.setVisibility(View.INVISIBLE);
                 Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
                 intent.putExtra("diary", diary);
                 startActivityForResult(intent, 1);
@@ -236,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         int nextPosition = wheelView.getSelectedPosition() + 1;
-                        if(nextPosition >= wheelView.getWheelItemCount()){
+                        if (nextPosition >= wheelView.getWheelItemCount()) {
                             nextPosition = 0;
                         }
                         wheelView.setSelected(nextPosition);
@@ -272,16 +274,21 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("emotionText", key);
                 intent.putExtra("emotion", emotionList.get(key));
                 intent.putExtra("date", selectedDateString);
+                intent.putExtra("temperature", WeatherService.getTemperature());
+                intent.putExtra("weather", WeatherService.getWeather());
                 startActivityForResult(intent, 1);
+                calendarView.clearSelection();
                 wheelView.setVisibility(View.INVISIBLE);
             }
         });
+
         binding.getRoot().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 wheelView.setVisibility(View.INVISIBLE);
                 calendarView.clearSelection();
                 cardView.setVisibility(View.INVISIBLE);
+                // 神奇的是，点击空白处，白色的背景缓缓消失
             }
         });
     }
@@ -304,13 +311,9 @@ public class MainActivity extends AppCompatActivity {
             if(cardView.getVisibility() == View.VISIBLE){
                 return;
             }
-            TreeMap<String, Diary> treeMap = new TreeMap<>(Collections.reverseOrder());
-            treeMap.putAll(diaryMap);
-            Diary[] diariesArray = treeMap.values().toArray(new Diary[0]);
             // 发送日记列表
             // Diary类是序列化的，所以直接传就可以
             Intent intent = new Intent(this, DiaryListActivity.class);
-            intent.putExtra("diaries", diariesArray);
             startActivity(intent);
         });
     }
@@ -388,26 +391,16 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1 && resultCode == RESULT_OK) {
             if (data.hasExtra("deletedDate")) {
-                // TODO: 应将日记保存在数据库中，并且删除日记该直接从数据库删除
-                diaryMap.remove(data.getStringExtra("deletedDate"));
-                CustomDecorator decorator = new CustomDecorator(selectedDate);
-                decorator.setDecorated(false);
-//                decorator.setColor(diary.getMood());
-
-                decorator.setContext(this);
-
-                calendarView.addDecorator(decorator);
-                //TODO:去除selectedData日期上的装饰效果，使日期底色变成原来的颜色
+                Log.i(tag, "deal with deleted diary.");
+                calendarView.clearSelection();
             } else {
                 Diary diary = (Diary) data.getSerializableExtra("diary");
-                if (diaryMap.get(diary.getDate()) != null) diaryMap.remove(diary.getDate());
-                diaryMap.put(diary.getDate(), diary);
-                //添加装饰效果使日期底色变成红色
+                Log.i(tag, "custom date: " + selectedDate);
                 CustomDecorator decorator = new CustomDecorator(selectedDate);
                 decorator.setDecorated(true);
                 int pos = 0;
-                for (int drawableResId: emotionList.values()){
-                    if(drawableResId == diary.getMood()){
+                for (int drawableResId : emotionList.values()) {
+                    if (drawableResId == diary.getMood()) {
                         decorator.setColor(pos);
                         break;
                     }

@@ -45,15 +45,15 @@ public class RegisterFragment extends Fragment {
     }
 
     private void initView() {
-        username = root.findViewById(R.id.register_username);
+        username = root.findViewById(R.id.login_username);
         password = root.findViewById(R.id.login_password);
         confirm = root.findViewById(R.id.register_confirm);
         phone = root.findViewById(R.id.register_phone);
-        register = root.findViewById(R.id.register_button);
+        register = root.findViewById(R.id.login_button);
         jump_to_login = root.findViewById(R.id.jump_to_login);
         jump_to_login.setOnClickListener(view -> {
             getActivity().getSupportFragmentManager().popBackStack();
-            Toast.makeText(getActivity(), "I'm back to login page.", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), "I'm back to login page.", Toast.LENGTH_SHORT).show();
         });
     }
 }

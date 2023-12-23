@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
@@ -14,16 +15,17 @@ import com.prolificinteractive.materialcalendarview.DayViewDecorator;
 import com.prolificinteractive.materialcalendarview.DayViewFacade;
 
 public class CustomDecorator implements DayViewDecorator {
-    public static final int ANGRY = 0;
-    public static final int SHY = 1;
-    public static final int HOHO = 2;
-    public static final int GOOD = 3;
-    public static final int HAPPY = 4;
+    public static final int GOOD = 0;
+    public static final int HAPPY = 1;
+    public static final int SHY = 2;
+    public static final int HOHO = 3;
+    public static final int SLEEPY = 4;
     public static final int DIZZY = 5;
-    public static final int SHOCK = 6;
-    public static final int INJURED = 7;
-    public static final int DECADENCE = 8;
-    public static final int SLEEPY = 9;
+    public static final int ANGRY = 6;
+    public static final int SHOCK = 7;
+    public static final int INJURED = 8;
+    public static final int DECADENCE = 9;
+
     private CalendarDay dateToDecorate;
     private int color;
     private boolean isDecorated;
@@ -36,8 +38,13 @@ public class CustomDecorator implements DayViewDecorator {
     public void setContext(Context context) {
         this.context = context;
     }
+    private String tag = "CustomDecorator";
     @Override
     public boolean shouldDecorate(CalendarDay day) {
+//        Log.i(tag, "day: " + day.toString() + " my date: " + dateToDecorate.toString());
+        if (day.equals(dateToDecorate)) {
+//            Log.i(tag, "sure to decorate.");
+        }
         return day.equals(dateToDecorate);
     }
     @Override
@@ -89,6 +96,7 @@ public class CustomDecorator implements DayViewDecorator {
             view.setBackgroundDrawable(circleDrawable);
         } else {
             // TODO: 设置日期底色为原来的颜色
+            Log.i("CustomDecorator", "not selected decorator.");
             view.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
     }

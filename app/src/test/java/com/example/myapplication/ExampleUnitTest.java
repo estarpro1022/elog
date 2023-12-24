@@ -5,6 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.example.myapplication.interfaces.ApiWeather;
+import com.example.myapplication.utils.Calculate;
 import com.example.myapplication.utils.WeatherService;
 
 /**
@@ -29,5 +30,10 @@ public class ExampleUnitTest {
         System.out.println(String.format("%.0f", -3.64));
         System.out.println(String.format("%.0f", -3.47));
         System.out.println(String.format("%.0f", -3.55));
+    }
+
+    @Test
+    public void testDistance() {
+        assertEquals(5 , Calculate.distance(3, 4, 7, 7), 0.01);
     }
 }

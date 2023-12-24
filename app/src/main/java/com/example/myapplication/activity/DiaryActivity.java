@@ -47,7 +47,7 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
     private ConstraintLayout textLayout;
     private TextView date;
     private ScrollView scrollView;
-    private ImageButton back;
+    private ImageView back;
     private TextView temperature;
     private TextView weather;
     private ImageView emotion;

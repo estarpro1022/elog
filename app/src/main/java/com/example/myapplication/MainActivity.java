@@ -11,13 +11,17 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 
 import com.bumptech.glide.Glide;
@@ -35,6 +39,7 @@ import com.example.myapplication.data.DiaryDatabase;
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.decorator.CustomDecorator;
 import com.example.myapplication.decorator.SelectedDayDecorator;
+import com.example.myapplication.utils.Calculate;
 import com.example.myapplication.utils.WeatherService;
 import com.lukedeighton.wheelview.WheelView;
 import com.lukedeighton.wheelview.adapter.WheelAdapter;
@@ -49,6 +54,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
     private String tag = "MainActivity";
@@ -206,19 +212,42 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // 更改UI，确保Runnable代码在主线程上运行
                 wheelView.post(() -> {
-                    int nextPosition = wheelView.getSelectedPosition() + 1;
-                    if (nextPosition >= wheelView.getWheelItemCount()) {
-                        nextPosition = 0;
+                    int nextPosition = wheelView.getSelectedPosition() - 1;
+                    if (nextPosition < 0) {
+                        nextPosition = (int) wheelView.getWheelItemCount() - 1;
                     }
                     wheelView.setSelected(nextPosition);
                 });
 
+//                wheelView.setWheelItemCount(10);
+//                RotateAnimation rotateAnimation = new RotateAnimation(
+//                        0f, 360f,
+//                        Animation.RELATIVE_TO_SELF, 0.5f,
+//                        Animation.RELATIVE_TO_SELF, 1.0f
+//                );
+//
+//                rotateAnimation.setInterpolator(new FastOutSlowInInterpolator());
+//                rotateAnimation.setDuration(1000);
+//                rotateAnimation.setRepeatCount(0);
+//
+//                // 旋转动画
+//                Log.i(tag, "animation.");
+//                wheelView.startAnimation(rotateAnimation);
+
+//                wheelView.setAngle(wheelView.getSelectionAngle() + 36);
                 wheelView.setVisibility(View.VISIBLE);
             }
         });
     }
 
+    private static final int MAX_DISTANCE_DP = 5;
+    
+    private float pressX;
+    private float pressY;
+    private boolean isRotating;
+
     private void initWheelView() {
+
         wheelView.setAdapter(new WheelAdapter() {
             @Override
             public Drawable getDrawable(int position) {
@@ -231,9 +260,46 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // 判断用户是否在转动轮盘
+
+        wheelView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                switch (motionEvent.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        Log.i(tag, "wheelView click down.");
+                        isRotating = false;
+                        pressX = motionEvent.getX();
+                        pressY = motionEvent.getY();
+                        Log.i(tag, "isRotating: " + isRotating);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        Log.i(tag, "wheelView click finish.");
+                        float distancePixel = Calculate.distance(pressX, pressY, motionEvent.getX(), motionEvent.getY());
+                        float distanceDp = Calculate.pixelToDp(distancePixel, getResources().getDisplayMetrics().density);
+                        Log.i(tag, "distancePixel: " + distancePixel);
+                        Log.i(tag, "distanceDp: " + distanceDp);
+                        if (distanceDp < MAX_DISTANCE_DP) {
+                            isRotating = false;
+                        }
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        Log.i(tag, "wheelview rotate around.");
+                        isRotating = true;
+                        break;
+                }
+                return false;
+            }
+        });
         wheelView.setOnWheelItemClickListener(new WheelView.OnWheelItemClickListener() {
             @Override
             public void onWheelItemClick(WheelView parent, int position, boolean isSelected) {
+                wheelView.invalidateWheelItemDrawables();
+                if (isRotating) {
+                    Log.i(tag, "轮盘进行了滚动，不跳转");
+                    return;
+                }
+                Log.i(tag, "wheelview select " + position + " item.");
                 wheelView.setSelected(position);
                 Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
                 String key = (String) emotionList.keySet().toArray()[position];
@@ -252,6 +318,9 @@ public class MainActivity extends AppCompatActivity {
             wheelView.setVisibility(View.INVISIBLE);
             // 神奇的是，点击空白处，白色的背景缓缓消失
             calendarView.clearSelection();
+            // 清除文字样式
+            selectedDayDecorator.setDecorateSelected(false);
+            calendarView.invalidateDecorators();
         });
     }
 
@@ -273,6 +342,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initLLM() {
+        String[] names = {"无语羊驼", "活力小狗", "悲伤青蛙", "困困考拉", "爆炸河豚", "摆烂乌龟"};
+        String[] descriptions = {"呸呸呸！让口水飞", "汪汪汪，快乐无限！", "在湿漉漉的荷叶上思考人生",
+                "呼~呼~呼", "毁灭吧！海底世界", "懒懒散散，悠哉游哉"};
+        int[] animals = {R.raw.alpaca, R.raw.dog, R.raw.frog,
+                R.raw.koala, R.raw.puffer, R.raw.turtle};
         String name = "无语羊驼";
         String description = "——呸呸呸！让口水飞";
         String llm = "人生不是一场竞赛，有时候放慢脚步，适当休息，反而能够更好地迎接挑战和充实自己";
@@ -320,19 +394,23 @@ public class MainActivity extends AppCompatActivity {
         };
 
         // 提前加载
+        Random random = new Random();
+        int number = random.nextInt(6);
+        int[] animalNumber = new int[]{number};
+        ((TextView) popupView.findViewById(R.id.card_view_name)).setText(names[number]);
+        ((TextView) popupView.findViewById(R.id.card_view_description)).setText("——" + descriptions[number]);
         ((TextView) popupView.findViewById(R.id.card_view_llm)).setText(llm);
-        ((TextView) popupView.findViewById(R.id.card_view_name)).setText(name);
-        ((TextView) popupView.findViewById(R.id.card_view_description)).setText(description);
 
         // 设置imagebutton
         llmButton.setElevation(8); // 设置阴影的高度
         llmButton.setTranslationZ(4); // 设置阴影的偏移量
         llmButton.setAlpha(0.8f);
 
+        llmButton.setImageResource(animals[number]);
         llmButton.setOnClickListener(view -> {
             Glide.with(getApplicationContext())
                     .asGif()
-                    .load(R.raw.alpaca)
+                    .load(animals[animalNumber[0]])
                     .listener(animationListener)
                     .into(animal);
 

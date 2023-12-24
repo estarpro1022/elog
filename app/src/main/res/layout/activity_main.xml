@@ -25,6 +25,7 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_gravity="top"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/user_new"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -47,6 +48,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="bottom"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/diaries"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -111,7 +113,7 @@
             android:clipToOutline="true"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"
             android:scaleType="centerCrop"
-            android:src="@raw/alpaca" />
+            />
 
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

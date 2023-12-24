@@ -19,12 +19,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-<!--        适当调大用户图像大小，看起来和右边日记和谐点-->
+        <!--        适当调大用户图像大小，看起来和右边日记和谐点-->
         <ImageView
             android:id="@+id/activity_main_user"
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_gravity="top"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/user_new"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -47,6 +48,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="bottom"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:src="@drawable/diaries"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -54,13 +56,18 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <RelativeLayout
+        android:id="@+id/activity_main_relativelayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="20dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/activity_main_top_constraintLayout">
+        app:layout_constraintTop_toBottomOf="@+id/activity_main_top_constraintLayout"
+        app:layout_constraintVertical_bias="1.0">
 
         <com.prolificinteractive.materialcalendarview.MaterialCalendarView
             android:id="@+id/calendarView"
@@ -92,5 +99,21 @@
             app:wheelPosition="bottom"
             app:wheelRadius="220dp"
             tools:ignore="MissingConstraints" />
+
+        <!--        foreground加上波纹效果-->
+        <ImageView
+            android:id="@+id/llm_button"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_above="@+id/wheelView"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="30dp"
+            android:background="@drawable/background_circle"
+            android:clipToOutline="true"
+            android:foreground="?android:attr/selectableItemBackgroundBorderless"
+            android:scaleType="centerCrop"
+            />
+
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,11 +15,12 @@
 
     <ImageView
         android:id="@+id/item_diary_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_marginStart="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="5dp"
         android:src="@drawable/good"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,9 +28,9 @@
         android:id="@+id/item_diary_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        android:text="2023.12.19"
+        tools:text="2023.12.19"
         android:textSize="16sp"
         app:layout_constraintStart_toEndOf="@+id/item_diary_image"
         app:layout_constraintTop_toTopOf="@+id/item_diary_image" />
@@ -64,7 +65,7 @@
         android:maxLines="1"
         android:scrollHorizontally="true"
         android:text="今天是个好日子，真是快乐 的一天,最好每天都是"
-        android:textSize="18sp"
+        android:textSize="17sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/item_diary_image"
         app:layout_constraintStart_toStartOf="@+id/item_diary_date"

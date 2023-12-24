@@ -116,38 +116,17 @@ public class MainActivity extends AppCompatActivity {
         decorateCalendarView();
     }
 
-    private void decorateCalendarView() {
-        // 删除日记后，日历背景样式需要去除
-        calendarView.removeDecorators();
-
-        // 日历字体样式
-        calendarView.addDecorator(selectedDayDecorator);
-
-        // 日历背景样式
-        List<Diary> diaryList = diaryDao.queryAllDiaries();
-        for (Diary diary : diaryList) {
-            int year = Integer.parseInt(diary.getDate().substring(0, 4));
-            // month下表: 0-11
-            int month = Integer.parseInt(diary.getDate().substring(5, 7)) - 1;
-            int day = Integer.parseInt(diary.getDate().substring(8, 10));
-            CalendarDay calendarDay = CalendarDay.from(year, month, day);
-            CustomDecorator decorator = new CustomDecorator(calendarDay);
-            decorator.setDecorated(true);
-            int pos = 0;
-            for (int drawableResId : emotionList.values()) {
-                if (drawableResId == diary.getMood()) {
-                    decorator.setColor(pos);
-                    break;
-                }
-                pos++;
-            }
-            decorator.setContext(this);
-            calendarView.addDecorator(decorator);
-        }
+    private void initView() {
+        wheelView = findViewById(R.id.wheelView);
+        calendarView = findViewById(R.id.calendarView);
+        user = findViewById(R.id.activity_main_user);
+        diaries = findViewById(R.id.activity_main_diary);
+        llmButton = findViewById(R.id.llm_button);
+        cardView = findViewById(R.id.card_view);
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
-    public void init() {
+    private void init() {
         int[] images = {R.drawable.good, R.drawable.happy, R.drawable.shy, R.drawable.hoho,
                 R.drawable.sleepy, R.drawable.dizzy, R.drawable.angry, R.drawable.shock,
                 R.drawable.injured, R.drawable.decadence};
@@ -159,15 +138,6 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < images.length; i++) {
             emotionList.put(emotionTextList[i], images[i]);
         }
-    }
-
-    private void initView() {
-        wheelView = findViewById(R.id.wheelView);
-        calendarView = findViewById(R.id.calendarView);
-        user = findViewById(R.id.activity_main_user);
-        diaries = findViewById(R.id.activity_main_diary);
-        llmButton = findViewById(R.id.llm_button);
-        cardView = findViewById(R.id.card_view);
     }
 
     private void initCalendarView() {
@@ -210,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra("diary", diary);
                 startActivityForResult(intent, 1);
             } else {
-                // 更改UI，确保Runnable代码在主线程上运行
+                // 更改UI为顺时针旋转，确保Runnable代码在主线程上运行
                 wheelView.post(() -> {
                     int nextPosition = wheelView.getSelectedPosition() - 1;
                     if (nextPosition < 0) {
@@ -218,30 +188,13 @@ public class MainActivity extends AppCompatActivity {
                     }
                     wheelView.setSelected(nextPosition);
                 });
-
-//                wheelView.setWheelItemCount(10);
-//                RotateAnimation rotateAnimation = new RotateAnimation(
-//                        0f, 360f,
-//                        Animation.RELATIVE_TO_SELF, 0.5f,
-//                        Animation.RELATIVE_TO_SELF, 1.0f
-//                );
-//
-//                rotateAnimation.setInterpolator(new FastOutSlowInInterpolator());
-//                rotateAnimation.setDuration(1000);
-//                rotateAnimation.setRepeatCount(0);
-//
-//                // 旋转动画
-//                Log.i(tag, "animation.");
-//                wheelView.startAnimation(rotateAnimation);
-
-//                wheelView.setAngle(wheelView.getSelectionAngle() + 36);
                 wheelView.setVisibility(View.VISIBLE);
             }
         });
     }
 
+    // ACTION_MOVE的距离小于MAX_DISTANCE_UP就判定为事件为click
     private static final int MAX_DISTANCE_DP = 5;
-    
     private float pressX;
     private float pressY;
     private boolean isRotating;
@@ -260,58 +213,48 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 判断用户是否在转动轮盘
-
-        wheelView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        Log.i(tag, "wheelView click down.");
+        // 判断用户是否在转动轮盘，若是则不跳转写日记界面
+        wheelView.setOnTouchListener((view, motionEvent) -> {
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    Log.i(tag, "wheelView click down.");
+                    isRotating = false;
+                    pressX = motionEvent.getX();
+                    pressY = motionEvent.getY();
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    Log.i(tag, "wheelview rotate around.");
+                    isRotating = true;
+                    break;
+                case MotionEvent.ACTION_UP:
+                    Log.i(tag, "wheelView click finish.");
+                    float distancePixel = Calculate.distance(pressX, pressY, motionEvent.getX(), motionEvent.getY());
+                    float distanceDp = Calculate.pixelToDp(distancePixel, getResources().getDisplayMetrics().density);
+                    Log.i(tag, "distancePixel: " + distancePixel + " distanceDp: " + distanceDp);
+                    if (distanceDp < MAX_DISTANCE_DP)
                         isRotating = false;
-                        pressX = motionEvent.getX();
-                        pressY = motionEvent.getY();
-                        Log.i(tag, "isRotating: " + isRotating);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        Log.i(tag, "wheelView click finish.");
-                        float distancePixel = Calculate.distance(pressX, pressY, motionEvent.getX(), motionEvent.getY());
-                        float distanceDp = Calculate.pixelToDp(distancePixel, getResources().getDisplayMetrics().density);
-                        Log.i(tag, "distancePixel: " + distancePixel);
-                        Log.i(tag, "distanceDp: " + distanceDp);
-                        if (distanceDp < MAX_DISTANCE_DP) {
-                            isRotating = false;
-                        }
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        Log.i(tag, "wheelview rotate around.");
-                        isRotating = true;
-                        break;
-                }
-                return false;
+                    break;
             }
+            // touch事件为false，否则不会继续触发WheelItemClickListener
+            return false;
         });
-        wheelView.setOnWheelItemClickListener(new WheelView.OnWheelItemClickListener() {
-            @Override
-            public void onWheelItemClick(WheelView parent, int position, boolean isSelected) {
-                wheelView.invalidateWheelItemDrawables();
-                if (isRotating) {
-                    Log.i(tag, "轮盘进行了滚动，不跳转");
-                    return;
-                }
-                Log.i(tag, "wheelview select " + position + " item.");
-                wheelView.setSelected(position);
-                Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
-                String key = (String) emotionList.keySet().toArray()[position];
-                intent.putExtra("emotionText", key);
-                intent.putExtra("emotion", emotionList.get(key));
-                intent.putExtra("date", selectedDateString);
-                intent.putExtra("temperature", WeatherService.getTemperature());
-                intent.putExtra("weather", WeatherService.getWeather());
-                startActivityForResult(intent, 1);
-                calendarView.clearSelection();
-                wheelView.setVisibility(View.INVISIBLE);
+        wheelView.setOnWheelItemClickListener((parent, position, isSelected) -> {
+            if (isRotating) {
+                Log.i(tag, "用户在转动轮盘，不跳转");
+                return;
             }
+            Log.i(tag, "wheelview select " + position + " item.");
+            wheelView.setSelected(position);
+            Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
+            String key = (String) emotionList.keySet().toArray()[position];
+            intent.putExtra("emotionText", key);
+            intent.putExtra("emotion", emotionList.get(key));
+            intent.putExtra("date", selectedDateString);
+            intent.putExtra("temperature", WeatherService.getTemperature());
+            intent.putExtra("weather", WeatherService.getWeather());
+            startActivityForResult(intent, 1);
+            calendarView.clearSelection();
+            wheelView.setVisibility(View.INVISIBLE);
         });
 
         binding.getRoot().setOnClickListener(view -> {
@@ -418,6 +361,35 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void decorateCalendarView() {
+        // 删除日记后，日历背景样式需要去除
+        calendarView.removeDecorators();
+
+        // 日历字体样式
+        calendarView.addDecorator(selectedDayDecorator);
+
+        // 日历背景样式
+        List<Diary> diaryList = diaryDao.queryAllDiaries();
+        for (Diary diary : diaryList) {
+            int year = Integer.parseInt(diary.getDate().substring(0, 4));
+            // month下表: 0-11
+            int month = Integer.parseInt(diary.getDate().substring(5, 7)) - 1;
+            int day = Integer.parseInt(diary.getDate().substring(8, 10));
+            CalendarDay calendarDay = CalendarDay.from(year, month, day);
+            CustomDecorator decorator = new CustomDecorator(calendarDay);
+            decorator.setDecorated(true);
+            int pos = 0;
+            for (int drawableResId : emotionList.values()) {
+                if (drawableResId == diary.getMood()) {
+                    decorator.setColor(pos);
+                    break;
+                }
+                pos++;
+            }
+            decorator.setContext(this);
+            calendarView.addDecorator(decorator);
+        }
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

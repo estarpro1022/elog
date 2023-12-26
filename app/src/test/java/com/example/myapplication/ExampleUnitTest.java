@@ -4,9 +4,9 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import com.example.myapplication.interfaces.ApiWeather;
 import com.example.myapplication.utils.Calculate;
-import com.example.myapplication.utils.WeatherService;
+
+import java.util.regex.Pattern;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -35,5 +35,11 @@ public class ExampleUnitTest {
     @Test
     public void testDistance() {
         assertEquals(5 , Calculate.distance(3, 4, 7, 7), 0.01);
+    }
+
+    @Test
+    public void testPhone() {
+        Pattern pattern = Pattern.compile("^1(?:3\\d{3}|5[^4\\D]\\d{2}|8\\d{3}|7(?:[235-8]\\d{2}|4(?:0\\d|1[0-2]|9\\d))|9[0-35-9]\\d{2}|66\\d{2})\\d{6}$");
+        assertEquals(true, pattern.matcher("17826271022").matches());
     }
 }

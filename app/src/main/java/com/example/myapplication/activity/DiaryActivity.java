@@ -10,12 +10,10 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
@@ -30,7 +28,6 @@ import com.example.myapplication.data.DiaryDatabase;
 import com.example.myapplication.fragment.DeleteDialogFragment;
 import com.example.myapplication.fragment.InfoDialogFragment;
 import com.example.myapplication.interfaces.OnDeleteClickListener;
-import com.example.myapplication.utils.WeatherService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;

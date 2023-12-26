@@ -1,15 +1,14 @@
-package com.example.myapplication.utils;
+package com.example.myapplication.service;
 
 import android.util.Log;
 
-import com.example.myapplication.interfaces.ApiWeather;
+import com.example.myapplication.interfaces.ApiWeatherService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,8 +30,8 @@ public class WeatherService {
                 .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        ApiWeather apiWeather = retrofit.create(ApiWeather.class);
-        Call<JsonObject> result = apiWeather.getWeatherInfo(latitude, longitude, api_key, language);
+        ApiWeatherService apiWeatherService = retrofit.create(ApiWeatherService.class);
+        Call<JsonObject> result = apiWeatherService.getWeatherInfo(latitude, longitude, api_key, language);
         System.out.println("visit weather");
         result.enqueue(new Callback<JsonObject>() {
             @Override

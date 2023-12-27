@@ -14,7 +14,12 @@ import android.widget.TextView;
 import com.example.myapplication.adapter.DiaryAdapter;
 import com.example.myapplication.R;
 import com.example.myapplication.data.Diary;
+import com.example.myapplication.data.DiaryDao;
+import com.example.myapplication.data.DiaryDatabase;
 import com.example.myapplication.interfaces.OnItemDiaryClickListener;
+
+import java.util.Comparator;
+import java.util.List;
 
 public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryClickListener {
     private String tag = "DiaryListActivity";
@@ -22,6 +27,7 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
     private ImageView back;
     private RecyclerView recyclerView;
     private TextView hint;
+    private DiaryDao diaryDao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,13 +38,24 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
         back.setOnClickListener(view -> {
             finish();
         });
-        Intent intent = getIntent();
-        Diary[] diaries = (Diary[]) intent.getSerializableExtra("diaries");
-        assert diaries != null;
+
+        diaryDao = DiaryDatabase.getInstance(this).getDiaryDao();
+    }
+
+    /**
+     * 删除日记后刷新界面
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        List<Diary> diaries = diaryDao.queryAllDiaries();
+        diaries.sort(Comparator.comparing(Diary::getDate));
+        diaries.sort((a, b) -> b.getDate().compareTo(a.getDate()));
         for (Diary diary: diaries) {
             Log.i(tag, "diary");
         }
-        if (diaries.length == 0) {
+        if (diaries.size() == 0) {
             hint.setVisibility(View.VISIBLE);
         }
         recyclerView = findViewById(R.id.activity_diary_list_recycler_view);
@@ -46,6 +63,7 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
         adapter.setOnItemDiaryClickListener(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
     }
 
     @Override

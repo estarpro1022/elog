@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
@@ -37,8 +38,13 @@ public class CustomDecorator implements DayViewDecorator {
     public void setContext(Context context) {
         this.context = context;
     }
+    private String tag = "CustomDecorator";
     @Override
     public boolean shouldDecorate(CalendarDay day) {
+//        Log.i(tag, "day: " + day.toString() + " my date: " + dateToDecorate.toString());
+        if (day.equals(dateToDecorate)) {
+//            Log.i(tag, "sure to decorate.");
+        }
         return day.equals(dateToDecorate);
     }
     @Override
@@ -90,6 +96,7 @@ public class CustomDecorator implements DayViewDecorator {
             view.setBackgroundDrawable(circleDrawable);
         } else {
             // TODO: 设置日期底色为原来的颜色
+            Log.i("CustomDecorator", "not selected decorator.");
             view.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }
     }

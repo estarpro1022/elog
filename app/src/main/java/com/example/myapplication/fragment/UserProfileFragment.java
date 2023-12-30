@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -40,15 +41,21 @@ public class UserProfileFragment extends Fragment {
         usrIcon.setImageResource(R.drawable.ic_launcher);
 
         TextView usrname = view.findViewById(R.id.UserName);
-        usrname.setText("username");
+        usrname.setText("昵称");
+
+        Button logout = view.findViewById(R.id.logout);
+        logout.setText("退出登录");
 
         ListView listView = view.findViewById(R.id.listView);
+        listView.setFooterDividersEnabled(true);
+        listView.setHeaderDividersEnabled(true);
 
         List<UserProfileItem> items = new ArrayList<>();
-        items.add(new UserProfileItem("用户名修改", R.drawable.ic_launcher));
-        items.add(new UserProfileItem("密码修改", R.drawable.ic_launcher));
+        items.add(new UserProfileItem("修改信息", R.drawable.ic_launcher));
         items.add(new UserProfileItem("应用锁设置", R.drawable.ic_launcher));
-        items.add(new UserProfileItem("登出", R.drawable.ic_launcher));
+        items.add(new UserProfileItem("帮助", R.drawable.ic_launcher));
+        items.add(new UserProfileItem("版本号", R.drawable.ic_launcher));
+
 
         UserProfileAdapter adapter = new UserProfileAdapter(requireContext(), items);
         listView.setAdapter(adapter);
@@ -63,20 +70,13 @@ public class UserProfileFragment extends Fragment {
     private void handleListItemClick(UserProfileItem item) {
         // 根据点击的列表项进行相应的操作
         switch (item.getTitle()) {
-            case "用户名展示":
-                // 处理用户名展示点击事件
-                break;
-            case "用户名修改":
-                // 处理用户名修改点击事件
-                break;
-            case "密码修改":
-                // 处理密码修改点击事件
+            case "修改信息":
                 break;
             case "应用锁设置":
-                // 处理应用锁设置点击事件
                 break;
-            case "登出":
-                // 处理登出点击事件
+            case "帮助":
+                break;
+            case "版本号":
                 break;
         }
     }

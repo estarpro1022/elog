@@ -6,9 +6,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.example.myapplication.adapter.DiaryAdapter;
@@ -27,6 +30,7 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
     private ImageView back;
     private RecyclerView recyclerView;
     private TextView hint;
+    private SearchView searchView;
     private DiaryDao diaryDao;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +42,36 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
         back.setOnClickListener(view -> {
             finish();
         });
-
         diaryDao = DiaryDatabase.getInstance(this).getDiaryDao();
+        initSearch();
     }
+
+    private void initSearch(){
+        searchView = findViewById(R.id.diary_search);
+        // 设置搜索文本监听
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            // 当点击搜索按钮时触发该方法
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;//这里return false不需要修改，false的作用是当你输入要搜索的文字点击搜索按钮后，手机键盘会自动消失，你把false改成true，键盘不会消失。
+            }
+
+            // 当搜索内容改变时触发该方法
+            @Override
+            public boolean onQueryTextChange(String newText) {//此方法的作用是对搜索框里的文字实时监听。
+                if (!TextUtils.isEmpty(newText)){
+
+                }else{
+
+                }
+                return false;
+            }
+        });
+
+    }
+
+
 
     /**
      * 删除日记后刷新界面

@@ -25,6 +25,8 @@ import com.example.myapplication.utils.ResultCode;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
 import java.util.regex.Pattern;
 
 import retrofit2.Call;
@@ -51,7 +53,7 @@ public class RegisterFragment extends Fragment {
         super.onCreate(savedInstanceState);
         TransitionInflater inflater = TransitionInflater.from(requireContext());
         setEnterTransition(inflater.inflateTransition(R.transition.fade_in));
-
+        setExitTransition(inflater.inflateTransition(R.transition.fade_out));
     }
 
 
@@ -128,6 +130,7 @@ public class RegisterFragment extends Fragment {
                                     editor.putBoolean("login", true);
                                     editor.apply();
                                     userId = response.body().getData();
+                                    jumpToProfile();
                                 }
                                 Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
                             }
@@ -147,9 +150,19 @@ public class RegisterFragment extends Fragment {
         });
 
         jump_to_login.setOnClickListener(view -> {
-            getActivity().getSupportFragmentManager().popBackStack();
+            getActivity().getSupportFragmentManager().beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.activity_user_fragment_container_view, LoginFragment.class, null)
+                    .commit();
         });
         return root;
+    }
+
+    private void jumpToProfile() {
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.activity_user_fragment_container_view, UserFragment.class, null)
+                .commit();
     }
 
 
@@ -210,4 +223,27 @@ public class RegisterFragment extends Fragment {
         return true;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i(tag, "register On Resume.");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i(tag, "register On Pause.");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i(tag, "register On Destroy.");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.i(tag, "register On Detach.");
+    }
 }

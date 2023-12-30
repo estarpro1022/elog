@@ -49,7 +49,7 @@ public class LoginFragment extends Fragment {
         super.onCreate(savedInstanceState);
         TransitionInflater inflater = TransitionInflater.from(requireContext());
         setExitTransition(inflater.inflateTransition(R.transition.fade_out));
-//        setEnterTransition(inflater.inflateTransition(R.transition.fade_in));
+        setEnterTransition(inflater.inflateTransition(R.transition.fade_in));
     }
 
     private Context mContext;
@@ -109,6 +109,7 @@ public class LoginFragment extends Fragment {
                                     editor.apply();
                                     // 只有此时userId才有数据
                                     userId = response.body().getData();
+                                    jumpToProfile();
                                 }
                                 Log.i(tag, "response result: " + msg);
                                 Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
@@ -132,10 +133,17 @@ public class LoginFragment extends Fragment {
             getActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.activity_user_fragment_container_view, RegisterFragment.class, null)
                     .setReorderingAllowed(true)
-                    .addToBackStack(null)
+//                    .addToBackStack(null)
                     .commit();
         });
         return root;
+    }
+
+    private void jumpToProfile() {
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(R.id.activity_user_fragment_container_view, UserFragment.class, null)
+                .commit();
     }
 
     private boolean isUsernameValid() {
@@ -160,5 +168,28 @@ public class LoginFragment extends Fragment {
         return true;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.i(tag, "login On Resume.");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i(tag, "login On Pause.");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i(tag, "login On Destroy.");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.i(tag, "login On Detach.");
+    }
 
 }

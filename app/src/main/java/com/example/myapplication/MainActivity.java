@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,7 +28,9 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.myapplication.activity.DiaryActivity;
 import com.example.myapplication.activity.DiaryListActivity;
+import com.example.myapplication.activity.PasswordInputActivity;
 import com.example.myapplication.activity.UserActivity;
+import com.example.myapplication.activity.UserProfileActivity;
 import com.example.myapplication.data.Diary;
 import com.example.myapplication.data.DiaryDao;
 import com.example.myapplication.data.DiaryDatabase;
@@ -67,10 +70,14 @@ public class MainActivity extends AppCompatActivity {
     final LinkedHashMap<String, Integer> emotionList = new LinkedHashMap<>();
     private final List<Drawable> imgList = new ArrayList<>();
     private DiaryDao diaryDao;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = new Intent(this, UserProfileActivity.class);
+        Toast.makeText(this, "用户信息", Toast.LENGTH_SHORT).show();
+
+        startActivity(intent);
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 

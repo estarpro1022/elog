@@ -25,6 +25,8 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
     private String tag = "DiaryListActivity";
 
     private ImageView back;
+
+    private ImageView analysis;
     private RecyclerView recyclerView;
     private TextView hint;
     private DiaryDao diaryDao;
@@ -34,9 +36,14 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
         setContentView(R.layout.activity_diary_list);
 
         back = findViewById(R.id.activity_diary_list_back);
+        analysis = findViewById(R.id.activity_diary_list_analysis);
         hint = findViewById(R.id.activity_diary_list_hint);
         back.setOnClickListener(view -> {
             finish();
+        });
+        analysis.setOnClickListener(view -> {
+            Intent intent = new Intent(this, DiaryAnalysisActivity.class);
+            startActivity(intent);
         });
 
         diaryDao = DiaryDatabase.getInstance(this).getDiaryDao();

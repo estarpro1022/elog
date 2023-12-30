@@ -86,10 +86,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = new Intent(this, UserProfileActivity.class);
-        Toast.makeText(this, "用户信息", Toast.LENGTH_SHORT).show();
-
-        startActivity(intent);
+//        Intent intent = new Intent(this, UserProfileActivity.class);
+//        Toast.makeText(this, "用户信息", Toast.LENGTH_SHORT).show();
+//
+//        startActivity(intent);
 //        // 检查是否已通过密码验证
 //        if (!isPasswordVerified()) {
 //            // 未通过密码验证，启动密码输入界面

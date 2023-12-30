@@ -1,4 +1,4 @@
-package com.example.myapplication.activity;
+package com.example.myapplication.data;
 
 public class UserProfileItem {
     private String title;

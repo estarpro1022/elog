@@ -1,11 +1,16 @@
-package com.example.myapplication.activity;
+package com.example.myapplication.fragment;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.R;
 import com.example.myapplication.adapter.UserProfileAdapter;
@@ -14,17 +19,30 @@ import com.example.myapplication.data.UserProfileItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserProfileActivity extends AppCompatActivity {
+public class UserProfileFragment extends Fragment {
+
+    public UserProfileFragment() {
+        // Required empty public constructor
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_user_profile);
-        ImageView usrIcon = findViewById(R.id.userIcon);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_user_profile, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        ImageView usrIcon = view.findViewById(R.id.userIcon);
         usrIcon.setImageResource(R.drawable.ic_launcher);
-        TextView usrname = findViewById(R.id.UserName);
+
+        TextView usrname = view.findViewById(R.id.UserName);
         usrname.setText("username");
-        ListView listView = findViewById(R.id.listView);
+
+        ListView listView = view.findViewById(R.id.listView);
 
         List<UserProfileItem> items = new ArrayList<>();
         items.add(new UserProfileItem("用户名修改", R.drawable.ic_launcher));
@@ -32,11 +50,10 @@ public class UserProfileActivity extends AppCompatActivity {
         items.add(new UserProfileItem("应用锁设置", R.drawable.ic_launcher));
         items.add(new UserProfileItem("登出", R.drawable.ic_launcher));
 
-
-        UserProfileAdapter adapter = new UserProfileAdapter(this, items);
+        UserProfileAdapter adapter = new UserProfileAdapter(requireContext(), items);
         listView.setAdapter(adapter);
 
-        listView.setOnItemClickListener((parent, view, position, id) -> {
+        listView.setOnItemClickListener((parent, view1, position, id) -> {
             // 处理列表项点击事件
             UserProfileItem selectedItem = items.get(position);
             handleListItemClick(selectedItem);

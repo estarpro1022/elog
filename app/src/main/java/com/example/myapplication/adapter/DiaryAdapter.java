@@ -37,7 +37,7 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
         }
     }
 
-    private final List<Diary> diaries;
+    private List<Diary> diaries;
 
     private OnItemDiaryClickListener listener;
 
@@ -80,6 +80,9 @@ public class DiaryAdapter extends RecyclerView.Adapter<DiaryAdapter.ViewHolder> 
     public int getItemCount() {
         return diaries.size();
     }
-
+    public void setFilter(List<Diary> filter){
+        diaries = filter;
+        notifyDataSetChanged();
+    }
 
 }

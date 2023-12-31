@@ -32,11 +32,8 @@ android {
 }
 
 dependencies {
-<<<<<<< HEAD
     implementation files('lib\\hellocharts-library-1.5.8.jar')
-=======
-    implementation 'androidx.preference:preference:1.2.0'
->>>>>>> 7f23db35d0c025d19dc34916e58022b2cba3e61b
+            implementation 'androidx.preference:preference:1.2.0'
     def fragment_version = "1.5.5"
 
     // 拖拽按钮

@@ -134,7 +134,7 @@ public class DiaryAnalysisActivity extends AppCompatActivity {
         lineChartView.setLineChartData(lData);
 
         //设置是否允许平移和缩放
-        lineChartView.setInteractive(false);
+        lineChartView.setInteractive(true);
 
         //设置缩放的轴
         lineChartView.setZoomType(ZoomType.HORIZONTAL);

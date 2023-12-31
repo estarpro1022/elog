@@ -5,13 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 
 import com.example.myapplication.R;
-import com.example.myapplication.data.User;
 import com.example.myapplication.fragment.LoginFragment;
-import com.example.myapplication.fragment.UserFragment;
 import com.example.myapplication.fragment.UserProfileFragment;
 
 public class UserActivity extends AppCompatActivity {

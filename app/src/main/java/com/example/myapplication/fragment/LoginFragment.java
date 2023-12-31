@@ -144,7 +144,7 @@ public class LoginFragment extends Fragment {
     private void jumpToProfile() {
         getActivity().getSupportFragmentManager().beginTransaction()
                 .setReorderingAllowed(true)
-                .replace(R.id.activity_user_fragment_container_view, UserFragment.class, null)
+                .replace(R.id.activity_user_fragment_container_view, UserProfileFragment.class, null)
                 .commit();
     }
 

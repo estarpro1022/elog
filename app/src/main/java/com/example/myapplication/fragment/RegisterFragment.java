@@ -114,22 +114,24 @@ public class RegisterFragment extends Fragment {
                 Log.i(tag, "register process begins");
                 Log.i(tag, "username: " + username + " password: *** phone: " + phoneStr);
                 ApiUserService userService = RetrofitClient.getInstance().getApiUserService();
-                Call<Result<Integer>> resultCall = userService.apiRegister(usernameStr, passwordStr, phoneStr);
-                resultCall.enqueue(new Callback<Result<Integer>>() {
+                Call<Result<String>> resultCall = userService.apiRegister(usernameStr, passwordStr, phoneStr);
+                resultCall.enqueue(new Callback<Result<String>>() {
                     @Override
-                    public void onResponse(Call<Result<Integer>> call, Response<Result<Integer>> response) {
+                    public void onResponse(Call<Result<String>> call, Response<Result<String>> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 int code = response.body().getCode();
                                 String msg = response.body().getMsg();
-                                int userId;
+                                String token;
                                 if (code == ResultCode.REGISTER_SUCCESS) {
                                     Log.i(tag, "注册成功");
+                                    token = response.body().getData();
                                     SharedPreferences preferences = mContext.getSharedPreferences("user", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = preferences.edit();
                                     editor.putBoolean("login", true);
+                                    editor.putString("token", token);
+                                    editor.putString("username", usernameStr);
                                     editor.apply();
-                                    userId = response.body().getData();
                                     jumpToProfile();
                                 }
                                 Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
@@ -140,9 +142,10 @@ public class RegisterFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<Result<Integer>> call, Throwable t) {
+                    public void onFailure(Call<Result<String>> call, Throwable t) {
                         t.printStackTrace();
                         Log.i(tag, "register network error.");
+                        Toast.makeText(mContext, "网络连接错误", Toast.LENGTH_SHORT).show();
                     }
                 });
 

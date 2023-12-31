@@ -21,7 +21,6 @@ import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.R;
 import com.example.myapplication.service.RetrofitClient;
-import com.example.myapplication.service.UserService;
 import com.example.myapplication.utils.Result;
 import com.example.myapplication.utils.ResultCode;
 import com.google.android.material.textfield.TextInputEditText;
@@ -92,23 +91,25 @@ public class LoginFragment extends Fragment {
                 Log.i(tag, "login begins.");
                 Log.i(tag, "username: " + usernameStr);
 //                Log.i(tag, "password: " + passwordStr);
-                Call<Result<Integer>> resultCall = RetrofitClient.getInstance().getApiUserService().apiLogin(usernameStr, passwordStr);
-                resultCall.enqueue(new Callback<Result<Integer>>() {
+                Call<Result<String>> resultCall = RetrofitClient.getInstance().getApiUserService().apiLogin(usernameStr, passwordStr);
+                resultCall.enqueue(new Callback<Result<String>>() {
                     @Override
-                    public void onResponse(Call<Result<Integer>> call, Response<Result<Integer>> response) {
+                    public void onResponse(Call<Result<String>> call, Response<Result<String>> response) {
                         if (response.isSuccessful()) {
                             if (response.body() != null) {
                                 Log.i(tag, "response succeeds.");
                                 int code = response.body().getCode();
                                 String msg = response.body().getMsg();
-                                int userId;
+                                String token = "";
                                 if (code == ResultCode.LOGIN_SUCCESS) {
+                                    token = response.body().getData();
                                     SharedPreferences preferences = mContext.getSharedPreferences("user", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = preferences.edit();
                                     editor.putBoolean("login", true);
+                                    editor.putString("token", token);
+                                    editor.putString("username", usernameStr);
                                     editor.apply();
                                     // 只有此时userId才有数据
-                                    userId = response.body().getData();
                                     jumpToProfile();
                                 }
                                 Log.i(tag, "response result: " + msg);
@@ -120,9 +121,10 @@ public class LoginFragment extends Fragment {
                     }
 
                     @Override
-                    public void onFailure(Call<Result<Integer>> call, Throwable t) {
+                    public void onFailure(Call<Result<String>> call, Throwable t) {
                         t.printStackTrace();
                         Log.i(tag, "login network error occurs.");
+                        Toast.makeText(mContext, "网络连接错误", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

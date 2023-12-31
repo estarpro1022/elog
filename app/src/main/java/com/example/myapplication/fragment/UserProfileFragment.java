@@ -1,6 +1,9 @@
 package com.example.myapplication.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,9 +22,16 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.myapplication.R;
 import com.example.myapplication.adapter.UserProfileAdapter;
 import com.example.myapplication.data.UserProfileItem;
+import com.example.myapplication.service.RetrofitClient;
+import com.example.myapplication.utils.Result;
+import com.example.myapplication.utils.ResultCode;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class UserProfileFragment extends Fragment {
     private static int EDITINFO = 0;
@@ -33,6 +44,13 @@ public class UserProfileFragment extends Fragment {
         // Required empty public constructor
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        TransitionInflater inflater = TransitionInflater.from(requireContext());
+        setExitTransition(inflater.inflateTransition(R.transition.fade_out));
+        setEnterTransition(inflater.inflateTransition(R.transition.fade_in));
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -52,6 +70,44 @@ public class UserProfileFragment extends Fragment {
 
         Button logout = view.findViewById(R.id.logout);
         logout.setText("退出登录");
+        logout.setOnClickListener(v -> {
+            SharedPreferences sharedPreferences = mContext.getSharedPreferences("user", Context.MODE_PRIVATE);
+            Call<Result<Boolean>> resultCall = RetrofitClient.getInstance().getApiUserService().apiLogout(sharedPreferences.getString("token", ""),
+                    sharedPreferences.getString("username", ""));
+            resultCall.enqueue(new Callback<Result<Boolean>>() {
+                @Override
+                public void onResponse(Call<Result<Boolean>> call, Response<Result<Boolean>> response) {
+                    if (response.isSuccessful()) {
+                        if (response.body() != null) {
+                            int code = response.body().getCode();
+                            String msg = response.body().getMsg();
+                            boolean result;
+                            if (code == ResultCode.LOGOUT_SUCCESS) {
+                                result = response.body().getData();
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putBoolean("login", false);
+                                editor.remove("token");
+                                editor.remove("username");
+                                editor.apply();
+                                Toast.makeText(mContext, "登出成功", Toast.LENGTH_SHORT).show();
+                                getActivity().getSupportFragmentManager().beginTransaction()
+                                        .replace(R.id.activity_user_fragment_container_view, LoginFragment.class, null)
+                                        .setReorderingAllowed(true)
+                                        .commit();
+                                return;
+                            }
+                        }
+                    }
+                    Toast.makeText(mContext, "登出失败", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onFailure(Call<Result<Boolean>> call, Throwable t) {
+                    Toast.makeText(mContext, "网络连接故障", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
 
         ListView listView = view.findViewById(R.id.listView);
 
@@ -114,5 +170,12 @@ public class UserProfileFragment extends Fragment {
 
         // 提交事务
         fragmentTransaction.commit();
+    }
+
+    private Context mContext;
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mContext = context;
     }
 }

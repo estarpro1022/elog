@@ -23,8 +23,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     buildFeatures {
         viewBinding true
@@ -32,7 +32,8 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.preference:preference:1.2.0'
+    implementation files('lib\\hellocharts-library-1.5.8.jar')
+            implementation 'androidx.preference:preference:1.2.0'
     def fragment_version = "1.5.5"
 
     // 拖拽按钮

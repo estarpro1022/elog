@@ -20,6 +20,9 @@
         </activity>
 
         <activity
+            android:name=".activity.DiaryAnalysisActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.DiaryListActivity"
             android:exported="false" />
         <activity

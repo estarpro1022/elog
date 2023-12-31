@@ -1,8 +1,9 @@
 package com.example.myapplication.activity;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,110 +12,157 @@ import com.example.myapplication.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import lecho.lib.hellocharts.gesture.ZoomType;
+import lecho.lib.hellocharts.listener.ColumnChartOnValueSelectListener;
+import lecho.lib.hellocharts.listener.PieChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.AxisValue;
-import lecho.lib.hellocharts.model.Line;
-import lecho.lib.hellocharts.model.LineChartData;
-import lecho.lib.hellocharts.model.PointValue;
-import lecho.lib.hellocharts.model.ValueShape;
-import lecho.lib.hellocharts.view.LineChartView;
+import lecho.lib.hellocharts.model.Column;
+import lecho.lib.hellocharts.model.ColumnChartData;
+import lecho.lib.hellocharts.model.PieChartData;
+import lecho.lib.hellocharts.model.SliceValue;
+import lecho.lib.hellocharts.model.SubcolumnValue;
+import lecho.lib.hellocharts.util.ChartUtils;
+import lecho.lib.hellocharts.view.ColumnChartView;
+import lecho.lib.hellocharts.view.PieChartView;
 
 public class DiaryAnalysisActivity extends AppCompatActivity {
     private String tag = "DiaryAnalysisActivity";
     private ImageView back;
 
-    private LineChartView lineChartView;
-    // x轴数据
-    private String[] data = {"1s前", "2s前", "3s前", "4s前", "5s前", "6s前", "7s前", "8s前", "9s前", "10s前"};
-    // 每个点的y轴数据
-    private Float[] score = {Float.valueOf(541), Float.valueOf(429), Float.valueOf(865), Float.valueOf(901), Float.valueOf(503), Float.valueOf(787), Float.valueOf(222), Float.valueOf(666), Float.valueOf(800), Float.valueOf(525)};
-    private List<AxisValue> axisValues = new ArrayList<AxisValue>();
-    private List<PointValue> pointValues = new ArrayList<PointValue>();
+    private TextView pieTitle;
 
-    //折线集合  用于存放多个折线，即可以显示多条折线
-    private List<Line> lines = new ArrayList<>();
-    //折线图数据对象
-    private LineChartData lData = new LineChartData();
-    private void  initData(){
-        for (int i = 0; i < 10; i++) {
-            axisValues.add(new AxisValue(i).setLabel(data[i]));
-            pointValues.add(new PointValue(i, score[i]));
+    private TextView columnTitle;
+
+    private PieChartView pieChart;     //View
+    private PieChartData pieData;
+
+    private boolean pieLabels = true;                   //是否有标语
+    private boolean hasLabelsOutside = false;           //扇形外面是否有标语
+    private boolean hasCenterCircle = false;            //是否有中心圆
+    private boolean hasCenterText1 = false;             //是否有中心的文字
+    private boolean hasCenterText2 = false;             //是否有中心的文字
+    private boolean isExploded = true;                  //是否是炸开的图像
+    private boolean pieLabelForSelected = false;         //选中的扇形显示标语
+
+    private ColumnChartView columnChart;            //柱状图的自定义View
+    private ColumnChartData data;             //存放柱状图数据的对象
+    private boolean hasAxes = true;            //是否有坐标轴
+    private boolean hasAxesNames = true;       //是否有坐标轴的名字
+    private boolean hasLabels = false;          //柱子上是否显示标识文字
+    private boolean hasLabelForSelected = false;    //柱子被点击时，是否显示标识的文字
+
+    private void initView() {
+        pieChart = (PieChartView) findViewById(R.id.pieChart);
+        columnChart = (ColumnChartView) findViewById(R.id.columnChart);
+    }
+
+    private void initEvent() {
+        pieChart.setOnValueTouchListener(new PieTouchListener());
+        columnChart.setOnValueTouchListener(new ColumnTouchListener());
+    }
+
+    private void initData() {
+        generatePieData();
+        generateColumnData();
+    }
+    private void generatePieData() {
+        int numValues = 6;   //扇形的数量
+
+        //存放扇形数据的集合
+        List<SliceValue> values = new ArrayList<SliceValue>();
+        for (int i = 0; i < numValues; ++i) {
+            SliceValue sliceValue = new SliceValue((float) Math.random() * 30 + 15, ChartUtils.pickColor());
+            sliceValue.setLabel("心情测试");
+            values.add(sliceValue);
+        }
+
+        pieData = new PieChartData(values);
+        pieData.setHasLabels(pieLabels);
+        pieData.setHasLabelsOnlyForSelected(pieLabelForSelected);
+        pieData.setHasLabelsOutside(hasLabelsOutside);
+        pieData.setHasCenterCircle(hasCenterCircle);
+
+        pieChart.setPieChartData(pieData);
+
+        if(isExploded) {
+            pieData.setSlicesSpacing(5);
         }
     }
 
-    /**
-     * 创建一条线   这里可以创建多条线然后添加到lines中即可
-     */
-    private void createLine(){
-        Line mLine = new Line();
-        // 为线添加点
-        mLine.setValues(pointValues);
+    private void generateColumnData() {
+        int numSubcolumns = 1;
+        int numColumns = 8;
+        // Column can have many subcolumns, here by default I use 1 subcolumn in each of 8 columns.
+        List<Column> columns = new ArrayList<Column>();
+        List<SubcolumnValue> values;
+        for (int i = 0; i < numColumns; ++i) {
 
-        //设置线的颜色
-        mLine.setColor(Color.parseColor("#5699BB"));
+            values = new ArrayList<SubcolumnValue>();
+            for (int j = 0; j < numSubcolumns; ++j) {
+                values.add(new SubcolumnValue((float) Math.random() * 50f + 5, ChartUtils.pickColor()));
+            }
 
-        //曲线是否平滑，即是曲线还是折线
-        mLine.setCubic(true);
+            Column column = new Column(values);
+            column.setHasLabels(hasLabels);
+            column.setHasLabelsOnlyForSelected(hasLabelForSelected);
+            columns.add(column);
+        }
 
-        //设置点的形状
-        mLine.setShape(ValueShape.SQUARE);
+        data = new ColumnChartData(columns);
 
-        //设置点击坐标提醒  平常不显示 点击才显示
-//        mLine.setHasLabelsOnlyForSelected(true);
+        if (hasAxes) {
+            Axis axisX = new Axis();
+            Axis axisY = new Axis().setHasLines(true);
+            if (hasAxesNames) {
+                axisX.setName("Axis X");
+                axisY.setName("Axis Y");
+            }
+            data.setAxisXBottom(axisX);
+            data.setAxisYLeft(axisY);
+        } else {
+            data.setAxisXBottom(null);
+            data.setAxisYLeft(null);
+        }
 
-        //取消线
-//        mLine.setHasLines(false);
-
-
-        //是否填充面积
-        mLine.setFilled(false);
-
-        //设置坐标数据显示
-        mLine.setHasLabels(true);
-        //将所有的线都添加到线的集合中
-        lines.add(mLine);
-    }
-
-    /**
-     * 对x轴和y轴进行配置
-     */
-    private void createXAndY(){
-        //设置X轴
-        Axis axisX = new Axis(); //X轴
-        //X坐标轴字体是斜的显示还是直的，true是斜的显示
-        axisX.setHasTiltedLabels(true);
-        //设置字体颜色
-        axisX.setTextColor(Color.parseColor("#1C1C1C"));
-        //设置字体大小
-        axisX.setTextSize(15);
-        //最多几个X轴坐标，意思就是你的缩放让X轴上数据的个数7<=x<=mAxisXValues.length
-        axisX.setMaxLabelChars(2);
-        //填充X轴的坐标名称
-        axisX.setValues(axisValues);
-
-        //设置标题
-        axisX.setName("test");
-
-        //设置是否拥有轴的分界线
-        axisX.setHasLines(true);
-
-        lData.setAxisXBottom(axisX); //x 轴在底部
-
-
-        // Y轴是根据数据的大小自动设置Y轴上限(在下面我会给出固定Y轴数据个数的解决方案)
-        Axis axisY = new Axis();  //Y轴
-        axisY.setName("");//y轴标注
-        axisY.setTextSize(10);//设置字体大小
-        lData.setAxisYLeft(axisY);  //Y轴设置在左边
-        //data.setAxisYRight(axisY);  //y轴设置在右边
-
+        columnChart.setColumnChartData(data);
 
     }
+
+    private class PieTouchListener implements PieChartOnValueSelectListener {
+
+        @Override
+        public void onValueSelected(int arcIndex, SliceValue value) {
+            Toast.makeText(DiaryAnalysisActivity.this, "Selected: " + value, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onValueDeselected() {}
+    }
+
+    private class ColumnTouchListener implements ColumnChartOnValueSelectListener {
+
+        @Override
+        public void onValueSelected(int columnIndex, int subcolumnIndex, SubcolumnValue value) {
+            showToast("Selected: " + value);
+        }
+
+        @Override
+        public void onValueDeselected() {}
+    }
+
+    Toast toast;
+
+    public void showToast(String msg) {
+        if (toast == null) {
+            toast = Toast.makeText(this, msg, Toast.LENGTH_SHORT);
+        } else {
+            toast.setText(msg);
+        }
+        toast.show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_diary_analysis);
 
         back = findViewById(R.id.activity_diary_analysis_back);
@@ -122,24 +170,12 @@ public class DiaryAnalysisActivity extends AppCompatActivity {
             finish();
         });
 
+        pieTitle = findViewById(R.id.tv_title);
+        columnTitle = findViewById(R.id.tv_title_2);
+
         setContentView(R.layout.activity_diary_analysis);
-        lineChartView = findViewById(R.id.lineChart);
+        initView();
+        initEvent();
         initData();
-        createLine();
-        createXAndY();
-
-        lData.setLines(lines);
-
-        //把数据对象设置到折线图中
-        lineChartView.setLineChartData(lData);
-
-        //设置是否允许平移和缩放
-        lineChartView.setInteractive(true);
-
-        //设置缩放的轴
-        lineChartView.setZoomType(ZoomType.HORIZONTAL);
-
-        //设置缩放的倍数
-        lineChartView.setMaxZoom(5);
     }
 }

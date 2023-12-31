@@ -33,5 +33,9 @@ public interface DiaryDao {
     //删除全部日记
     @Query("DELETE FROM DIARY")
     void deleteAllDiaries();
+
+    //查找某用户某心情的日记
+    @Query("SELECT * FROM DIARY WHERE DIARY_MOOD_TEXT = :mood")
+    List<Diary> queryDiaryByMood(String mood);
 }
 

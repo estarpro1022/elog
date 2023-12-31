@@ -17,6 +17,7 @@ import com.example.myapplication.data.DiaryDao;
 import com.example.myapplication.data.DiaryDatabase;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ import java.util.Map;
 import lecho.lib.hellocharts.listener.ColumnChartOnValueSelectListener;
 import lecho.lib.hellocharts.listener.PieChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.Axis;
+import lecho.lib.hellocharts.model.AxisValue;
 import lecho.lib.hellocharts.model.Column;
 import lecho.lib.hellocharts.model.ColumnChartData;
 import lecho.lib.hellocharts.model.PieChartData;
@@ -56,8 +58,8 @@ public class DiaryAnalysisActivity extends AppCompatActivity {
     private ColumnChartView columnChart;            //柱状图的自定义View
     private ColumnChartData data;             //存放柱状图数据的对象
     private boolean hasAxes = true;            //是否有坐标轴
-    private boolean hasAxesNames = true;       //是否有坐标轴的名字
-    private boolean hasLabels = false;          //柱子上是否显示标识文字
+    private boolean hasAxesNames = false;       //是否有坐标轴的名字
+    private boolean hasLabels = true;          //柱子上是否显示标识文字
     private boolean hasLabelForSelected = false;    //柱子被点击时，是否显示标识的文字
 
     private DiaryDao diaryDao;
@@ -65,8 +67,22 @@ public class DiaryAnalysisActivity extends AppCompatActivity {
     private List<Diary> diaries = new ArrayList<>();
     private List<String> moods = new ArrayList<>();
 
-    private String[] emotionTextList = {"好", "非常棒", "害羞", "呵呵", "困觉", "晕",
-            "生气", "惊吓", "委屈", "颓废"};
+    private List<String> emotionTextList = Arrays.asList("好", "非常棒", "害羞", "呵呵", "困觉", "晕",
+            "生气", "惊吓", "委屈", "颓废");
+
+    private List<AxisValue> moodList = new ArrayList<>();
+    {
+        moodList.add(new AxisValue(0).setLabel("好"));
+        moodList.add(new AxisValue(1).setLabel("非常棒"));
+        moodList.add(new AxisValue(2).setLabel("害羞"));
+        moodList.add(new AxisValue(3).setLabel("呵呵"));
+        moodList.add(new AxisValue(4).setLabel("困觉"));
+        moodList.add(new AxisValue(5).setLabel("晕"));
+        moodList.add(new AxisValue(6).setLabel("生气"));
+        moodList.add(new AxisValue(7).setLabel("惊吓"));
+        moodList.add(new AxisValue(8).setLabel("委屈"));
+        moodList.add(new AxisValue(9).setLabel("颓废"));
+    }
 
     private Map<String, Integer> colorData = Map.of("好", Color.parseColor("#ffc038"),
             "非常棒", Color.parseColor("#fb9139"),
@@ -99,8 +115,8 @@ public class DiaryAnalysisActivity extends AppCompatActivity {
     }
 
     private void initEvent() {
-        pieChart.setOnValueTouchListener(new PieTouchListener());
-        columnChart.setOnValueTouchListener(new ColumnTouchListener());
+//        pieChart.setOnValueTouchListener(new PieTouchListener());
+//        columnChart.setOnValueTouchListener(new ColumnTouchListener());
     }
 
     private void initData() {
@@ -142,7 +158,6 @@ public class DiaryAnalysisActivity extends AppCompatActivity {
         List<SubcolumnValue> values;
 
         for (String emotion: emotionTextList) {
-
             values = new ArrayList<SubcolumnValue>();
             for (int j = 0; j < numSubcolumns; ++j) {
                 values.add(new SubcolumnValue((float) map.get(emotion), colorData.get(emotion)));
@@ -157,14 +172,15 @@ public class DiaryAnalysisActivity extends AppCompatActivity {
         data = new ColumnChartData(columns);
 
         if (hasAxes) {
-            Axis axisX = new Axis();
-            Axis axisY = new Axis().setHasLines(true);
+            Axis axisX = new Axis(moodList);
+//            Axis axisY = new Axis().setHasLines(false);
             if (hasAxesNames) {
                 axisX.setName("心情");
-                axisY.setName("数量");
+                axisX.setHasTiltedLabels(true);
+                axisX.setLineColor(Color.parseColor("#FF000000"));
+                axisX.setTextColor(Color.parseColor("#FF000000"));
             }
             data.setAxisXBottom(axisX);
-            data.setAxisYLeft(axisY);
         } else {
             data.setAxisXBottom(null);
             data.setAxisYLeft(null);

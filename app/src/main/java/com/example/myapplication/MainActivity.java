@@ -18,7 +18,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 
 import com.bumptech.glide.Glide;
@@ -39,6 +38,7 @@ import com.example.myapplication.decorator.CustomDecorator;
 import com.example.myapplication.decorator.SelectedDayDecorator;
 import com.example.myapplication.utils.Calculate;
 import com.example.myapplication.service.WeatherService;
+import com.example.myapplication.utils.LLMUtil;
 import com.lukedeighton.wheelview.WheelView;
 import com.lukedeighton.wheelview.adapter.WheelAdapter;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -46,19 +46,20 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.Date;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LLMUtil.AsyncTaskListener {
     private String tag = "MainActivity";
     private MaterialCalendarView calendarView;
     private WheelView wheelView;
     private ImageView user;
     private ImageView diaries;
-    private CardView cardView;
     private ImageView llmButton;
     private View popupView;
     private PopupWindow popupWindow;
@@ -70,6 +71,17 @@ public class MainActivity extends AppCompatActivity {
     final LinkedHashMap<String, Integer> emotionList = new LinkedHashMap<>();
     private final List<Drawable> imgList = new ArrayList<>();
     private DiaryDao diaryDao;
+    private String[] names = {"无语羊驼", "活力小狗", "悲伤青蛙", "困困考拉", "爆炸河豚", "摆烂乌龟"};
+    private String[] descriptions = {"呸呸呸！让口水飞", "汪汪汪，快乐无限！", "在湿漉漉的荷叶上思考人生",
+            "呼~呼~呼", "毁灭吧！海底世界", "懒懒散散，悠哉游哉"};
+    private int[] icons = {R.raw.alpaca, R.raw.dog, R.raw.frog,
+            R.raw.koala, R.raw.puffer, R.raw.turtle};
+
+    private static final String PREFS_NAME = "MyPrefsFile";
+    private static final String LAST_DATE = "lastDate";
+    private static final String PERSONALITY_KEY = "personalityKey";
+    private static final String LLM_KEY = "llmKey";
+
 
     private SharedPreferences preferences;
     private boolean fromDesktop = true;
@@ -104,8 +116,8 @@ public class MainActivity extends AppCompatActivity {
         initWheelView();
 
         // 初始化展示人格的FloatingActionButton组件
-        initAnimation();
         initLLM();
+        checkNewDay();
 
         WeatherService.apiGetTemperature();
         Log.i(tag, "get temperature: " + WeatherService.getTemperature());
@@ -149,7 +161,6 @@ public class MainActivity extends AppCompatActivity {
         user = findViewById(R.id.activity_main_user);
         diaries = findViewById(R.id.activity_main_diary);
         llmButton = findViewById(R.id.llm_button);
-        cardView = findViewById(R.id.card_view);
 
         user.setOnClickListener(view -> {
             fromDesktop = false;
@@ -287,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
 
         // 选择心情，跳转界面
         wheelView.setOnWheelItemClickListener((parent, position, isSelected) -> {
+            fromDesktop = false;
             if (isRotating) {
                 Log.i(tag, "用户在转动轮盘，不跳转");
                 return;
@@ -302,30 +314,14 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(intent, 1);
             calendarView.clearSelection();
             // 清除文字样式
-            selectedDayDecorator.setDecorateSelected(false);
-            calendarView.invalidateDecorators();
-        });
-    }
-
-    private void initUser() {
-        user.setOnClickListener(view -> {
-            fromDesktop = false;
-            Intent intent = new Intent(MainActivity.this, UserActivity.class);
-            startActivity(intent);
-        });
-
-    }
-
-    private void initDiaries() {
-        diaries.setOnClickListener(view -> {
-            fromDesktop = false;
-            Intent intent = new Intent(this, DiaryListActivity.class);
-            startActivity(intent);
+//            selectedDayDecorator.setDecorateSelected(false);
+//            calendarView.invalidateDecorators();
             wheelView.setVisibility(View.INVISIBLE);
         });
     }
 
-    private void initAnimation() {
+    private void initLLM() {
+        // 先inflate layout，否则null pointer
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         // 将layout布局转为View对象
         popupView = inflater.inflate(R.layout.cardview_layout, null);
@@ -339,8 +335,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // 初始化动画
         ImageView animal = popupView.findViewById(R.id.card_view_icon);
-
         animationListener = new RequestListener<GifDrawable>() {
             @Override
             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<GifDrawable> target, boolean isFirstResource) {
@@ -355,7 +351,6 @@ public class MainActivity extends AppCompatActivity {
                     // 播放gif动画
                     resource.start();
                     // 监听动画播放完成事件
-                    // 监听动画播放完成事件
                     resource.registerAnimationCallback(new Animatable2Compat.AnimationCallback() {
                         @Override
                         public void onAnimationEnd(Drawable drawable) {
@@ -367,37 +362,16 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-    }
-
-    private void initLLM() {
-        String[] names = {"无语羊驼", "活力小狗", "悲伤青蛙", "困困考拉", "爆炸河豚", "摆烂乌龟"};
-        String[] descriptions = {"呸呸呸！让口水飞", "汪汪汪，快乐无限！", "在湿漉漉的荷叶上思考人生",
-                "呼~呼~呼", "毁灭吧！海底世界", "懒懒散散，悠哉游哉"};
-        int[] animals = {R.raw.alpaca, R.raw.dog, R.raw.frog,
-                R.raw.koala, R.raw.puffer, R.raw.turtle};
-        String name = "无语羊驼";
-        String description = "——呸呸呸！让口水飞";
-        String llm = "人生不是一场竞赛，有时候放慢脚步，适当休息，反而能够更好地迎接挑战和充实自己";
-
-        // 提前加载
-        Random random = new Random();
-        int number = random.nextInt(6);
-        int[] animalNumber = new int[]{number};
-        ((TextView) popupView.findViewById(R.id.card_view_name)).setText(names[number]);
-        ((TextView) popupView.findViewById(R.id.card_view_description)).setText("——" + descriptions[number]);
-        ((TextView) popupView.findViewById(R.id.card_view_llm)).setText(llm);
-
-        // 设置imagebutton
-        llmButton.setImageResource(animals[number]);
+        // 设置button
         llmButton.setElevation(8); // 设置阴影的高度
         llmButton.setTranslationZ(4); // 设置阴影的偏移量
         llmButton.setAlpha(0.8f);
-
         llmButton.setOnClickListener(view -> {
-            ImageView animal = popupView.findViewById(R.id.card_view_icon);
+            // 获取资源ID
+            int storedResourceId = (int) llmButton.getTag();
             Glide.with(getApplicationContext())
                     .asGif()
-                    .load(animals[animalNumber[0]])
+                    .load(storedResourceId)
                     .listener(animationListener)
                     .into(animal);
 
@@ -452,5 +426,67 @@ public class MainActivity extends AppCompatActivity {
                 decorateBackground(diary, selectedDate);
             }
         }
+    }
+
+    private void checkNewDay() {
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+
+        // 获取当前日期
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        String currentDate = dateFormat.format(new Date());
+
+        // 获取上次保存的日期
+        String lastDate = settings.getString(LAST_DATE, "");
+
+        // 如果是新的一天，则调用 Help 函数，并更新日期
+        if (!lastDate.equals(currentDate)) {
+            chatWithLLM();
+
+//             更新日期为当前日期
+            editor.putString(LAST_DATE, currentDate);
+            editor.apply();
+        } else {
+            setAnimalPersonality(settings.getInt(PERSONALITY_KEY, 0), settings.getString(LLM_KEY, ""));
+        }
+    }
+
+    public void chatWithLLM() {
+        String[] emotion_list = new String[7];
+        Calendar today = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        for (int i = 0; i < 7; i++) {
+            today.add(Calendar.DAY_OF_MONTH, -1);
+            String date = sdf.format(today.getTime());
+            Diary diary = diaryDao.queryDiaryByDate(date);
+            if (diary == null) {
+                emotion_list[i] = "无";
+            } else {
+                emotion_list[i] = diary.getMoodText();
+            }
+        }
+        // 创建并执行 AsyncTask
+        LLMUtil myAsyncTask = new LLMUtil(this);
+        myAsyncTask.execute(Arrays.toString(emotion_list));
+    }
+
+    private void setAnimalPersonality(int num, String str) {
+        ((TextView) popupView.findViewById(R.id.card_view_name)).setText(names[num]);
+        ((TextView) popupView.findViewById(R.id.card_view_description)).setText("——" + descriptions[num]);
+        ((ImageView) popupView.findViewById(R.id.card_view_icon)).setImageResource(icons[num]);
+        llmButton.setImageResource(icons[num]);
+        llmButton.setTag(icons[num]);
+        ((TextView) popupView.findViewById(R.id.card_view_llm)).setText(str);
+    }
+
+    @Override
+    public void onPersonalityComplete(int result, String llm) {
+        setAnimalPersonality(result, llm);
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putInt(PERSONALITY_KEY, result);
+        editor.putString(LLM_KEY, llm);
+        editor.apply();
     }
 }

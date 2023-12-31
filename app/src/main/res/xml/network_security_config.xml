@@ -2,6 +2,7 @@
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">60.204.154.139</domain>
+        <domain includeSubdomains="true">10.58.0.2</domain>
         <!-- Add more domains as needed -->
     </domain-config>
 </network-security-config>

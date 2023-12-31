@@ -5,7 +5,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_5"
+    android:background="@drawable/bg_main"
     android:fitsSystemWindows="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -72,7 +72,7 @@
         <com.prolificinteractive.materialcalendarview.MaterialCalendarView
             android:id="@+id/calendarView"
             android:layout_width="match_parent"
-            android:layout_height="390dp"
+            android:layout_height="360dp"
             app:mcv_dateTextAppearance="@style/TextAppearance.AppCompat.Medium"
             app:mcv_headerTextAppearance="@style/TextAppearance.AppCompat.Medium"
             app:mcv_selectionColor="#FFFFFF"
@@ -108,7 +108,7 @@
             android:layout_above="@+id/wheelView"
             android:layout_alignParentRight="true"
             android:layout_marginRight="20dp"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/background_circle"
             android:clipToOutline="true"
             android:foreground="?android:attr/selectableItemBackgroundBorderless"

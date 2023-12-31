@@ -202,6 +202,7 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -229,6 +230,13 @@ public class APPLockFragment extends Fragment {
 
     public APPLockFragment() {
         // Required empty public constructor
+    }
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        TransitionInflater inflater = TransitionInflater.from(requireContext());
+        setExitTransition(inflater.inflateTransition(R.transition.fade_out));
+        setEnterTransition(inflater.inflateTransition(R.transition.fade_in));
     }
 
     @Override

@@ -5,7 +5,7 @@
     android:id="@+id/activity_diary_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/write_2"
+    android:background="@drawable/bg_write"
     android:fitsSystemWindows="true">
 
     <RelativeLayout

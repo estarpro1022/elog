@@ -426,27 +426,28 @@ public class MainActivity extends AppCompatActivity implements LLMUtil.AsyncTask
         }
     }
     private void checkNewDay() {
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-
-        // 获取当前日期
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-        String currentDate = dateFormat.format(new Date());
-
-        // 获取上次保存的日期
-        String lastDate = settings.getString(LAST_DATE, "");
-
-        // 如果是新的一天，则调用 Help 函数，并更新日期
-        if (!lastDate.equals(currentDate)) {
-            // 调用 Help 函数
-            chatWithLLM();
-
-            // 更新日期为当前日期
-            editor.putString(LAST_DATE, currentDate);
-            editor.apply();
-        }else{
-            setAnimalPersonality(settings.getInt(PERSONALITY_KEY, 0), settings.getString(LLM_KEY,""));
-        }
+        chatWithLLM();
+//        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+//        SharedPreferences.Editor editor = settings.edit();
+//
+//        // 获取当前日期
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+//        String currentDate = dateFormat.format(new Date());
+//
+//        // 获取上次保存的日期
+//        String lastDate = settings.getString(LAST_DATE, "");
+//
+//        // 如果是新的一天，则调用 Help 函数，并更新日期
+//        if (!lastDate.equals(currentDate)) {
+//            // 调用 Help 函数
+//            chatWithLLM();
+//
+//            // 更新日期为当前日期
+//            editor.putString(LAST_DATE, currentDate);
+//            editor.apply();
+//        }else{
+//            setAnimalPersonality(settings.getInt(PERSONALITY_KEY, 0), settings.getString(LLM_KEY,""));
+//        }
     }
     public void chatWithLLM(){
         String[] emotion_list = new String[7];

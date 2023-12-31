@@ -2,8 +2,6 @@ package com.example.myapplication;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,17 +10,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 
 import com.bumptech.glide.Glide;
@@ -33,9 +27,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.myapplication.activity.DiaryActivity;
 import com.example.myapplication.activity.DiaryListActivity;
-import com.example.myapplication.activity.PasswordInputActivity;
 import com.example.myapplication.activity.UserActivity;
-import com.example.myapplication.activity.UserProfileActivity;
 import com.example.myapplication.data.Diary;
 import com.example.myapplication.data.DiaryDao;
 import com.example.myapplication.data.DiaryDatabase;
@@ -52,11 +44,9 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {

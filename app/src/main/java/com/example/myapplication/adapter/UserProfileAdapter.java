@@ -28,7 +28,7 @@ public class UserProfileAdapter extends ArrayAdapter<UserProfileItem> {
         UserProfileItem item = getItem(position);
 
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.fragment_user_profile, parent, false);
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_item_layout, parent, false);
         }
         convertView.getLayoutParams().height = 200; // 200是像素，你可以适应自己的需要进行调整
 

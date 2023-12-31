@@ -25,7 +25,8 @@ public class PasswordInputActivity extends AppCompatActivity {
         editTextPassword = findViewById(R.id.editTextPassword);
 
         // 设置数字键盘
-        editTextPassword.setInputType(InputType.TYPE_CLASS_NUMBER);
+        editTextPassword.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+
     }
 
     public void onEnterClicked(View view) {

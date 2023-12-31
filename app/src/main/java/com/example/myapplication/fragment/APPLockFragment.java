@@ -202,6 +202,8 @@ import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -262,6 +264,15 @@ public class APPLockFragment extends Fragment {
         editTextPassword = view.findViewById(R.id.editTextPassword);
         editTextConfirmPassword = view.findViewById(R.id.editTextConfirmPassword);
         buttonSave = view.findViewById(R.id.buttonSave);
+        // 设置密码输入的最大长度为4位
+        int maxLength = 4;
+        InputFilter[] filters = new InputFilter[1];
+        filters[0] = new InputFilter.LengthFilter(maxLength);
+        editTextPassword.setFilters(filters);
+        editTextConfirmPassword.setFilters(filters);
+        editTextPassword.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+        editTextConfirmPassword.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+
         @SuppressLint("UseSwitchCompatOrMaterialCode")
         Switch switchAppLock = view.findViewById(R.id.switchAppLock);
 

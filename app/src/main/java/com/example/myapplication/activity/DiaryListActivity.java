@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryClickListener {
     private String tag = "DiaryListActivity";
@@ -52,6 +53,11 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
         });
         diaryDao = DiaryDatabase.getInstance(this).getDiaryDao();
         initSearch();
+        recyclerView = findViewById(R.id.activity_diary_list_recycler_view);
+        adapter = new DiaryAdapter(diaryList);
+        adapter.setOnItemDiaryClickListener(this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
     }
 
     private void initSearch(){
@@ -73,9 +79,9 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
                 // 根据搜索框更新
                 String query = searchView.getQuery().toString();
                 if(!query.equals("")){
-                    adapter.setFilter(filterByText(diaryList, query));
+                    setAdapterFilter(filterByText(diaryList, query));
                 }else{
-                    adapter.setFilter(diaryList);
+                    setAdapterFilter(diaryList);
                 }
             }
 
@@ -94,7 +100,12 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
             // 当点击搜索按钮时触发该方法
             @Override
             public boolean onQueryTextSubmit(String query) {
-                adapter.setFilter(filterByText(diaryList, query));
+                // 根据搜索框更新
+                if(!query.equals("")){
+                    setAdapterFilter(filterByText(diaryList, query));
+                }else{
+                    setAdapterFilter(diaryList);
+                }
                 searchView.clearFocus();
                 return false;//这里return false不需要修改，false的作用是当你输入要搜索的文字点击搜索按钮后，手机键盘会自动消失
             }
@@ -104,14 +115,13 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
             public boolean onQueryTextChange(String newText) {
                 //此方法的作用是对搜索框里的文字实时监听。
                 if(!TextUtils.isEmpty(newText)){
-                    adapter.setFilter(filterByText(diaryList, newText));
+                    setAdapterFilter(filterByText(diaryList, newText));
                 }else{
-                    adapter.setFilter(diaryList);
+                    setAdapterFilter(diaryList);
                 }
                 return true;
             }
         });
-
     }
 
 
@@ -122,22 +132,19 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
     @Override
     protected void onStart() {
         super.onStart();
+        // 按心情更新diaryList
+        Spinner spinner = findViewById(R.id.spinner);
+        String selected_text = (String) ((Map<String, Object>)spinner.getSelectedItem()).get("text");
+        diaryList = Objects.equals(selected_text, "全部") ? diaryDao.queryAllDiaries() : diaryDao.queryDiaryByMood(selected_text);
+        diaryList.sort(Comparator.comparing(Diary::getDate));
+        diaryList.sort((a, b) -> b.getDate().compareTo(a.getDate()));
 
-        List<Diary> diaries = diaryDao.queryAllDiaries();
-        diaries.sort(Comparator.comparing(Diary::getDate));
-        diaries.sort((a, b) -> b.getDate().compareTo(a.getDate()));
-        for (Diary diary: diaries) {
-            Log.i(tag, "diary");
+        // 按搜索框更新显示内容
+        if(!searchView.getQuery().toString().equals("")){
+            setAdapterFilter(filterByText(diaryList, searchView.getQuery().toString()));
+        }else{
+            setAdapterFilter(diaryList);
         }
-        if (diaries.size() == 0) {
-            hint.setVisibility(View.VISIBLE);
-        }
-        recyclerView = findViewById(R.id.activity_diary_list_recycler_view);
-        adapter = new DiaryAdapter(diaries);
-        adapter.setOnItemDiaryClickListener(this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        diaryList = diaries;
     }
 
     @Override
@@ -152,16 +159,6 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
 
         for (Diary diary:diaryList){
             if (diary.getContent().contains(text))
-                filterDiary.add(diary);
-        }
-        return filterDiary;
-    }
-
-    private List<Diary> filterByMood(List<Diary> diaryList, String text){
-        List<Diary> filterDiary = new ArrayList<>();
-
-        for (Diary diary:diaryList){
-            if (diary.getMoodText().contains(text))
                 filterDiary.add(diary);
         }
         return filterDiary;
@@ -182,5 +179,15 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
             emotionList.add(map);
         }
         return emotionList;
+    }
+
+    private void setAdapterFilter(List<Diary> diaries){
+        if (diaries.size() == 0) {
+            hint.setVisibility(View.VISIBLE);
+        }else{
+            hint.setVisibility(View.INVISIBLE);
+
+        }
+        adapter.setFilter(diaries);
     }
 }

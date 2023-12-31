@@ -10,5 +10,7 @@ public class ResultCode {
     public static final int PHONE_ALREADY_EXISTS = 405;
     public static final int INTERNET_ERROR = 406;
     public static final int HTTP_STATUS_CODE_WRONG = 407;
-
+    public static final int TOKEN_EXPIRED = 408;
+    public static final int LOGOUT_SUCCESS = 102;
+    public static final int BAD_REQUEST = 409;
 }

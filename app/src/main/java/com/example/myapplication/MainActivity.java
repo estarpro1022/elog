@@ -73,10 +73,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = new Intent(this, UserProfileActivity.class);
-        Toast.makeText(this, "用户信息", Toast.LENGTH_SHORT).show();
+//        Intent intent = new Intent(this, UserProfileActivity.class);
+//        Toast.makeText(this, "用户信息", Toast.LENGTH_SHORT).show();
 
-        startActivity(intent);
+//        startActivity(intent);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

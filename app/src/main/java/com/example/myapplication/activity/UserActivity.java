@@ -9,8 +9,10 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.example.myapplication.R;
+import com.example.myapplication.data.User;
 import com.example.myapplication.fragment.LoginFragment;
 import com.example.myapplication.fragment.UserFragment;
+import com.example.myapplication.fragment.UserProfileFragment;
 
 public class UserActivity extends AppCompatActivity {
     private ImageView back;
@@ -24,9 +26,9 @@ public class UserActivity extends AppCompatActivity {
         boolean status = sharedPreferences.getBoolean("login", false);
         if (status) {
             // 用户已登录
-            UserFragment userFragment = new UserFragment();
+            UserProfileFragment userProfileFragment = new UserProfileFragment();
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.activity_user_fragment_container_view, userFragment)
+                    .add(R.id.activity_user_fragment_container_view, userProfileFragment)
                     .commit();
         } else {
             LoginFragment loginFragment = new LoginFragment();
@@ -34,7 +36,6 @@ public class UserActivity extends AppCompatActivity {
                     .add(R.id.activity_user_fragment_container_view, loginFragment)
                     .commit();
         }
-
         initView();
     }
 

@@ -1,0 +1,70 @@
+<!-- fragment_profile_settings.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@drawable/background_user"
+    >
+    <ImageView
+        android:id="@+id/imageViewBackHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/back"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"/>
+    <!-- 标题 -->
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="个人设置"
+        android:textSize="24sp"
+        android:textColor="#333333"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="20dp"/>
+
+    <!-- 修改用户名 -->
+    <EditText
+        android:id="@+id/editTextUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="新用户名"
+        android:inputType="text"
+        android:layout_below="@id/textViewTitle"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- 修改密码 -->
+    <EditText
+        android:id="@+id/editTextNewPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="新密码"
+        android:inputType="textPassword"
+        android:layout_below="@id/editTextUsername"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- 确认密码 -->
+    <EditText
+        android:id="@+id/editTextConfirmPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="确认密码"
+        android:inputType="textPassword"
+        android:layout_below="@id/editTextNewPassword"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp"/>
+
+    <!-- 保存按钮 -->
+    <Button
+        android:id="@+id/buttonSaveProfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="保存"
+        android:textColor="#ffffff"
+        android:background="#3498db"
+        android:layout_below="@id/editTextConfirmPassword"
+        android:layout_marginTop="24dp"/>
+</RelativeLayout>

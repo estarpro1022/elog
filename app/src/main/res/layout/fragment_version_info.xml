@@ -1,0 +1,43 @@
+<!-- fragment_version_info.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@drawable/background_user"
+    >
+    <ImageView
+        android:id="@+id/imageViewBackHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/back"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"/>
+    <!-- 标题 -->
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="版本信息"
+        android:textSize="24sp"
+        android:textColor="#333333"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="20dp"/>
+
+    <!-- 版本内容 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/textViewTitle"
+        android:layout_marginBottom="24dp">
+
+        <TextView
+            android:id="@+id/textViewContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="应用版本：1.0.0\n\n更新日期：2023-01-01\n\n更新内容：\n- 新增功能A\n- 修复bugB\n- 改进性能\n\n欢迎使用我们的应用，感谢您的支持！"
+            android:textSize="18sp"
+            android:textColor="#666666"
+            android:lineSpacingMultiplier="1.2"/>
+    </ScrollView>
+</RelativeLayout>

@@ -18,9 +18,7 @@
         <activity android:name=".activity.PasswordInputActivity"
             android:exported="false">
         </activity>
-        <activity
-            android:name=".activity.UserProfileActivity"
-            android:exported="false" />
+
         <activity
             android:name=".activity.DiaryListActivity"
             android:exported="false" />

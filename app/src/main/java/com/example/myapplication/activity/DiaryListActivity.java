@@ -10,7 +10,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.SimpleAdapter;
@@ -171,7 +170,7 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
     private List<Map<String, Object>> getDataList(){
         String[] emotionTextList = {"全部", "好", "非常棒", "害羞", "呵呵", "困觉", "晕",
                 "生气", "惊吓", "委屈", "颓废"};
-        int[] emotionImgList = {R.mipmap.ic_launcher, R.drawable.good, R.drawable.happy, R.drawable.shy, R.drawable.hoho,
+        int[] emotionImgList = {R.drawable.multi_mood, R.drawable.good, R.drawable.happy, R.drawable.shy, R.drawable.hoho,
                 R.drawable.sleepy, R.drawable.dizzy, R.drawable.angry, R.drawable.shock,
                 R.drawable.injured, R.drawable.decadence};
         List<Map<String,Object>> emotionList = new ArrayList<>();

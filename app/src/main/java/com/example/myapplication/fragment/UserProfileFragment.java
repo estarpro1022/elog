@@ -68,6 +68,7 @@ public class UserProfileFragment extends Fragment {
             // 处理列表项点击事件
             UserProfileItem selectedItem = items.get(position);
             handleListItemClick(selectedItem);
+
         });
         ImageView back = requireActivity().findViewById(R.id.activity_user_back);
         if (back != null) {

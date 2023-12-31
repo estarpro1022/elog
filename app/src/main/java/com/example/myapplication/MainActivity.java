@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +29,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.myapplication.activity.DiaryActivity;
 import com.example.myapplication.activity.DiaryListActivity;
+import com.example.myapplication.activity.PasswordInputActivity;
 import com.example.myapplication.activity.UserActivity;
 import com.example.myapplication.data.Diary;
 import com.example.myapplication.data.DiaryDao;
@@ -58,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private CardView cardView;
     private ImageView llmButton;
     private View popupView;
+
     private RequestListener<GifDrawable> animationListener;
     private ActivityMainBinding binding;
     private CalendarDay selectedDate;
@@ -66,30 +70,18 @@ public class MainActivity extends AppCompatActivity {
     final LinkedHashMap<String, Integer> emotionList = new LinkedHashMap<>();
     private final List<Drawable> imgList = new ArrayList<>();
     private DiaryDao diaryDao;
-//    private boolean isPasswordVerified() {
-//        // 在这里添加检查密码是否已验证的逻辑
-//        // 可以使用 SharedPreferences 或其他方式保存密码验证状态
-//        // 这里只是一个示例，实际中需要根据你的需求进行更改
-//        SharedPreferences preferences = getSharedPreferences("MyPreferences", MODE_PRIVATE);
-//        return preferences.getBoolean("isPasswordVerified", false);
-//    }
+    private SharedPreferences preferences;
+    private boolean fromDesktop = true;
+    private boolean isPasswordVerified() {
+        // 在这里添加检查密码是否已验证的逻辑
+        // 可以使用 SharedPreferences 或其他方式保存密码验证状态
+        // 这里只是一个示例，实际中需要根据你的需求进行更改
+        preferences = getSharedPreferences("LOCK", MODE_PRIVATE);
+        return preferences.getBoolean("isPasswordVerified", false);
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        Intent intent = new Intent(this, UserProfileActivity.class);
-//        Toast.makeText(this, "用户信息", Toast.LENGTH_SHORT).show();
-//
-//        startActivity(intent);
-//        // 检查是否已通过密码验证
-//        if (!isPasswordVerified()) {
-//            // 未通过密码验证，启动密码输入界面
-//            Intent intent = new Intent(this, PasswordInputActivity.class);
-//            startActivity(intent);
-//            finish();  // 关闭 MainActivity
-//        }
-//        SharedPreferences preferences = getSharedPreferences("MyPreferences", MODE_PRIVATE);
-//        preferences.edit().putBoolean("isPasswordVerified", false).apply();
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -122,11 +114,32 @@ public class MainActivity extends AppCompatActivity {
         Log.i(tag, "get temperature: " + WeatherService.getTemperature());
     }
 
+    public void setFromDesktop(boolean fromDesktop) {
+        this.fromDesktop = fromDesktop;
+    }
+
     @Override
     protected void onStart() {
+        if(fromDesktop){
+            preferences = getSharedPreferences("LOCK", MODE_PRIVATE);
+            if(preferences.getBoolean("isAppLockEnabled",false)){
+                Toast.makeText(this, "设置了密码", Toast.LENGTH_SHORT).show();
+                // 检查是否已通过密码验证
+                if (!isPasswordVerified()) {
+                    // 未通过密码验证，启动密码输入界面
+                    Intent intent = new Intent(this, PasswordInputActivity.class);
+                    startActivity(intent);
+                    finish();  // 关闭 MainActivity
+                }
+                preferences = getSharedPreferences("LOCK", MODE_PRIVATE);
+                preferences.edit().putBoolean("isPasswordVerified", false).apply();
+            }
+        }
+        fromDesktop = true;
         Log.i(tag, "onStart method.");
         super.onStart();
         decorateCalendarView();
+
     }
 
     private void decorateCalendarView() {
@@ -339,13 +352,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void initUser() {
         user.setOnClickListener(view -> {
+            fromDesktop = false;
             Intent intent = new Intent(MainActivity.this, UserActivity.class);
             startActivity(intent);
         });
+
     }
 
     private void initDiaries() {
         diaries.setOnClickListener(view -> {
+            fromDesktop = false;
             Intent intent = new Intent(this, DiaryListActivity.class);
             startActivity(intent);
         });

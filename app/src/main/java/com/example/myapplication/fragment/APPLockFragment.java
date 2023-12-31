@@ -318,13 +318,40 @@ public class APPLockFragment extends Fragment {
 
     private void initView(View rootView) {
         backHelp = rootView.findViewById(R.id.imageViewBackHelp);
-        backHelp.setOnClickListener(view -> navigateToUserProfile());
+        backHelp.setOnClickListener(view -> navigateToUserProfile(rootView));
 
     }
 
-    private void navigateToUserProfile() {
-        // 返回到 UserProfileFragment
-        getParentFragmentManager().popBackStack();
+    private void navigateToUserProfile(View view) {
+        sharedPreferences = requireContext().getSharedPreferences("LOCK", 0);
+        @SuppressLint("UseSwitchCompatOrMaterialCode")
+        Switch switchAppLock = view.findViewById(R.id.switchAppLock);
+        if(switchAppLock.isChecked()&&!sharedPreferences.getBoolean("isAppLockEnabled",false)){
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setTitle("提示")
+                    .setMessage("您还没有设置密码，应用锁将不会开启，确定要离开吗？")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 确定按钮的点击事件
+                            dialog.dismiss(); // 关闭对话框
+                            getParentFragmentManager().popBackStack(); // 返回到 UserProfileFragment
+                        }
+                    })
+                    .setNegativeButton("设置密码", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 设置密码按钮的点击事件
+                            // 这里不做任何操作，留在本页面
+                            dialog.dismiss(); // 关闭对话框
+                        }
+                    })
+                    .show();
+        }else{
+            // 返回到 UserProfileFragment
+            getParentFragmentManager().popBackStack();
+        }
+
     }
 
     private void savePassword() {

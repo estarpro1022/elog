@@ -64,9 +64,9 @@ public class UserProfileFragment extends Fragment {
 
         ImageView usrIcon = view.findViewById(R.id.userIcon);
         usrIcon.setImageResource(R.drawable.ic_launcher);
-
+        SharedPreferences preferences = getContext().getSharedPreferences("user",Context.MODE_PRIVATE);
         TextView usrname = view.findViewById(R.id.UserName);
-        usrname.setText("昵称");
+        usrname.setText(preferences.getString("username",""));
 
         Button logout = view.findViewById(R.id.logout);
         logout.setText("退出登录");
@@ -124,6 +124,7 @@ public class UserProfileFragment extends Fragment {
             // 处理列表项点击事件
             UserProfileItem selectedItem = items.get(position);
             handleListItemClick(selectedItem);
+
         });
         ImageView back = requireActivity().findViewById(R.id.activity_user_back);
         if (back != null) {

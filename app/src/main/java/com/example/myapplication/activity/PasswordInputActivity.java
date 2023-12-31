@@ -16,7 +16,7 @@ import com.example.myapplication.R;
 public class PasswordInputActivity extends AppCompatActivity {
 
     private EditText editTextPassword;
-
+    SharedPreferences preferences;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +25,8 @@ public class PasswordInputActivity extends AppCompatActivity {
         editTextPassword = findViewById(R.id.editTextPassword);
 
         // 设置数字键盘
-        editTextPassword.setInputType(InputType.TYPE_CLASS_NUMBER);
+        editTextPassword.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+
     }
 
     public void onEnterClicked(View view) {
@@ -34,7 +35,7 @@ public class PasswordInputActivity extends AppCompatActivity {
         // 验证密码
         if (isPasswordCorrect(enteredPassword)) {
             // 密码正确，跳转到主界面
-            SharedPreferences preferences = getSharedPreferences("MyPreferences", MODE_PRIVATE);
+            preferences = getSharedPreferences("LOCK", MODE_PRIVATE);
             preferences.edit().putBoolean("isPasswordVerified", true).apply();
 
             Toast.makeText(this, "密码正确", Toast.LENGTH_SHORT).show();
@@ -50,8 +51,12 @@ public class PasswordInputActivity extends AppCompatActivity {
     }
 
     private boolean isPasswordCorrect(String enteredPassword) {
+        preferences = getSharedPreferences("LOCK", MODE_PRIVATE);
+
         // 验证密码
-        return enteredPassword.equals("1110");
+        String savedPassword = preferences.getString("appLockPassword", "");
+
+        return enteredPassword.equals(savedPassword);
     }
 
 }

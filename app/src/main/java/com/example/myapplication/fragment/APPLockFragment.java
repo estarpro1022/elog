@@ -1,19 +1,234 @@
-package com.example.myapplication.fragment;
-
+package com.example.myapplication.fragment;////package com.example.myapplication.fragment;
+////
+////import android.annotation.SuppressLint;
+////import android.content.SharedPreferences;
+////import android.os.Bundle;
+////import android.view.LayoutInflater;
+////import android.view.View;
+////import android.view.ViewGroup;
+////import android.widget.Button;
+////import android.widget.CompoundButton;
+////import android.widget.EditText;
+////import android.widget.ImageView;
+////import android.widget.ListView;
+////import android.widget.Switch;
+////import android.widget.TextView;
+////
+////import androidx.annotation.NonNull;
+////import androidx.annotation.Nullable;
+////import androidx.fragment.app.Fragment;
+////
+////import com.example.myapplication.R;
+////import com.example.myapplication.adapter.UserProfileAdapter;
+////import com.example.myapplication.data.UserProfileItem;
+////
+////import java.util.ArrayList;
+////import java.util.List;
+////
+////// HelpFragment.java
+////public class APPLockFragment extends Fragment {
+////    private ImageView backHelp;
+////    private EditText editTextPassword;
+////    private EditText editTextConfirmPassword;
+////    private SharedPreferences sharedPreferences;
+////    private Button buttonSave;
+////    @SuppressLint("UseSwitchCompatOrMaterialCode")
+////    Switch switchAppLock;
+////    public APPLockFragment() {
+////        // Required empty public constructor
+////    }
+////
+////    @Override
+////    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+////                             Bundle savedInstanceState) {
+////        // Inflate the layout for this fragment
+////        View rootView = inflater.inflate(R.layout.fragment_lock_set, container, false);
+////        // 在此处找到并设置容器中的返回按钮为不可见
+////        ImageView back = requireActivity().findViewById(R.id.activity_user_back);
+////        if (back != null) {
+////            back.setVisibility(View.GONE);
+////        }
+////
+////        initView(rootView);
+////        return rootView;
+////    }
+////    @Override
+////    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+////        super.onViewCreated(view, savedInstanceState);
+////        editTextPassword = view.findViewById(R.id.editTextPassword);
+////        editTextConfirmPassword  = view.findViewById(R.id.editTextConfirmPassword);
+////        buttonSave = view.findViewById(R.id.buttonSave);
+////        switchAppLock = view.findViewById(R.id.switchAppLock);
+////        switchAppLock.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+////            @Override
+////            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+////                // 处理开关状态变化的逻辑
+////                if (isChecked) {
+////                    // 开关打开时的处理
+////                    editTextPassword.setVisibility(View.VISIBLE);
+////                    editTextConfirmPassword.setVisibility(View.VISIBLE);
+////                    buttonSave.setVisibility(View.VISIBLE);
+////                } else {
+////                    // 开关关闭时的处理
+////                    editTextPassword.setVisibility(View.GONE);
+////                    editTextConfirmPassword.setVisibility(View.GONE);
+////                    buttonSave.setVisibility(View.GONE);
+////                }
+////            }
+////        });
+////    }
+////    private void initView(View rootView) {
+////        backHelp = rootView.findViewById(R.id.imageViewBackHelp);
+////        backHelp.setOnClickListener(view -> navigateToUserProfile());
+////    }
+////
+////    private void navigateToUserProfile() {
+////        // 返回到 UserProfileFragment
+////        getParentFragmentManager().popBackStack();
+////    }
+////}
+//import android.content.SharedPreferences;
+//import android.os.Bundle;
+//import android.view.LayoutInflater;
+//import android.view.View;
+//import android.view.ViewGroup;
+//import android.widget.Button;
+//import android.widget.CompoundButton;
+//import android.widget.EditText;
+//import android.widget.ImageView;
+//import android.widget.Switch;
+//import android.widget.Toast;
+//
+//import androidx.annotation.NonNull;
+//import androidx.annotation.Nullable;
+//import androidx.fragment.app.Fragment;
+//
+//import com.example.myapplication.R;
+//
+//public class APPLockFragment extends Fragment {
+//    private ImageView backHelp;
+//    private EditText editTextPassword;
+//    private EditText editTextConfirmPassword;
+//    private SharedPreferences sharedPreferences;
+//    private Button buttonSave;
+//    private Switch switchAppLock;
+//
+//    public APPLockFragment() {
+//        // Required empty public constructor
+//    }
+//
+//    @Override
+//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+//                             Bundle savedInstanceState) {
+//        // Inflate the layout for this fragment
+//        View rootView = inflater.inflate(R.layout.fragment_lock_set, container, false);
+//        // 在此处找到并设置容器中的返回按钮为不可见
+//        ImageView back = requireActivity().findViewById(R.id.activity_user_back);
+//        if (back != null) {
+//            back.setVisibility(View.GONE);
+//        }
+//
+//        initView(rootView);
+//        return rootView;
+//    }
+//
+//    @Override
+//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+//        super.onViewCreated(view, savedInstanceState);
+//        editTextPassword = view.findViewById(R.id.editTextPassword);
+//        editTextConfirmPassword = view.findViewById(R.id.editTextConfirmPassword);
+//        buttonSave = view.findViewById(R.id.buttonSave);
+//        switchAppLock = view.findViewById(R.id.switchAppLock);
+//
+//        sharedPreferences = requireContext().getSharedPreferences("AppLockPrefs", 0);
+//
+//        switchAppLock.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                // 处理开关状态变化的逻辑
+//                if (isChecked) {
+//                    // 开关打开时的处理
+//                    editTextPassword.setVisibility(View.VISIBLE);
+//                    editTextConfirmPassword.setVisibility(View.VISIBLE);
+//                    buttonSave.setVisibility(View.VISIBLE);
+//                } else {
+//                    // 开关关闭时的处理
+//                    editTextPassword.setVisibility(View.GONE);
+//                    editTextConfirmPassword.setVisibility(View.GONE);
+//                    buttonSave.setVisibility(View.GONE);
+//                }
+//            }
+//        });
+//
+//        buttonSave.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                savePassword();
+//            }
+//        });
+//    }
+//
+//    private void initView(View rootView) {
+//        backHelp = rootView.findViewById(R.id.imageViewBackHelp);
+//        backHelp.setOnClickListener(view -> navigateToUserProfile());
+//    }
+//
+//    private void navigateToUserProfile() {
+//        // 返回到 UserProfileFragment
+//        getParentFragmentManager().popBackStack();
+//    }
+//
+//    private void savePassword() {
+//        String password = editTextPassword.getText().toString();
+//        String confirmPassword = editTextConfirmPassword.getText().toString();
+//
+//        if (!password.equals(confirmPassword)) {
+//            // 两次密码不一致，给出错误提示并清空密码
+//            Toast.makeText(requireContext(), "两次密码不一致，请重新输入", Toast.LENGTH_SHORT).show();
+//            editTextPassword.setText("");
+//            editTextConfirmPassword.setText("");
+//        } else {
+//            // 密码一致，保存密码和设置状态到 SharedPreferences
+//            SharedPreferences.Editor editor = sharedPreferences.edit();
+//            editor.putString("appLockPassword", password);
+//            editor.putBoolean("isAppLockEnabled", switchAppLock.isChecked());
+//            editor.apply();
+//
+//            Toast.makeText(requireContext(), "密码已保存", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//}
+import android.annotation.SuppressLint;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.myapplication.R;
 
-// HelpFragment.java
 public class APPLockFragment extends Fragment {
     private ImageView backHelp;
+    private EditText editTextPassword;
+    private EditText editTextConfirmPassword;
+    private SharedPreferences sharedPreferences;
+    private Button buttonSave;
+
 
     public APPLockFragment() {
         // Required empty public constructor
@@ -29,9 +244,8 @@ public class APPLockFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//        View container_help = inflater.inflate(R.layout.activity_user,container,false);
-//        ImageView back = container_help.findViewById(R.id.activity_user_back);
-//        back.setVisibility(View.GONE);
+        sharedPreferences = requireContext().getSharedPreferences("LOCK", 0);
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_lock_set, container, false);
         // 在此处找到并设置容器中的返回按钮为不可见
@@ -44,13 +258,144 @@ public class APPLockFragment extends Fragment {
         return rootView;
     }
 
-    private void initView(View rootView) {
-        backHelp = rootView.findViewById(R.id.imageViewBackHelp);
-        backHelp.setOnClickListener(view -> navigateToUserProfile());
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        editTextPassword = view.findViewById(R.id.editTextPassword);
+        editTextConfirmPassword = view.findViewById(R.id.editTextConfirmPassword);
+        buttonSave = view.findViewById(R.id.buttonSave);
+        // 设置密码输入的最大长度为4位
+        int maxLength = 4;
+        InputFilter[] filters = new InputFilter[1];
+        filters[0] = new InputFilter.LengthFilter(maxLength);
+        editTextPassword.setFilters(filters);
+        editTextConfirmPassword.setFilters(filters);
+        editTextPassword.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+        editTextConfirmPassword.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+
+        @SuppressLint("UseSwitchCompatOrMaterialCode")
+        Switch switchAppLock = view.findViewById(R.id.switchAppLock);
+
+        if(sharedPreferences.getBoolean("isAppLockEnabled",false)){
+            switchAppLock.setChecked(true);
+            editTextPassword.setVisibility(View.VISIBLE);
+            editTextConfirmPassword.setVisibility(View.VISIBLE);
+            buttonSave.setVisibility(View.VISIBLE);
+        }else{
+            switchAppLock.setChecked(false);
+        }
+
+        switchAppLock.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                // 处理开关状态变化的逻辑
+                if (isChecked) {
+                    // 开关打开时的处理
+                    editTextPassword.setVisibility(View.VISIBLE);
+                    editTextConfirmPassword.setVisibility(View.VISIBLE);
+                    buttonSave.setVisibility(View.VISIBLE);
+                } else {
+                    // 开关关闭时的处理
+                    editTextPassword.setVisibility(View.GONE);
+                    editTextConfirmPassword.setVisibility(View.GONE);
+                    buttonSave.setVisibility(View.GONE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                    editor.putBoolean("isAppLockEnabled", false);
+                    editor.apply();
+
+                }
+            }
+        });
+
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                savePassword();
+            }
+        });
     }
 
-    private void navigateToUserProfile() {
-        // 返回到 UserProfileFragment
-        getParentFragmentManager().popBackStack();
+    private void initView(View rootView) {
+        backHelp = rootView.findViewById(R.id.imageViewBackHelp);
+        backHelp.setOnClickListener(view -> navigateToUserProfile(rootView));
+
+    }
+
+    private void navigateToUserProfile(View view) {
+        sharedPreferences = requireContext().getSharedPreferences("LOCK", 0);
+        @SuppressLint("UseSwitchCompatOrMaterialCode")
+        Switch switchAppLock = view.findViewById(R.id.switchAppLock);
+        if(switchAppLock.isChecked()&&!sharedPreferences.getBoolean("isAppLockEnabled",false)){
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+            builder.setTitle("提示")
+                    .setMessage("您还没有设置密码，应用锁将不会开启，确定要离开吗？")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 确定按钮的点击事件
+                            dialog.dismiss(); // 关闭对话框
+                            getParentFragmentManager().popBackStack(); // 返回到 UserProfileFragment
+                        }
+                    })
+                    .setNegativeButton("设置密码", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // 设置密码按钮的点击事件
+                            // 这里不做任何操作，留在本页面
+                            dialog.dismiss(); // 关闭对话框
+                        }
+                    })
+                    .show();
+        }else{
+            // 返回到 UserProfileFragment
+            getParentFragmentManager().popBackStack();
+        }
+
+    }
+
+    private void savePassword() {
+        String password = editTextPassword.getText().toString();
+        String confirmPassword = editTextConfirmPassword.getText().toString();
+
+        if (!password.equals(confirmPassword)) {
+            // 两次密码不一致，显示错误提示框
+            showAlertDialog("错误", "两次密码不一致，请重新输入");
+            editTextPassword.setText("");
+            editTextConfirmPassword.setText("");
+        } else {
+            // 密码一致，保存密码和设置状态到 SharedPreferences
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            editor.putString("appLockPassword", password);
+            editor.putBoolean("isAppLockEnabled", true);
+            editor.apply();
+
+            // 显示成功提示框
+            showAlertDialog("成功", "密码已保存", (dialog, which) -> {
+                // 保存密码成功后，点击确定按钮后退出当前 Fragment
+                getParentFragmentManager().popBackStack();
+            });
+        }
+    }
+    private void showAlertDialog(String title, String message, DialogInterface.OnClickListener listener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("确定", listener)
+                .show();
+    }
+    private void showAlertDialog(String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 确定按钮点击事件
+                        dialog.dismiss();
+                    }
+                })
+                .show();
     }
 }

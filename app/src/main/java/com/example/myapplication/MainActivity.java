@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     private DiaryDao diaryDao;
 
     private SharedPreferences preferences;
-    private boolean fromDesktop = true;
+    private boolean fromDesktop =true;
     private boolean isPasswordVerified() {
         // 在这里添加检查密码是否已验证的逻辑
         // 可以使用 SharedPreferences 或其他方式保存密码验证状态
@@ -118,25 +118,29 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        if(fromDesktop){
-            preferences = getSharedPreferences("LOCK", MODE_PRIVATE);
-            if(preferences.getBoolean("isAppLockEnabled",false)){
-                Toast.makeText(this, "设置了密码", Toast.LENGTH_SHORT).show();
-                // 检查是否已通过密码验证
-                if (!isPasswordVerified()) {
-                    // 未通过密码验证，启动密码输入界面
-                    Intent intent = new Intent(this, PasswordInputActivity.class);
-                    startActivity(intent);
-                    finish();  // 关闭 MainActivity
-                }
+        preferences = getSharedPreferences("user",MODE_PRIVATE);
+        if(preferences.getBoolean("login",false)){
+            if(fromDesktop){
                 preferences = getSharedPreferences("LOCK", MODE_PRIVATE);
-                preferences.edit().putBoolean("isPasswordVerified", false).apply();
+                if(preferences.getBoolean("isAppLockEnabled",false)){
+                    Toast.makeText(this, "设置了密码", Toast.LENGTH_SHORT).show();
+                    // 检查是否已通过密码验证
+                    if (!isPasswordVerified()) {
+                        // 未通过密码验证，启动密码输入界面
+                        Intent intent = new Intent(this, PasswordInputActivity.class);
+                        startActivity(intent);
+                        finish();  // 关闭 MainActivity
+                    }
+                    preferences = getSharedPreferences("LOCK", MODE_PRIVATE);
+                    preferences.edit().putBoolean("isPasswordVerified", false).apply();
+                }
             }
         }
-        fromDesktop = true;
+
         Log.i(tag, "onStart method.");
         super.onStart();
         decorateCalendarView();
+        fromDesktop = true;
 
     }
 
@@ -149,10 +153,12 @@ public class MainActivity extends AppCompatActivity {
         cardView = findViewById(R.id.card_view);
 
         user.setOnClickListener(view -> {
+            fromDesktop = false;
             startActivity(new Intent(MainActivity.this, UserActivity.class));
         });
 
         diaries.setOnClickListener(view -> {
+            fromDesktop = false;
             startActivity(new Intent(this, DiaryListActivity.class));
         });
 

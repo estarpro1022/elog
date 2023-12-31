@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(tag, "onCreate method.");
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -98,9 +99,39 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        Log.i(tag, "onStart method.");
         super.onStart();
+        Log.i(tag, "onStart method.");
         decorateCalendarView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(tag, "onResume.");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i(tag, "onPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i(tag, "onStop.");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.i(tag, "onRestart");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i(tag, "onDestroy");
     }
 
     private void initView() {

@@ -3,8 +3,10 @@ package com.example.myapplication.activity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -27,12 +29,20 @@ import com.example.myapplication.data.DiaryDao;
 import com.example.myapplication.data.DiaryDatabase;
 import com.example.myapplication.fragment.DeleteDialogFragment;
 import com.example.myapplication.fragment.InfoDialogFragment;
+import com.example.myapplication.interfaces.ApiDiaryService;
 import com.example.myapplication.interfaces.OnDeleteClickListener;
+import com.example.myapplication.service.RetrofitClient;
+import com.example.myapplication.utils.Result;
+import com.example.myapplication.utils.ResultCode;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent;
 
 import java.util.LinkedHashMap;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DiaryActivity extends AppCompatActivity implements OnDeleteClickListener {
 
@@ -236,24 +246,84 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
         intent2.putExtra("deletedDate", selectedDate);
         setResult(RESULT_OK, intent2);
         diaryDao.deleteDiaryByDate(selectedDate);
-//        Toast.makeText(DiaryActivity.this, "日记已删除", Toast.LENGTH_SHORT).show();
+
+        SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
+        ApiDiaryService apiDiaryService = RetrofitClient.getInstance().getApiDiaryService();
+        Call<Result<Diary>> resultCall = apiDiaryService.deleteDiary(sharedPreferences.getString("token", ""),
+                sharedPreferences.getString("username", ""),
+                selectedDate);
+        resultCall.enqueue(new Callback<Result<Diary>>() {
+            @Override
+            public void onResponse(Call<Result<Diary>> call, Response<Result<Diary>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        Log.i(tag, "receive delete response");
+                        int code = response.body().getCode();
+                        String msg = response.body().getMsg();
+                        Log.i(tag, msg);
+                        if (code == ResultCode.DELETE_DIARY_SUCCESS) {
+                            Diary diary = response.body().getData();
+                            Log.i(tag, "deleted diary: " + diary);
+                            return;
+                        }
+                    }
+                }
+                Log.i(tag, "deleted failed.");
+            }
+
+            @Override
+            public void onFailure(Call<Result<Diary>> call, Throwable t) {
+                Log.i(tag, "network error while deleting the diary.");
+                t.printStackTrace();
+            }
+        });
         finish();
     }
 
     private void saveDiary() {
         Diary result = diaryDao.queryDiaryByDate(selectedDate);
         Intent intent1 = new Intent();
+        Diary diary;
         if (result != null) {
-            Diary diary = new Diary(selectedDate, content.getText().toString(), emotionDrawable, emotionText.getText().toString(), result.getTemperature(), result.getWeather());
+            diary = new Diary(selectedDate, content.getText().toString(), emotionDrawable, emotionText.getText().toString(), result.getTemperature(), result.getWeather());
             intent1.putExtra("diary", diary);
             diaryDao.updateDiary(diary);
 //            Toast.makeText(DiaryActivity.this, "日记修改成功", Toast.LENGTH_SHORT).show();
         } else {
-            Diary diary = new Diary(selectedDate, content.getText().toString(), emotionDrawable, emotionText.getText().toString(), getIntent().getStringExtra("temperature"), getIntent().getStringExtra("weather"));
+            diary = new Diary(selectedDate, content.getText().toString(), emotionDrawable, emotionText.getText().toString(), getIntent().getStringExtra("temperature"), getIntent().getStringExtra("weather"));
             intent1.putExtra("diary", diary);
             diaryDao.insertDiary(diary);
 //            Toast.makeText(DiaryActivity.this, "日记保存成功", Toast.LENGTH_SHORT).show();
         }
+        Log.i(tag, "local diary stored successfully.");
+        ApiDiaryService apiDiaryService = RetrofitClient.getInstance().getApiDiaryService();
+        SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
+        Call<Result<Diary>> resultCall = apiDiaryService.postDiary(sharedPreferences.getString("token", ""),
+                sharedPreferences.getString("username", ""), diary);
+        resultCall.enqueue(new Callback<Result<Diary>>() {
+            @Override
+            public void onResponse(Call<Result<Diary>> call, Response<Result<Diary>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        Log.i(tag, "server already saves diary");
+                        int code = response.body().getCode();
+                        String msg = response.body().getMsg();
+                        if (code == ResultCode.POST_DIARY_SUCCESS) {
+                            Diary diary1 = response.body().getData();
+                            Log.i(tag, "post diary: " + diary1);
+                            return;
+                        }
+                    }
+                }
+                Log.i(tag, "post diary failed.");
+            }
+
+            @Override
+            public void onFailure(Call<Result<Diary>> call, Throwable t) {
+                Log.i(tag, "网络故障");
+                t.printStackTrace();
+            }
+        });
         setResult(RESULT_OK, intent1);
         finish();
     }
@@ -268,4 +338,42 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
         builder.create().show();
 
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i(tag, "onStart");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.i(tag, "onRestart");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.i(tag, "onResume");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i(tag, "onPause");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.i(tag, "onStop.");
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i(tag, "onDestroy");
+    }
+
 }

@@ -4,7 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,7 +23,11 @@ import com.example.myapplication.R;
 import com.example.myapplication.data.Diary;
 import com.example.myapplication.data.DiaryDao;
 import com.example.myapplication.data.DiaryDatabase;
+import com.example.myapplication.interfaces.ApiDiaryService;
 import com.example.myapplication.interfaces.OnItemDiaryClickListener;
+import com.example.myapplication.service.RetrofitClient;
+import com.example.myapplication.utils.Result;
+import com.example.myapplication.utils.ResultCode;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -29,6 +35,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryClickListener {
     private String tag = "DiaryListActivity";
@@ -68,6 +78,39 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
         adapter.setOnItemDiaryClickListener(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
+        SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
+        ApiDiaryService diaryService = RetrofitClient.getInstance().getApiDiaryService();
+        Call<Result<List<Diary>>> diaries = diaryService.getDiaries(sharedPreferences.getString("token", ""),
+                sharedPreferences.getString("username", ""));
+        diaries.enqueue(new Callback<Result<List<Diary>>>() {
+            @Override
+            public void onResponse(Call<Result<List<Diary>>> call, Response<Result<List<Diary>>> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        int code = response.body().getCode();
+                        String msg = response.body().getMsg();
+                        if (code == ResultCode.GET_DIARY_SUCCESS) {
+                            Log.i(tag, "get diary successfully.");
+                            List<Diary> diaryList = response.body().getData();
+                            for (Diary diary: diaryList) {
+                                Log.i(tag, "diary: " + diary);
+                            }
+                            return;
+                        }
+                    }
+                    Log.i(tag, "get diaries failure");
+                } else {
+                    Log.i(tag, "response error: " + response.errorBody());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Result<List<Diary>>> call, Throwable t) {
+                Log.i(tag, "network error when getting diaries.");
+            }
+        });
+
     }
 
     private void initSearch(){

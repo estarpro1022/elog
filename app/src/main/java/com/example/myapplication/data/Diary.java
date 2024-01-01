@@ -40,6 +40,18 @@ public class Diary implements Serializable{
         this.weather = weather;
     }
 
+    @Override
+    public String toString() {
+        return "Diary{" +
+                "date='" + date + '\'' +
+                ", content='" + content + '\'' +
+                ", mood=" + mood +
+                ", moodText='" + moodText + '\'' +
+                ", temperature='" + temperature + '\'' +
+                ", weather='" + weather + '\'' +
+                '}';
+    }
+
     public void setDate(String date) {
         this.date = date;
     }

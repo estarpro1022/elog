@@ -89,7 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="30dp"
         android:dropDownWidth="80dp"
-        android:dropDownVerticalOffset="90dp"
+        android:dropDownVerticalOffset="70dp"
         android:spinnerMode="dropdown"
         app:layout_constraintBottom_toBottomOf="@+id/diary_search"
         app:layout_constraintStart_toStartOf="parent"

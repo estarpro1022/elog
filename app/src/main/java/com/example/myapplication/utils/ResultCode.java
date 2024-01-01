@@ -14,4 +14,7 @@ public class ResultCode {
     public static final int LOGOUT_SUCCESS = 102;
     public static final int GET_DIARY_SUCCESS = 105;
     public static final int BAD_REQUEST = 409;
+    public static final int POST_DIARY_SUCCESS = 106;
+    public static final int DIARY_NOT_EXIST = 410;
+    public static final int DELETE_DIARY_SUCCESS = 107;
 }

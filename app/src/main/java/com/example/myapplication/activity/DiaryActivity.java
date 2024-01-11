@@ -55,7 +55,8 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
     private TextView temperature;
     private TextView weather;
     private ImageView emotion;
-    private TextView emotionText;private EditText content;
+    private TextView emotionText;
+    private EditText content;
     private FloatingActionButton saveButton;
     private DiaryDatabase diaryDatabase;
     private DiaryDao diaryDao;
@@ -261,12 +262,10 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
             diary = new Diary(selectedDate, content.getText().toString(), emotionDrawable, emotionText.getText().toString(), result.getTemperature(), result.getWeather());
             intent1.putExtra("diary", diary);
             diaryDao.updateDiary(diary);
-//            Toast.makeText(DiaryActivity.this, "日记修改成功", Toast.LENGTH_SHORT).show();
         } else {
             diary = new Diary(selectedDate, content.getText().toString(), emotionDrawable, emotionText.getText().toString(), getIntent().getStringExtra("temperature"), getIntent().getStringExtra("weather"));
             intent1.putExtra("diary", diary);
             diaryDao.insertDiary(diary);
-//            Toast.makeText(DiaryActivity.this, "日记保存成功", Toast.LENGTH_SHORT).show();
         }
         Log.i(tag, "local diary stored successfully.");
         ApiDiaryService apiDiaryService = RetrofitClient.getInstance().getApiDiaryService();

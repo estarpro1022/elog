@@ -71,14 +71,6 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
             startActivity(intent);
         });
 
-        diaryDao = DiaryDatabase.getInstance(this).getDiaryDao();
-        initSearch();
-        recyclerView = findViewById(R.id.activity_diary_list_recycler_view);
-        adapter = new DiaryAdapter(diaryList);
-        adapter.setOnItemDiaryClickListener(this);
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-
         SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
         ApiDiaryService diaryService = RetrofitClient.getInstance().getApiDiaryService();
         Call<Result<List<Diary>>> diaries = diaryService.getDiaries(sharedPreferences.getString("token", ""),
@@ -93,7 +85,7 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
                         if (code == ResultCode.GET_DIARY_SUCCESS) {
                             Log.i(tag, "get diary successfully.");
                             List<Diary> diaryList = response.body().getData();
-                            for (Diary diary: diaryList) {
+                            for (Diary diary : diaryList) {
                                 Log.i(tag, "diary: " + diary);
                             }
                             return;
@@ -111,9 +103,16 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
             }
         });
 
+        diaryDao = DiaryDatabase.getInstance(this).getDiaryDao();
+        initSearch();
+        recyclerView = findViewById(R.id.activity_diary_list_recycler_view);
+        adapter = new DiaryAdapter(diaryList);
+        adapter.setOnItemDiaryClickListener(this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
     }
 
-    private void initSearch(){
+    private void initSearch() {
         Spinner spinner = findViewById(R.id.spinner);
         //创建一个SimpleAdapter适配器
         //第一个参数：上下文，第二个参数：数据源，第三个参数：item子布局，第四、五个参数：键值对，获取item布局中的控件id
@@ -131,9 +130,9 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
 
                 // 根据搜索框更新
                 String query = searchView.getQuery().toString();
-                if(!query.equals("")){
+                if (!query.equals("")) {
                     setAdapterFilter(filterByText(diaryList, query));
-                }else{
+                } else {
                     setAdapterFilter(diaryList);
                 }
             }
@@ -154,9 +153,9 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
             @Override
             public boolean onQueryTextSubmit(String query) {
                 // 根据搜索框更新
-                if(!query.equals("")){
+                if (!query.equals("")) {
                     setAdapterFilter(filterByText(diaryList, query));
-                }else{
+                } else {
                     setAdapterFilter(diaryList);
                 }
                 searchView.clearFocus();
@@ -167,16 +166,15 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
             @Override
             public boolean onQueryTextChange(String newText) {
                 //此方法的作用是对搜索框里的文字实时监听。
-                if(!TextUtils.isEmpty(newText)){
+                if (!TextUtils.isEmpty(newText)) {
                     setAdapterFilter(filterByText(diaryList, newText));
-                }else{
+                } else {
                     setAdapterFilter(diaryList);
                 }
                 return true;
             }
         });
     }
-
 
 
     /**
@@ -187,15 +185,14 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
         super.onStart();
         // 按心情更新diaryList
         Spinner spinner = findViewById(R.id.spinner);
-        String selected_text = (String) ((Map<String, Object>)spinner.getSelectedItem()).get("text");
+        String selected_text = (String) ((Map<String, Object>) spinner.getSelectedItem()).get("text");
         diaryList = Objects.equals(selected_text, "全部") ? diaryDao.queryAllDiaries() : diaryDao.queryDiaryByMood(selected_text);
-        diaryList.sort(Comparator.comparing(Diary::getDate));
         diaryList.sort((a, b) -> b.getDate().compareTo(a.getDate()));
 
         // 按搜索框更新显示内容
-        if(!searchView.getQuery().toString().equals("")){
+        if (!searchView.getQuery().toString().isEmpty()) {
             setAdapterFilter(filterByText(diaryList, searchView.getQuery().toString()));
-        }else{
+        } else {
             setAdapterFilter(diaryList);
         }
     }
@@ -207,25 +204,25 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
         startActivity(intent);
     }
 
-    private List<Diary> filterByText(List<Diary> diaryList, String text){
+    private List<Diary> filterByText(List<Diary> diaryList, String text) {
         List<Diary> filterDiary = new ArrayList<>();
 
-        for (Diary diary:diaryList){
+        for (Diary diary : diaryList) {
             if (diary.getContent().contains(text))
                 filterDiary.add(diary);
         }
         return filterDiary;
     }
 
-    private List<Map<String, Object>> getDataList(){
+    private List<Map<String, Object>> getDataList() {
         String[] emotionTextList = {"全部", "好", "非常棒", "害羞", "呵呵", "困觉", "晕",
                 "生气", "惊吓", "委屈", "颓废"};
         int[] emotionImgList = {R.drawable.multi_mood, R.drawable.good, R.drawable.happy, R.drawable.shy, R.drawable.hoho,
                 R.drawable.sleepy, R.drawable.dizzy, R.drawable.angry, R.drawable.shock,
                 R.drawable.injured, R.drawable.decadence};
-        List<Map<String,Object>> emotionList = new ArrayList<>();
+        List<Map<String, Object>> emotionList = new ArrayList<>();
         int size = emotionImgList.length;
-        for(int i = 0; i < size; i++){
+        for (int i = 0; i < size; i++) {
             Map<String, Object> map = new HashMap<>();
             map.put("image", emotionImgList[i]);
             map.put("text", emotionTextList[i]);
@@ -234,10 +231,10 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
         return emotionList;
     }
 
-    private void setAdapterFilter(List<Diary> diaries){
+    private void setAdapterFilter(List<Diary> diaries) {
         if (diaries.size() == 0) {
             hint.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             hint.setVisibility(View.INVISIBLE);
 
         }

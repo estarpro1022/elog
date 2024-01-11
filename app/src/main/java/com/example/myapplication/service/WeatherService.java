@@ -47,6 +47,7 @@ public class WeatherService {
                         temperature = String.format("%.0f", object.getJSONObject("main").getDouble("temp") - 273.15);
                         temperature += "°C";
                         weather = object.getJSONArray("weather").getJSONObject(0).getString("description");
+                        weather = weather.split("，")[0];
                         System.out.println("成功");
                         Log.i(tag, "temperature: " + temperature);
                         Log.i(tag, "weather: " + weather);

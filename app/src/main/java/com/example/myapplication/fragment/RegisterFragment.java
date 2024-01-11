@@ -139,9 +139,13 @@ public class RegisterFragment extends Fragment {
                                     editor.apply();
                                     jumpToProfile();
                                 }
+                                Log.i(tag, "response result: " + msg);
                                 Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
+                                return;
                             }
+                            Toast.makeText(mContext, "返回结果为空", Toast.LENGTH_SHORT).show();
                         } else {
+                            Toast.makeText(mContext, response.code() + "", Toast.LENGTH_SHORT).show();
                             Log.i(tag, "http status code not correct: " + response.code());
                         }
                     }

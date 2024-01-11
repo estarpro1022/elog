@@ -71,6 +71,7 @@ public class DiaryAnalysisActivity extends AppCompatActivity {
             "生气", "惊吓", "委屈", "颓废");
 
     private List<AxisValue> moodList = new ArrayList<>();
+
     {
         moodList.add(new AxisValue(0).setLabel("好"));
         moodList.add(new AxisValue(1).setLabel("非常棒"));
@@ -96,6 +97,7 @@ public class DiaryAnalysisActivity extends AppCompatActivity {
             "颓废", Color.parseColor("#9a77df"));
 
     private Map<String, Integer> map = new HashMap<>();
+
     {
         map.put("好", 0);
         map.put("非常棒", 0);
@@ -129,7 +131,7 @@ public class DiaryAnalysisActivity extends AppCompatActivity {
 
         //存放扇形数据的集合
         List<SliceValue> values = new ArrayList<SliceValue>();
-        for (String emotion: emotionTextList) {
+        for (String emotion : emotionTextList) {
             if (map.get(emotion) != 0) {
                 SliceValue sliceValue = new SliceValue((float) map.get(emotion), colorData.get(emotion));
                 sliceValue.setLabel(emotion);
@@ -145,7 +147,7 @@ public class DiaryAnalysisActivity extends AppCompatActivity {
 
         pieChart.setPieChartData(pieData);
 
-        if(isExploded) {
+        if (isExploded) {
             pieData.setSlicesSpacing(5);
         }
     }
@@ -157,7 +159,7 @@ public class DiaryAnalysisActivity extends AppCompatActivity {
         List<Column> columns = new ArrayList<Column>();
         List<SubcolumnValue> values;
 
-        for (String emotion: emotionTextList) {
+        for (String emotion : emotionTextList) {
             values = new ArrayList<SubcolumnValue>();
             for (int j = 0; j < numSubcolumns; ++j) {
                 values.add(new SubcolumnValue((float) map.get(emotion), colorData.get(emotion)));
@@ -198,7 +200,8 @@ public class DiaryAnalysisActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onValueDeselected() {}
+        public void onValueDeselected() {
+        }
     }
 
     private class ColumnTouchListener implements ColumnChartOnValueSelectListener {
@@ -209,7 +212,8 @@ public class DiaryAnalysisActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onValueDeselected() {}
+        public void onValueDeselected() {
+        }
     }
 
     Toast toast;
@@ -242,11 +246,11 @@ public class DiaryAnalysisActivity extends AppCompatActivity {
         diaries.sort(Comparator.comparing(Diary::getDate));
         diaries.sort((a, b) -> b.getDate().compareTo(a.getDate()));
 
-        for (Diary diary: diaries) {
+        for (Diary diary : diaries) {
             moods.add(diary.getMoodText());
         }
 
-        for (String mood: moods) {
+        for (String mood : moods) {
             if (map.containsKey(mood)) {
                 map.put(mood, map.get(mood) + 1);
             }

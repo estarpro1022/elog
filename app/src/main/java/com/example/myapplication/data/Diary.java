@@ -1,6 +1,7 @@
 package com.example.myapplication.data;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -8,6 +9,7 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 public class Diary implements Serializable{
@@ -50,6 +52,11 @@ public class Diary implements Serializable{
                 ", temperature='" + temperature + '\'' +
                 ", weather='" + weather + '\'' +
                 '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(date, content, mood, moodText, temperature, weather);
     }
 
     public void setDate(String date) {
@@ -98,4 +105,20 @@ public class Diary implements Serializable{
         this.weather = weather;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Diary diary = (Diary) o;
+
+        if (mood != diary.mood) return false;
+        if (!date.equals(diary.date)) return false;
+        if (!Objects.equals(content, diary.content)) return false;
+        if (!Objects.equals(moodText, diary.moodText))
+            return false;
+        if (!Objects.equals(temperature, diary.temperature))
+            return false;
+        return Objects.equals(weather, diary.weather);
+    }
 }

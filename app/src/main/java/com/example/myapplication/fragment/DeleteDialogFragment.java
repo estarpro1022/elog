@@ -12,6 +12,8 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.myapplication.interfaces.OnDeleteClickListener;
 
+import java.util.function.Function;
+
 public class DeleteDialogFragment extends DialogFragment {
     private String date;
 
@@ -52,3 +54,34 @@ public class DeleteDialogFragment extends DialogFragment {
     }
 
 }
+
+
+
+//interface Callback<T> {
+//    void onSuccess(T data);
+//    void onErr(Throwable throwable);
+//}
+//
+//class Http {
+//    public static void doReqDiaries(String username, String token, Callback<String> callback) {
+//        // HTTP
+//        String result = "123";
+//        callback.onSuccess(result);
+//    }
+//}
+//
+//class Act implements Callback<String> {
+//    public static void onCreate() {
+//        Http.doReqDiaries("", "", this);
+//    }
+//
+//    @Override
+//    public void onSuccess(String data) {
+//
+//    }
+//
+//    @Override
+//    public void onErr(Throwable throwable) {
+//
+//    }
+//}

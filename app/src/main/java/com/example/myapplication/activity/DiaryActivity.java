@@ -28,7 +28,9 @@ import com.example.myapplication.data.DiaryDatabase;
 import com.example.myapplication.fragment.DeleteDialogFragment;
 import com.example.myapplication.fragment.InfoDialogFragment;
 import com.example.myapplication.interfaces.ApiDiaryService;
+import com.example.myapplication.interfaces.DiaryCallback;
 import com.example.myapplication.interfaces.OnDeleteClickListener;
+import com.example.myapplication.service.DiaryService;
 import com.example.myapplication.service.RetrofitClient;
 import com.example.myapplication.utils.Result;
 import com.example.myapplication.utils.ResultCode;
@@ -221,36 +223,11 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
         setResult(RESULT_OK, intent2);
         diaryDao.deleteDiaryByDate(selectedDate);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
-        ApiDiaryService apiDiaryService = RetrofitClient.getInstance().getApiDiaryService();
-        Call<Result<Diary>> resultCall = apiDiaryService.deleteDiary(sharedPreferences.getString("token", ""),
-                sharedPreferences.getString("username", ""),
+        // delete diary from web server
+        SharedPreferences sp = getSharedPreferences("user", Context.MODE_PRIVATE);
+        DiaryService.delete(sp.getString("token", ""),
+                sp.getString("username", ""),
                 selectedDate);
-        resultCall.enqueue(new Callback<Result<Diary>>() {
-            @Override
-            public void onResponse(Call<Result<Diary>> call, Response<Result<Diary>> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        Log.i(tag, "receive delete response");
-                        int code = response.body().getCode();
-                        String msg = response.body().getMsg();
-                        Log.i(tag, msg);
-                        if (code == ResultCode.DELETE_DIARY_SUCCESS) {
-                            Diary diary = response.body().getData();
-                            Log.i(tag, "deleted diary: " + diary);
-                            return;
-                        }
-                    }
-                }
-                Log.i(tag, "deleted failed.");
-            }
-
-            @Override
-            public void onFailure(Call<Result<Diary>> call, Throwable t) {
-                Log.i(tag, "network error while deleting the diary.");
-                t.printStackTrace();
-            }
-        });
         finish();
     }
 
@@ -268,34 +245,10 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
             diaryDao.insertDiary(diary);
         }
         Log.i(tag, "local diary stored successfully.");
-        ApiDiaryService apiDiaryService = RetrofitClient.getInstance().getApiDiaryService();
-        SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
-        Call<Result<Diary>> resultCall = apiDiaryService.postDiary(sharedPreferences.getString("token", ""),
-                sharedPreferences.getString("username", ""), diary);
-        resultCall.enqueue(new Callback<Result<Diary>>() {
-            @Override
-            public void onResponse(Call<Result<Diary>> call, Response<Result<Diary>> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        Log.i(tag, "server already saves diary");
-                        int code = response.body().getCode();
-                        String msg = response.body().getMsg();
-                        if (code == ResultCode.POST_DIARY_SUCCESS) {
-                            Diary diary1 = response.body().getData();
-                            Log.i(tag, "post diary: " + diary1);
-                            return;
-                        }
-                    }
-                }
-                Log.i(tag, "post diary failed.");
-            }
 
-            @Override
-            public void onFailure(Call<Result<Diary>> call, Throwable t) {
-                Log.i(tag, "网络故障");
-                t.printStackTrace();
-            }
-        });
+        SharedPreferences sp = getSharedPreferences("user", Context.MODE_PRIVATE);
+        DiaryService.postDiary(sp.getString("token", ""),
+                sp.getString("username", ""), diary);
         setResult(RESULT_OK, intent1);
         finish();
     }

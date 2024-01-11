@@ -29,17 +29,8 @@ public class VersionInfoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//        View container_help = inflater.inflate(R.layout.activity_user,container,false);
-//        ImageView back = container_help.findViewById(R.id.activity_user_back);
-//        back.setVisibility(View.GONE);
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_version_info, container, false);
-        // 在此处找到并设置容器中的返回按钮为不可见
-        ImageView back = requireActivity().findViewById(R.id.fragment_profile_back);
-        if (back != null) {
-            back.setVisibility(View.GONE);
-        }
-
         initView(rootView);
         return rootView;
     }

@@ -1,10 +1,14 @@
 package com.example.myapplication;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -13,10 +17,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 
@@ -36,14 +42,20 @@ import com.example.myapplication.data.DiaryDatabase;
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.decorator.CustomDecorator;
 import com.example.myapplication.decorator.SelectedDayDecorator;
+import com.example.myapplication.interfaces.ApiDiaryService;
+import com.example.myapplication.service.DiaryService;
+import com.example.myapplication.service.RetrofitClient;
 import com.example.myapplication.utils.Calculate;
 import com.example.myapplication.service.WeatherService;
 import com.example.myapplication.utils.LLMUtil;
+import com.example.myapplication.utils.Result;
+import com.example.myapplication.utils.ResultCode;
 import com.lukedeighton.wheelview.WheelView;
 import com.lukedeighton.wheelview.adapter.WheelAdapter;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +65,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Date;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements LLMUtil.AsyncTaskListener {
     private String tag = "MainActivity";
@@ -67,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements LLMUtil.AsyncTask
     private ActivityMainBinding binding;
     private CalendarDay selectedDate;
     private String selectedDateString;
+    private ProgressBar progressBar;
     SelectedDayDecorator selectedDayDecorator = new SelectedDayDecorator();
     final LinkedHashMap<String, Integer> emotionList = new LinkedHashMap<>();
     private final List<Drawable> imgList = new ArrayList<>();
@@ -81,10 +98,12 @@ public class MainActivity extends AppCompatActivity implements LLMUtil.AsyncTask
     private static final String LAST_DATE = "lastDate";
     private static final String PERSONALITY_KEY = "personalityKey";
     private static final String LLM_KEY = "llmKey";
+    private String prevUsername;
 
 
     private SharedPreferences preferences;
     private boolean fromDesktop = true;
+    private boolean switchAccount = false;
 
     private boolean isPasswordVerified() {
         // 在这里添加检查密码是否已验证的逻辑
@@ -122,6 +141,13 @@ public class MainActivity extends AppCompatActivity implements LLMUtil.AsyncTask
 
         WeatherService.apiGetTemperature();
         Log.i(tag, "get temperature: " + WeatherService.getTemperature());
+
+        prevUsername = getSharedPreferences("user", MODE_PRIVATE).getString("username", "");
+
+        if (savedInstanceState == null) {
+            // first query when starting the app
+            queryDiaries();
+        }
     }
 
     public void setFromDesktop(boolean fromDesktop) {
@@ -130,6 +156,8 @@ public class MainActivity extends AppCompatActivity implements LLMUtil.AsyncTask
 
     @Override
     protected void onStart() {
+        super.onStart();
+        Log.i(tag, "onStart method.");
         preferences = getSharedPreferences("user", MODE_PRIVATE);
         if (preferences.getBoolean("login", false)) {
             if (fromDesktop) {
@@ -149,12 +177,99 @@ public class MainActivity extends AppCompatActivity implements LLMUtil.AsyncTask
             }
         }
 
-        Log.i(tag, "onStart method.");
-        super.onStart();
-        Log.i(tag, "onStart method.");
-        decorateCalendarView();
-        fromDesktop = true;
+        // query diaries from web server
+        queryDiaries();
 
+        fromDesktop = true;
+    }
+
+    private void queryDiaries() {
+        SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
+        ApiDiaryService diaryService = RetrofitClient.getInstance().getApiDiaryService();
+        Call<Result<List<Diary>>> diaries = diaryService.getDiaries(sharedPreferences.getString("token", ""),
+                sharedPreferences.getString("username", ""));
+        List<Diary> insertDiaries = new ArrayList<>();
+        // improve: first query when starting from desktop
+        if (fromDesktop) {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+        final boolean[] isSuccessful = {false};
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // 注意：不要在这个线程中更新 UI
+                try {
+                    Response<Result<List<Diary>>> execute = diaries.execute();
+                    Log.i(tag, "request begins.");
+                    if (execute.isSuccessful() && execute.body() != null) {
+                        isSuccessful[0] = true;
+                        int code = execute.body().getCode();
+                        String msg = execute.body().getMsg();
+                        if (code == ResultCode.GET_DIARY_SUCCESS) {
+                            Log.i(tag, "get diary successfully.");
+                            List<Diary> diaryList = execute.body().getData();
+                            for (Diary diary : diaryList) {
+                                Log.i(tag, "get diary: " + diary);
+                                insertDiaries.add(diary);
+                            }
+                        }
+                        Log.i(tag, "code: " + code + " msg: " + msg);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                // 在完成网络请求后，通过Handler切换到主线程执行操作
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // 在这里执行网络请求完成后的操作，例如更新 UI
+                        List<Diary> storeDiaries = diaryDao.queryAllDiaries();
+                        SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
+//                        prevUsername = sharedPreferences.getString("username", "");
+                        if (!isSuccessful[0]) {
+                            decorateCalendarView();
+                            progressBar.setVisibility(View.GONE);
+                            return;
+                        }
+                        if (!prevUsername.equals(sharedPreferences.getString("username", ""))) {
+                            // switch account
+                            diaryDao.deleteAllDiaries();
+                            for (Diary diary : insertDiaries) {
+                                diaryDao.insertDiary(diary);
+                            }
+                            decorateCalendarView();
+                            prevUsername = sharedPreferences.getString("username", "");
+                            progressBar.setVisibility(View.GONE);
+                            return;
+                        }
+                        if (!insertDiaries.equals(storeDiaries)) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                            builder.setTitle("云端数据和本地不一致")
+                                    .setMessage("请选择保留本地数据还是保留云端数据")
+                                    .setNegativeButton("保留云端", (dialogInterface, i) -> {
+                                        diaryDao.deleteAllDiaries();
+                                        for (Diary diary : insertDiaries) {
+                                            diaryDao.insertDiary(diary);
+                                        }
+                                        dialogInterface.dismiss();
+                                    })
+                                    .setPositiveButton("保留本地", (dialogInterface, i) -> {
+                                        List<Diary> diaryList = diaryDao.queryAllDiaries();
+                                        for (Diary diary : diaryList) {
+                                            SharedPreferences sp = getSharedPreferences("user", Context.MODE_PRIVATE);
+                                            DiaryService.postDiary(sp.getString("token", ""),
+                                                    sp.getString("username", ""), diary);
+                                        }
+                                    }).create().show();
+                        }
+                        // decorate instantly
+                        decorateCalendarView();
+                        progressBar.setVisibility(View.GONE);
+                    }
+                });
+            }
+        }).start();
     }
 
     @Override
@@ -193,6 +308,7 @@ public class MainActivity extends AppCompatActivity implements LLMUtil.AsyncTask
         user = findViewById(R.id.activity_main_user);
         diaries = findViewById(R.id.activity_main_diary);
         llmButton = findViewById(R.id.llm_button);
+        progressBar = findViewById(R.id.activity_main_progressbar);
 
         user.setOnClickListener(view -> {
             fromDesktop = false;
@@ -231,7 +347,7 @@ public class MainActivity extends AppCompatActivity implements LLMUtil.AsyncTask
 
     private void initCalendarView() {
         // 渲染已写日记
-        decorateCalendarView();
+//        decorateCalendarView();
 
         calendarView.setTopbarVisible(true);
         calendarView.setTitleFormatter(day -> String.format("%d年%d月", day.getYear(), day.getMonth() + 1));
@@ -264,6 +380,7 @@ public class MainActivity extends AppCompatActivity implements LLMUtil.AsyncTask
             if (diary != null) {
                 // fix: 当用户先点击未写日记，再点击已写日记时，需要让轮盘不可见
                 wheelView.setVisibility(View.INVISIBLE);
+                fromDesktop = false;
 
                 Intent intent = new Intent(MainActivity.this, DiaryActivity.class);
                 intent.putExtra("diary", diary);

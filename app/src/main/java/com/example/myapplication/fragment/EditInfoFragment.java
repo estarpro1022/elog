@@ -31,7 +31,6 @@ public class EditInfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_edit_info, container, false);
-        // 在此处找到并设置容器中的返回按钮为不可见
 
         initView(rootView);
         return rootView;

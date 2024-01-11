@@ -8,11 +8,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
@@ -29,6 +32,7 @@ import com.example.myapplication.service.RetrofitClient;
 import com.example.myapplication.utils.Result;
 import com.example.myapplication.utils.ResultCode;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -58,52 +62,19 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_diary_list);
 
+        diaryDao = DiaryDatabase.getInstance(this).getDiaryDao();
+
         back = findViewById(R.id.activity_diary_list_back);
         analysis = findViewById(R.id.activity_diary_list_analysis);
         hint = findViewById(R.id.activity_diary_list_hint);
 
-        back.setOnClickListener(view -> {
-            finish();
-        });
+        back.setOnClickListener(view -> finish());
 
         analysis.setOnClickListener(view -> {
             Intent intent = new Intent(this, DiaryAnalysisActivity.class);
             startActivity(intent);
         });
 
-        SharedPreferences sharedPreferences = getSharedPreferences("user", Context.MODE_PRIVATE);
-        ApiDiaryService diaryService = RetrofitClient.getInstance().getApiDiaryService();
-        Call<Result<List<Diary>>> diaries = diaryService.getDiaries(sharedPreferences.getString("token", ""),
-                sharedPreferences.getString("username", ""));
-        diaries.enqueue(new Callback<Result<List<Diary>>>() {
-            @Override
-            public void onResponse(Call<Result<List<Diary>>> call, Response<Result<List<Diary>>> response) {
-                if (response.isSuccessful()) {
-                    if (response.body() != null) {
-                        int code = response.body().getCode();
-                        String msg = response.body().getMsg();
-                        if (code == ResultCode.GET_DIARY_SUCCESS) {
-                            Log.i(tag, "get diary successfully.");
-                            List<Diary> diaryList = response.body().getData();
-                            for (Diary diary : diaryList) {
-                                Log.i(tag, "diary: " + diary);
-                            }
-                            return;
-                        }
-                    }
-                    Log.i(tag, "get diaries failure");
-                } else {
-                    Log.i(tag, "response error: " + response.errorBody());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Result<List<Diary>>> call, Throwable t) {
-                Log.i(tag, "network error when getting diaries.");
-            }
-        });
-
-        diaryDao = DiaryDatabase.getInstance(this).getDiaryDao();
         initSearch();
         recyclerView = findViewById(R.id.activity_diary_list_recycler_view);
         adapter = new DiaryAdapter(diaryList);
@@ -184,6 +155,7 @@ public class DiaryListActivity extends AppCompatActivity implements OnItemDiaryC
     protected void onStart() {
         super.onStart();
         // 按心情更新diaryList
+        Log.i(tag, "DiaryListActivity onStart");
         Spinner spinner = findViewById(R.id.spinner);
         String selected_text = (String) ((Map<String, Object>) spinner.getSelectedItem()).get("text");
         diaryList = Objects.equals(selected_text, "全部") ? diaryDao.queryAllDiaries() : diaryDao.queryDiaryByMood(selected_text);

@@ -7,6 +7,17 @@
     android:background="@drawable/bg_login">
 
     <ImageView
+        android:id="@+id/fragment_login_back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
         android:id="@+id/login_logo"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -77,17 +88,16 @@
         android:textSize="25sp"
         app:layout_constraintEnd_toEndOf="@+id/login_password_layout"
         app:layout_constraintStart_toStartOf="@+id/login_password_layout"
-        app:layout_constraintTop_toBottomOf="@+id/login_password_layout"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/login_password_layout" />
 
     <TextView
         android:id="@+id/login_forget_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="忘记密码"
-        android:textSize="18sp"
-        android:textColor="@color/link"
         android:layout_marginTop="20dp"
+        android:text="忘记密码"
+        android:textColor="@color/link"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="@+id/login_button"
         app:layout_constraintTop_toBottomOf="@+id/login_button" />
 

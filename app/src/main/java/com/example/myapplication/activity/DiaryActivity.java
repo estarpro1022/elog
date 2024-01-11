@@ -8,13 +8,11 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
@@ -53,14 +51,12 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
     private ConstraintLayout background;
     private ConstraintLayout textLayout;
     private TextView date;
-    private ScrollView scrollView;
     private ImageView back;
     private TextView temperature;
     private TextView weather;
     private ImageView emotion;
-    private TextView emotionText;
-    private EditText content;
-    private FloatingActionButton editButton;
+    private TextView emotionText;private EditText content;
+    private FloatingActionButton saveButton;
     private DiaryDatabase diaryDatabase;
     private DiaryDao diaryDao;
 
@@ -76,7 +72,6 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
         background = findViewById(R.id.activity_diary_layout);
         textLayout = findViewById(R.id.activity_diary_text_layout);
         menu = findViewById(R.id.activity_diary_menu);
-        scrollView = findViewById(R.id.activity_diary_scroll_view);
         date = findViewById(R.id.elog_date);
         back = findViewById(R.id.elog_back_btn);
         temperature = findViewById(R.id.activity_diary_temperature);
@@ -84,7 +79,7 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
         content = findViewById(R.id.elog_content);
         emotion = findViewById(R.id.emotion);
         emotionText = findViewById(R.id.emotionText);
-        editButton = findViewById(R.id.activity_diary_float_button);
+        saveButton = findViewById(R.id.activity_diary_float_button);
         blank = findViewById(R.id.activity_diary_blank);
 
         diaryDatabase = DiaryDatabase.getInstance(this);
@@ -113,39 +108,17 @@ public class DiaryActivity extends AppCompatActivity implements OnDeleteClickLis
 
         back.setOnClickListener(view -> getOnBackPressedDispatcher().onBackPressed());
 
-        // setOnClickListener设置是没用的，click的是Scrollview的child
-        scrollView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                // release the finger then keyboard appears.
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_UP:
-                        view.performClick();
-                        if (content.requestFocus()) {
-                            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.showSoftInput(content, InputMethodManager.SHOW_IMPLICIT);
-                        }
-                        break;
-                    case MotionEvent.ACTION_CANCEL:
-                        break;
-                    case MotionEvent.ACTION_DOWN:
-                        break;
-                }
-                return true;
-            }
-        });
-
         KeyboardVisibilityEvent.setEventListener(this, isOpen -> {
             if (isOpen) {
                 content.requestFocus();
-                editButton.setVisibility(View.INVISIBLE);
+                saveButton.setVisibility(View.INVISIBLE);
             } else {
                 content.clearFocus();
-                editButton.setVisibility(View.VISIBLE);
+                saveButton.setVisibility(View.VISIBLE);
             }
         });
 
-        editButton.setOnClickListener(view -> {
+        saveButton.setOnClickListener(view -> {
             saveDiary();
         });
 

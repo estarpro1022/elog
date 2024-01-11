@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +38,7 @@ public class RegisterFragment extends Fragment {
     private String tag = "RegisterFragment";
 
     private View root;
+    private ImageView back;
     private TextInputLayout username_layout;
     private TextInputEditText username;
     private TextInputLayout password_layout;
@@ -70,6 +72,7 @@ public class RegisterFragment extends Fragment {
         root = inflater.inflate(R.layout.fragment_register, container, false);
 
         // 没有单独extract函数initView的必要（顿悟
+        back = root.findViewById(R.id.fragment_register_back);
         username_layout = root.findViewById(R.id.register_username_layout);
         username = root.findViewById(R.id.register_username);
         password_layout = root.findViewById(R.id.register_password_layout);
@@ -80,6 +83,8 @@ public class RegisterFragment extends Fragment {
         phone = root.findViewById(R.id.register_phone);
         register = root.findViewById(R.id.register_button);
         jump_to_login = root.findViewById(R.id.jump_to_login);
+
+        back.setOnClickListener(view -> requireActivity().finish());
 
         username.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus) {

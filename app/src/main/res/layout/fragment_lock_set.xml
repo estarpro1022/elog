@@ -6,6 +6,25 @@
     android:background="@drawable/background_user"
     >
 
+    <ImageView
+        android:id="@+id/imageViewBackHelp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/back"
+        android:layout_marginTop="14dp"
+        android:layout_marginStart="14dp"/>
+    <!-- 标题 -->
+    <TextView
+        android:id="@+id/textViewTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="应用锁设置"
+        android:textSize="24sp"
+        android:textColor="#333333"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="20dp"/>
+
     <Switch
         android:id="@+id/switchAppLock"
         android:layout_width="wrap_content"
@@ -19,25 +38,6 @@
         android:layout_centerVertical="true"
         android:layout_gravity="start"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
-
-    <ImageView
-        android:id="@+id/imageViewBackHelp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/back"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp"/>
-    <!-- 标题 -->
-    <TextView
-        android:id="@+id/textViewTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="应用锁设置"
-        android:textSize="24sp"
-        android:textColor="#333333"
-        android:gravity="center"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="20dp"/>
 
     <EditText
         android:id="@+id/editTextPassword"

@@ -12,8 +12,6 @@ import com.example.myapplication.fragment.LoginFragment;
 import com.example.myapplication.fragment.UserProfileFragment;
 
 public class UserActivity extends AppCompatActivity {
-    private ImageView back;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,11 +31,5 @@ public class UserActivity extends AppCompatActivity {
                     .add(R.id.activity_user_fragment_container_view, loginFragment)
                     .commit();
         }
-        initView();
-    }
-
-    private void initView() {
-        back = findViewById(R.id.activity_user_back);
-        back.setOnClickListener(view -> finish());
     }
 }

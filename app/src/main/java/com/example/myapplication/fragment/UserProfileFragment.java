@@ -16,7 +16,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.myapplication.R;
@@ -39,11 +38,6 @@ public class UserProfileFragment extends Fragment {
     private static int HELP = 2;
     private static int VERSION = 3;
 
-
-    public UserProfileFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,11 +56,34 @@ public class UserProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        ImageView back = view.findViewById(R.id.fragment_profile_back);
         ImageView usrIcon = view.findViewById(R.id.userIcon);
         usrIcon.setImageResource(R.drawable.ic_launcher);
         SharedPreferences preferences = getContext().getSharedPreferences("user",Context.MODE_PRIVATE);
         TextView usrname = view.findViewById(R.id.UserName);
         usrname.setText(preferences.getString("username",""));
+
+        back.setOnClickListener(v -> {
+            requireActivity().finish();
+        });
+
+        ListView listView = view.findViewById(R.id.listView);
+
+        List<UserProfileItem> items = new ArrayList<>();
+        items.add(new UserProfileItem("修改信息", R.drawable.ic_edit_user_info));
+        items.add(new UserProfileItem("应用锁设置", R.drawable.ic_phonelink_lock));
+        items.add(new UserProfileItem("帮助", R.drawable.ic_help));
+        items.add(new UserProfileItem("版本号", R.drawable.ic_version));
+
+        UserProfileAdapter adapter = new UserProfileAdapter(requireContext(), items);
+        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener((parent, view1, position, id) -> {
+            // 处理列表项点击事件
+            UserProfileItem selectedItem = items.get(position);
+            handleListItemClick(selectedItem);
+
+        });
 
         Button logout = view.findViewById(R.id.logout);
         logout.setText("退出登录");
@@ -107,29 +124,6 @@ public class UserProfileFragment extends Fragment {
                 }
             });
         });
-
-
-        ListView listView = view.findViewById(R.id.listView);
-
-        List<UserProfileItem> items = new ArrayList<>();
-        items.add(new UserProfileItem("修改信息", R.drawable.ic_edit_user_info));
-        items.add(new UserProfileItem("应用锁设置", R.drawable.ic_phonelink_lock));
-        items.add(new UserProfileItem("帮助", R.drawable.ic_help));
-        items.add(new UserProfileItem("版本号", R.drawable.ic_version));
-
-        UserProfileAdapter adapter = new UserProfileAdapter(requireContext(), items);
-        listView.setAdapter(adapter);
-
-        listView.setOnItemClickListener((parent, view1, position, id) -> {
-            // 处理列表项点击事件
-            UserProfileItem selectedItem = items.get(position);
-            handleListItemClick(selectedItem);
-
-        });
-        ImageView back = requireActivity().findViewById(R.id.activity_user_back);
-        if (back != null) {
-            back.setVisibility(View.VISIBLE);
-        }
     }
 
     private void handleListItemClick(UserProfileItem item) {

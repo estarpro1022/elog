@@ -1,36 +1,44 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
     android:background="@drawable/background_user"
-    >
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/fragment_profile_back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="14dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/back" />
+
     <!-- 用户头像 -->
     <ImageView
         android:id="@+id/userIcon"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginTop="40dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp" />
 
     <TextView
         android:id="@+id/UserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:textSize="18sp"
-        android:layout_marginTop="8dp"
         android:layout_below="@+id/userIcon"
-        />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:textSize="18sp" />
 
     <ListView
         android:id="@+id/listView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/UserName"
-        android:fadingEdge="vertical"
+        android:layout_marginBottom="40dp"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp"
-        android:layout_marginBottom="40dp"
+        android:fadingEdge="vertical"
         android:padding="8dp" />
 
     <Button
@@ -38,7 +46,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/listView"
-        android:layout_centerHorizontal="true"
-
-        />
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

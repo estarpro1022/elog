@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +37,7 @@ import retrofit2.Response;
 public class LoginFragment extends Fragment {
     private String tag = "LoginFragment";
     private View root;
+    private ImageView back;
     private TextInputLayout username_layout;
     private TextInputEditText username;
     private TextInputLayout password_layout;
@@ -63,12 +65,15 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_login, container, false);
+        back = root.findViewById(R.id.fragment_login_back);
         username_layout = root.findViewById(R.id.login_username_layout);
         username = root.findViewById(R.id.login_username);
         password_layout = root.findViewById(R.id.login_password_layout);
         password = root.findViewById(R.id.login_password);
         login = root.findViewById(R.id.login_button);
         jump_to_register = root.findViewById(R.id.jump_to_register);
+
+        back.setOnClickListener(view -> requireActivity().finish());
 
         username.setOnFocusChangeListener((view, hasFocus) -> {
             if (!hasFocus) {
